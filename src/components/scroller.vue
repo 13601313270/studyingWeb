@@ -145,7 +145,12 @@ export default {
     },
     scrollIOS(e) {
       if(this.isiOS) {
-        const lengthToBottom = this.$refs.scrollRoot.children[1].offsetHeight - this.$refs.scrollRoot.scrollTop - this.$refs.scrollRoot.offsetHeight;
+        const temp = this.$refs.scrollRoot.children[1];
+        if(this.$refs.scrollRoot === undefined || temp === undefined) {
+          return;
+        }
+        
+        const lengthToBottom = temp.offsetHeight - this.$refs.scrollRoot.scrollTop - this.$refs.scrollRoot.offsetHeight;
         if(this.$refs.scrollRoot.scrollTop < 0) {
           this.$refs.scrollRoot.children[0].style.top = this.$refs.scrollRoot.children[0].offsetHeight * -1 - this.$refs.scrollRoot.scrollTop + 'px'
           if(this.$refs.scrollRoot.scrollTop < (this.pullLength * -1 || -100) ) {
@@ -169,7 +174,11 @@ export default {
     },
     fnEndIOS() {
       console.log('scrollTop', this.$refs.scrollRoot.scrollTop)
-      const lengthToBottom = this.$refs.scrollRoot.children[1].offsetHeight - this.$refs.scrollRoot.scrollTop - this.$refs.scrollRoot.offsetHeight;
+      const temp = this.$refs.scrollRoot.children[1];
+      if(temp === undefined) {
+        return;
+      }
+      const lengthToBottom = temp.offsetHeight - this.$refs.scrollRoot.scrollTop - this.$refs.scrollRoot.offsetHeight;
       if (this.$refs.scrollRoot.scrollTop < 0 ) {
         if((this.pullLength * -1 || -100)) {
           const then = () => {
