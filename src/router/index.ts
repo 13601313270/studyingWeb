@@ -22,7 +22,8 @@ import agreement from '../views/agreement.vue'
 import QQ from '../views/QQ.vue'
 import lessonLog from '../views/lessonLog.vue'
 import addQuestion from '../views/addQuestion.vue'
-import file from '../views/file.vue';
+import file from '../views/file.vue'
+import word from '../views/word.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -137,6 +138,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/file',
     name: 'file',
     component: file,
+  },
+  {
+    path: '/word',
+    name: 'word',
+    component: word,
   }
 ]
 
