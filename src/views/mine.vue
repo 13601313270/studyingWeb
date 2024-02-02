@@ -50,18 +50,22 @@
                 <div>分享好友</div>
                 <icon class="right" src="right_black"/>
             </div>
-            <div class="actionItem" @click="$router.push('/aboutUs')">
-                <div>关于我们</div>
-                <icon class="right" src="right_black"/>
-            </div>
             <div class="actionItem" @click="$router.push('/QQ')">
                 <div>QQ交流群</div>
+                <icon class="right" src="right_black"/>
+            </div>
+            <div class="actionItem" @click="$router.push('/aboutUs')">
+                <div>关于我们</div>
                 <icon class="right" src="right_black"/>
             </div>
             <!-- <div class="actionItem" v-if="isiOS" @click="score">
                 <div>给App评分</div>
                 <icon class="right" src="right_black"/>
             </div> -->
+            <div class="actionItem" @click="$router.push('/cache')">
+                <div>缓存设置</div>
+                <icon class="right" src="right_black"/>
+            </div>
             <div class="actionItem" @click="$router.push('/accountInfo')">
                 <div>账户信息</div>
                 <icon class="right" src="right_black"/>

@@ -18,6 +18,7 @@ import zhidaoDetail from '../views/zhidaoDetail.vue'
 import userInformation from '../views/userInformation.vue'
 import accountInfo from '../views/accountInfo.vue'
 import aboutUs from '../views/aboutUs.vue'
+import cache from '../views/cache.vue';
 import agreement from '../views/agreement.vue'
 import QQ from '../views/QQ.vue'
 import lessonLog from '../views/lessonLog.vue'
@@ -118,6 +119,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/aboutUs',
     name: 'aboutUs',
     component: aboutUs,
+  },
+  {
+    path: '/cache',
+    name: 'cache',
+    component: cache,
   },
   {
     path: '/agreement',

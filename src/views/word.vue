@@ -48,12 +48,14 @@
       </div>
     </scroller>
     <div v-if="showTransform && !todayFinish" class="tools">
-      <Button text="不认识" class="dontKnow" @wxcButtonClicked="dontKnow" />
-      <Button text="认识" class="knowAction" @wxcButtonClicked="knowAction" />
+      <Button text="不认识" class="dontKnow" @click="dontKnow" />
+      <Button text="认识" class="knowAction" @click="knowAction" />
     </div>
     <div class="word_test" v-if="showTestTransform"
       :style="{ backgroundColor: UserInterfaceStyle === 1 ? '#191919' : 'white' }">
-      5{{ checkShowWord }}
+      <div v-if="firstLoading" style="text-align: center;color: #535353;margin-top: 10vw;">
+        首次进入，单词库下载中...
+      </div>
       <div v-if="checkShowWord" style="display: flex;flex-direction: column;flex:1;">
         <div class="testContent">
           <text class="word_test_tips">第一次进入，将要进行测试，校验你的词汇量。大约需要10分钟，150个单词左右。</text>
@@ -64,33 +66,33 @@
           </div>
           <div class="testCollectionList">
             <div v-for="(item, key) in testCollectionForecast" class="testCollectionItem"
-              :style="{ bottom: '-1px', left: key * 710 / testDrawConfig.stepCount + 20 + 'px', height: parseInt((item.right / item.count) * 145) + 4 + 'px' }">
+              :style="{ bottom: '-1px', left: key * 100 / testDrawConfig.stepCount + 1 + 'vw', height: (item.right / item.count * 96) + '%' }">
             </div>
           </div>
           <div class="testCollectionList2">
-            <div v-for="item in testDrawConfig.stepCount" style="width: 100px;position: absolute;"
-              :style="{ left: (item - 1) * 710 / testDrawConfig.stepCount + 20 + 'px', height: '3px' }">
-              <text style="color:white;font-size: 24px;font-family: iconfont;">{{ getStrByNumber(item *
+            <div v-for="item in testDrawConfig.stepCount" class="item"
+              :style="{ left: (item - 1) * 100 / testDrawConfig.stepCount + 1 + 'vw' }">
+              <text class="text">{{ getStrByNumber(item *
                 testDrawConfig.stepWord) }}</text>
             </div>
           </div>
         </div>
         <div class="finish">
           <div style="flex: 1;">
-            <text v-if="!testCollectionFinish" class="word_test_word"
-              :style="{ color: UserInterfaceStyle === 1 ? 'white' : 'black' }">{{ checkShowWord }}</text>
+            <div v-if="!testCollectionFinish" class="word_test_word"
+              :style="{ color: UserInterfaceStyle === 1 ? 'white' : 'black' }">{{ checkShowWord }}</div>
             <div v-if="testCollectionFinish">
-              <text class="word_test_word_result_tip" style="text-align: center;font-size: 40px;"> </text>
-              <text class="word_test_word_result_tip"
-                :style="{ color: UserInterfaceStyle === 1 ? 'white' : 'black' }">您的单词量评估测试完成</text>
-              <text class="word_test_word_result_tip"
+              <div class="word_test_word_result_tip" style="text-align: center;"> </div>
+              <div class="word_test_word_result_tip"
+                :style="{ color: UserInterfaceStyle === 1 ? 'white' : 'black' }">您的单词量评估测试完成</div>
+              <div class="word_test_word_result_tip"
                 :style="{ color: UserInterfaceStyle === 1 ? 'white' : 'black' }">评估词汇量：{{ parseInt(youWordCount[0]) }}~{{
-                  parseInt(youWordCount[1]) }}</text>
-              <text class="word_test_word_result_tip"
+                  parseInt(youWordCount[1]) }}</div>
+              <div class="word_test_word_result_tip"
                 :style="{ color: UserInterfaceStyle === 1 ? 'white' : 'black' }">词汇量近似值：{{ parseInt((youWordCount[0] +
-                  youWordCount[1]) / 2) }}</text>
-              <text class="word_test_word_result_tip"
-                style="font-size: 28px;color:#535353;">随着每天使用App背单词，系统评估的词汇量会越来越精确</text>
+                  youWordCount[1]) / 2) }}</div>
+              <div class="word_test_word_result_tip"
+                style="fcolor:#535353;">随着每天使用App背单词，系统评估的词汇量会越来越精确</div>
             </div>
             <div v-else-if="showTestMeaningWord" style="flex:1">
               <div
@@ -113,15 +115,15 @@
                   }}</text>
               </scroller>
             </div>
-            <text v-else @click="getTestWordInfo" :style="{ color: UserInterfaceStyle === 1 ? 'white' : 'black' }"
-              style="flex: 1;text-align: center;padding-top: 200px;font-family: iconfont;">点击屏幕验证</text>
+            <div v-else @click="getTestWordInfo" :style="{ color: UserInterfaceStyle === 1 ? 'white' : 'black' }"
+              style="flex: 1;text-align: center;padding-top: 200px;font-family: iconfont;">点击屏幕验证</div>
           </div>
           <div v-if="testCollectionFinish">
-            <Button text="开启我的背单词计划" style="width: 710px;" class="dontKnow" @wxcButtonClicked="beginPlan" />
+            <Button text="开启我的背单词计划" style="width: 100%;" class="dontKnow" @click="beginPlan" />
           </div>
           <div class="tools" v-else-if="showTestMeaningWord">
-            <Button text="不认识" class="dontKnow" @wxcButtonClicked="checkDontKnow" />
-            <Button text="认识" class="knowAction" @wxcButtonClicked="checkKnowAction" />
+            <Button text="不认识" class="dontKnow" @click="checkDontKnow" />
+            <Button text="认识" class="knowAction" @click="checkKnowAction" />
           </div>
         </div>
       </div>
@@ -294,9 +296,9 @@ export default {
           let page = pageSteps[i]
           this.testDrawConfig.stepCount = Math.max(this.testDrawConfig.stepCount, page + 1)
           let wordApi = new sqlClass('word')
-          let sqlStr = 'select * from word where id<' + ((page + 1) * step) + ' and id>' + (page * step) + ' order by RANDOM() limit ' + times * perSearch + ',' + perSearch
-          // let sqlStr = 'select * from word limit ' + times * perSearch + ',' + perSearch
-
+          let sqlStr = navigator.userAgent.includes('windvane') ?
+            'select * from word where id<' + ((page + 1) * step) + ' and id>' + (page * step) + ' order by RANDOM() limit ' + times * perSearch + ',' + perSearch :
+            'select * from word where id<' + ((page + 1) * step) + ' and id>' + (page * step) + ' limit ' + times * perSearch + ',' + perSearch
           let list = await wordApi.select(sqlStr)
           for (let i = 0; i < list.length; i++) {
             let item = list[i]
@@ -325,7 +327,7 @@ export default {
         // 检查最后一个是不是找到最低点，超过10000不再检查
         if (pageSteps[pageSteps.length - 1] < 10000 / step) {
           let last = this.testCollection[pageSteps[pageSteps.length - 1]]
-          if (last.right / last.count > 0.4) {
+          if (last && last.right / last.count > 0.4) {
             pageSteps.push(pageSteps[pageSteps.length - 1] + 1)
           }
         }
@@ -345,9 +347,9 @@ export default {
         //加载单词
 
         let wordApi = new sqlClass('word')
-
         const exist = await wordApi.select('select count(*) as count from word')
         if (exist[0].count > 0) {
+          this.firstLoading = false
           resolve()
           return;
         }
@@ -368,20 +370,21 @@ export default {
 
             try {
               await wordApi.insert.apply(wordApi, insertList)
-              resolve();
-              // if (end < allWord.length - 1) {// end < allWord.length - 1 会在某一个值有bug
-              //   // return temp(end + 1, end + 21)
-              // } else {
-              //   self.firstLoading = false
-              //   resolve()
-              // }
+              if (end < allWord.length - 1) {// end < allWord.length - 1 会在某一个值有bug
+                return temp(end + 1, end + 21)
+              } else {
+                self.firstLoading = false
+                resolve()
+              }
             } catch (e) {
-              // return temp(end + 1, end + 21)
+              return temp(end + 1, end + 21)
             }
           })
         }
 
-        temp(0, 20)
+        this.$nextTick(() => {
+          temp(0, 20)
+        })
       })
     },
     checkWord(word) {
@@ -791,6 +794,7 @@ export default {
   height: 100px;
   width: 300px;
   background-color: #fc752e;
+  color: white;
 }
 
 .knowAction {
@@ -831,6 +835,7 @@ export default {
 }
 
 .testCollectionList {
+  position: relative;
   width: 710px;
   height: 152px;
   border-style: solid;
@@ -845,7 +850,22 @@ export default {
 .testCollectionList2 {
   display: flex;
   flex-direction: row;
-  width: '710px'
+  width: 710px;
+  overflow: hidden;
+  position: relative;
+  height: 42px;
+
+  .item {
+    // width: 100px;
+    position: absolute;
+    text-align: center;
+
+    .text {
+      color: white;
+      font-size: 24px;
+      font-family: iconfont;
+    }
+  }
 }
 
 .testCollectionItem {

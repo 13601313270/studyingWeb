@@ -16,7 +16,7 @@
           <text class="header_links_web_name">松鼠教育</text>
         </template>
         <template
-          v-else-if="['dailyQuestion','QQ','aboutUs','agreement','informationDetail','zhidaoDetail','friend'].includes($route.name)"
+          v-else-if="['dailyQuestion','QQ','aboutUs','cache', 'agreement','informationDetail','zhidaoDetail','friend'].includes($route.name)"
         >
           <text class="header_links_web_name"></text>
         </template>
@@ -191,7 +191,7 @@ export default {
         ...rootPages,
         'sourceDetail', 'lessonDetail', 'lessonDetailNew', 'lessonAllChildPoiVideo', 'lessonQuestionList', 'lessonKnowledgeList', 'poiQuestion', 'lessonLog',
         'addQuestion', 'informationDetail', 'dailyQuestion', 'zhidaoDetail', 'lessonKnowledgeDetail',
-        'aboutUs', 'agreement', 'QQ', 'userInformation','accountInfo'
+        'aboutUs', 'cache', 'agreement', 'QQ', 'userInformation','accountInfo'
       ];
       if (sort.indexOf(newVal) > sort.indexOf(oldVal)) {
         if (rootPages.includes(newVal) && rootPages.includes(oldVal)) {
@@ -299,7 +299,7 @@ export default {
           return 'source';
         } else if (['file'].includes(this.$route.name)) {
           return 'file';
-        } else if (['mine', 'aboutUs', 'agreement', 'QQ', 'userInformation','accountInfo'].includes(this.$route.name)) {
+        } else if (['mine', 'aboutUs', 'cache', 'agreement', 'QQ', 'userInformation','accountInfo'].includes(this.$route.name)) {
           return 'mine';
         } else if (['friend', 'addQuestion', 'informationDetail', 'dailyQuestion', 'zhidaoDetail'].includes(this.$route.name)) {
           return 'friend';

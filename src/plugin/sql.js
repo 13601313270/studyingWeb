@@ -152,7 +152,24 @@ const dbModule = {
         // alert('failure: ' + JSON.stringify(e));
       });
     } else {
-      alert('分享' + ':' + title + "|" + url)
+      var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
+      db.transaction(function (tx) {
+        if (isSelect) {
+          tx.executeSql(sql, [], function (tx, results) {
+            const list = [];
+            const len = results.rows.length;
+            for (let i = 0; i < len; i++) {
+              list.push(results.rows.item(i));
+            }
+            callBack({
+              status: 'SUCCESS',
+              data: list,
+            });
+          }, null); //查询和回调
+        } else {
+          callBack(tx.executeSql(sql));
+        }
+      });
     }
   }
 };//weex.requireModule('Db')
