@@ -27,7 +27,10 @@
       </div>
     </div>
     <scroller class="list" v-if="selectSub === 'english'">
-      <div @click="chooseWord">单词</div>
+      <div @click="chooseWord" class="englishItem">
+        超级单词卡
+        <Icon src="word" width="120" />
+      </div>
     </scroller>
     <scroller class="list" v-else>
       <div class="source_list" v-if="!loading">
@@ -49,6 +52,7 @@ import request from '../plugin/request'
 import localStorage from '../plugin/localStorage'
 import Switch from '../components/switch'
 import Button from '../components/Button.vue'
+import Icon from '../components/icon.vue'
 
 const userSetSourceListKey = 'saveSetSourceList';
 
@@ -77,8 +81,12 @@ export default {
       }
     }
     const selectSub = await localStorage.getItem('sourceChoose')
-    this.selectSub = +selectSub || this.subjects[0].id;
-    this.refresh()
+    if (selectSub === 'english') {
+      this.selectSub = selectSub
+    } else {
+      this.selectSub = +selectSub || this.subjects[0].id;
+      this.refresh()
+    }
 
     // setTimeout(() => {
     //     const start = this.$refs['start'];
@@ -140,7 +148,7 @@ export default {
     }
   },
   components: {
-    Switch, Button
+    Switch, Button, Icon
   }
 }
 </script>
@@ -300,6 +308,20 @@ export default {
   &_img {
     opacity: 0.8;
   }
+}
+
+.englishItem {
+  background-color: white;
+  margin: 32px;
+  padding: 32px;
+  font-size: 32px;
+  border: solid 1px #00795c;
+  color: #00795c;
+  font-size: 42px;
+  border-radius: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .loading {

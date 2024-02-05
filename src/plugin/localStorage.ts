@@ -2,7 +2,7 @@ export default {
   getItem: (key: string): Promise<any> => {
     return new Promise((resolve) => {
       const val = localStorage.getItem(key);
-      if (val === null) {
+      if (val === null || val === undefined) {
         resolve(null)
       } else {
         resolve(JSON.parse(val))

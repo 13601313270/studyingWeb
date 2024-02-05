@@ -1,8 +1,6 @@
 <template>
   <div class="content">
-    1
     <div class="index">
-      2
       <text v-if="!todayFinish" style="color:white;font-family: iconfont;">今日剩余：{{ allWords.length }}</text>
       <text v-else> </text>
       <text style="color:white;font-family: iconfont;" v-if="Math.abs(knowWordCount[0] - knowWordCount[1]) < 50">您的词汇量：{{
@@ -11,42 +9,46 @@
         parseInt(knowWordCount[1]) }}</text>
     </div>
     <div class="word" v-if="!todayFinish">
-      3
       <text class="word1">单词序：{{ word.numIndex }}</text>
-      <text class="word2">{{ word.word }}</text>
-      <div style="display: flex;flex-direction: row;justify-content: center;align-items: center;margin-top: 50px;">
-        <text style="color:white;font-size: 35px" v-if="info.ph_en" @click="play(info.ph_en_mp3)">英：{{ info.ph_en
-        }}</text>
-        <span v-if="info.en_mp3" @click="play(info.en_mp3)">
-          <Icon src="play_white" width="60" />
-        </span>
-        <text style="color:white;font-size: 35px;margin-left: 20px;" v-if="info.ph_am" @click="play(info.ph_am_mp3)">美：{{
-          info.ph_am }}</text>
-        <span v-if="info.am_mp3" @click="play(info.am_mp3)">
-          <Icon src="play_white" width="60" />
-        </span>
+      <div class="word2">{{ word.word }}</div>
+      <div class="yinbiao">
+        <div>
+          <div v-if="info.ph_en" @click="play(info.ph_en_mp3)">英：{{ info.ph_en
+          }}</div>
+          <div class="icon" v-if="info.en_mp3" @click="play(info.en_mp3)">
+            <Icon src="play" width="36" />
+          </div>
+        </div>
+        <div class="split"></div>
+        <div>
+          <div v-if="info.ph_am" @click="play(info.ph_am_mp3)">美：{{
+            info.ph_am }}</div>
+          <div class="icon" v-if="info.am_mp3" @click="play(info.am_mp3)">
+            <Icon src="play" width="36" />
+          </div>
+        </div>
       </div>
     </div>
-    <scroller class="answer">
-      4
+    <div class="answer">
       <div v-if="todayFinish" class="todayFinish">
-        <text class="todayFinishText">今天完成</text>
-        <text class="todayFinishText">Celebrate</text>
-        <image src="https://yingshijiaoyusystem.oss-cn-beijing.aliyuncs.com/celebrate.png"
-          style="width: 400px;height:400px;margin-left: 150px;" />
-        <text class="todayFinishInfo" style="margin-top: 30px;">今天复习单词{{ allWordsCount }}个</text>
-        <text class="todayFinishInfo">遇到生词{{ Object.keys(collection).length }}个</text>
+        <div class="todayFinishText">今天完成</div>
+        <div class="todayFinishText">Celebrate</div>
+        <div>
+          <img class="todayFinishImg" src="https://yingshijiaoyusystem.oss-cn-beijing.aliyuncs.com/celebrate.png" />
+        </div>
+        <div class="todayFinishInfo">
+          今天复习单词{{ allWordsCount }}个，遇到生词{{ Object.keys(collection).length }}个
+        </div>
       </div>
-      <div v-else style="flex:1">
+      <div v-else style="flex:1;height: 100%;">
         <div v-if="showTransform">
-          <text style="color:white;font-size: 38px;font-family: iconfont;" v-for="item in info.meaning">{{ item.part }}{{
+          <text style="color:white;font-family: iconfont;" v-for="item in info.meaning">{{ item.part }}{{
             item.means.join(';') }}</text>
           <!--<text style="color:white;">麦田</text>-->
         </div>
-        <text v-else class="showAnswer" @click="showTransform = true"
-          style="width: 700px;font-family: iconfont;">想好答案后，点击屏幕验证</text>
+        <div v-else class="showAnswer" @click="showTransform = true">想好答案后，点击屏幕验证</div>
       </div>
-    </scroller>
+    </div>
     <div v-if="showTransform && !todayFinish" class="tools">
       <Button text="不认识" class="dontKnow" @click="dontKnow" />
       <Button text="认识" class="knowAction" @click="knowAction" />
@@ -83,16 +85,15 @@
               :style="{ color: UserInterfaceStyle === 1 ? 'white' : 'black' }">{{ checkShowWord }}</div>
             <div v-if="testCollectionFinish">
               <div class="word_test_word_result_tip" style="text-align: center;"> </div>
-              <div class="word_test_word_result_tip"
-                :style="{ color: UserInterfaceStyle === 1 ? 'white' : 'black' }">您的单词量评估测试完成</div>
-              <div class="word_test_word_result_tip"
-                :style="{ color: UserInterfaceStyle === 1 ? 'white' : 'black' }">评估词汇量：{{ parseInt(youWordCount[0]) }}~{{
+              <div class="word_test_word_result_tip" :style="{ color: UserInterfaceStyle === 1 ? 'white' : 'black' }">
+                您的单词量评估测试完成</div>
+              <div class="word_test_word_result_tip" :style="{ color: UserInterfaceStyle === 1 ? 'white' : 'black' }">
+                评估词汇量：{{ parseInt(youWordCount[0]) }}~{{
                   parseInt(youWordCount[1]) }}</div>
-              <div class="word_test_word_result_tip"
-                :style="{ color: UserInterfaceStyle === 1 ? 'white' : 'black' }">词汇量近似值：{{ parseInt((youWordCount[0] +
+              <div class="word_test_word_result_tip" :style="{ color: UserInterfaceStyle === 1 ? 'white' : 'black' }">
+                词汇量近似值：{{ parseInt((youWordCount[0] +
                   youWordCount[1]) / 2) }}</div>
-              <div class="word_test_word_result_tip"
-                style="fcolor:#535353;">随着每天使用App背单词，系统评估的词汇量会越来越精确</div>
+              <div class="word_test_word_result_tip" style="fcolor:#535353;">随着每天使用App背单词，系统评估的词汇量会越来越精确</div>
             </div>
             <div v-else-if="showTestMeaningWord" style="flex:1">
               <div
@@ -184,7 +185,6 @@ export default {
         stepCount: 8
       },
       wordRecordWords: [],// 目前记录里所有的单词对应的word的id信息
-      asdf: ''
     }
   },
   async created() {
@@ -192,6 +192,13 @@ export default {
     if ((await option.select('select count(*) as count from option where name="wordTestFinish"'))[0].count === 0) {
       this.showTestTransform = true
       await this.initWords();
+      let config = await option.select('select * from option where name="perDay"')
+      if (config.length === 0) {
+        option.insert({
+          name: 'perDay',
+          val: '50'
+        })
+      }
       this.getTestWords()
     } else {
       this.init()
@@ -206,7 +213,6 @@ export default {
           temp = parseInt(key)
         }
       })
-      // this.asdf = temp + ';'
       this.collection = {}
       let recordApi = new sqlClass('wordRecord')
       let wordTimeRecord = new sqlClass('wordTimeRecord')
@@ -238,7 +244,6 @@ export default {
 
             let centerSlip = (temp + 1) * this.testDrawConfig.stepWord
             let centerSlip2 = temp * this.testDrawConfig.stepWord
-            // this.asdf = centerSlip + '|' + centerSlip2 + ';'
             let api = new sqlClass('word')
             let appendNewWord = await api.select('select word from word where word not in (select word from wordRecord) order by `id` limit ' + centerSlip + ',' + (todayNeed - leftWordNeed))
             for (let i = 0; i < appendNewWord.length; i++) {
@@ -263,15 +268,20 @@ export default {
         this.allWords = await recordApi.select('select word,deep from wordRecord where showTime <="' + getTimeStr() + '" order by showTime asc limit ' + perDay)
 
         this.allWordsCount = this.allWords.length
+
         await this.saveStates()
         this.getWordInfo()
         this.updateWordKnowCount()
       } else {
         // 今天已经打开了背单词
         storage.getItem('wordsTimeStamp').then((data) => {
-          this.allWords = JSON.parse(data.data).allWords
-          this.collection = JSON.parse(data.data).collection
-          this.allWordsCount = JSON.parse(data.data).allWordsCount
+          this.allWords = JSON.parse(data).allWords
+          if (this.allWords.length === 0) {
+            this.todayFinish = true
+            return
+          }
+          this.collection = JSON.parse(data).collection
+          this.allWordsCount = JSON.parse(data).allWordsCount
           this.getWordInfo()
           this.updateWordKnowCount()
         })
@@ -311,7 +321,7 @@ export default {
                 right: 0
               }
             }
-            if (this.testCollection[thisWordGroup].count > 30) {
+            if (this.testCollection[thisWordGroup].count > 15) {
               break
             }
             let temp = await this.checkWord(item)
@@ -542,7 +552,6 @@ export default {
             this.wordRecordWords = []
             let perMin = 0
             let perMax = 0
-            // this.asdf = [writeCollection, collection]
 
             let last = []
             for (let i = Math.max(...Object.keys(writeCollection).map(i => parseInt(i))); i >= 0; i--) {
@@ -697,7 +706,7 @@ export default {
 
 <style scoped lang="less">
 .content {
-  background-color: rgba(0, 121, 92, 0.84);
+  background-color: rgba(0, 121, 92, 0.84) !important;
   height: 100%;
   width: 750px;
   display: flex;
@@ -715,6 +724,7 @@ export default {
   color: white;
   margin-top: 20px;
   height: 100px;
+  flex-shrink: 0;
 }
 
 .word {
@@ -724,8 +734,8 @@ export default {
   border-top-color: rgba(225, 255, 248, 0.84);
   border-top-width: 1px;
   border-radius: 20px;
-  padding-top: 80px;
-  padding-bottom: 80px;
+  padding: 80px 20px;
+  flex-shrink: 0;
 }
 
 .word1 {
@@ -755,31 +765,40 @@ export default {
   flex-grow: 1;
   flex-shrink: 1;
   padding-top: 50px;
+  font-size: 38px;
+  overflow-y: auto;
 }
 
 .todayFinish {
   width: 700px;
-}
 
-.todayFinishText {
-  text-align: center;
-  font-size: 60px;
-  color: white;
+  .todayFinishText {
+    text-align: center;
+    font-size: 60px;
+    color: white;
+  }
+
+  .todayFinishImg {
+    width: 400px;
+    margin-left: 150px;
+  }
 }
 
 .todayFinishInfo {
   color: white;
   font-size: 36px;
   line-height: 68px;
-  margin-left: 30px;
+  text-align: center;
+  margin-top: 30px;
 }
 
 .showAnswer {
-  color: white;
-  /*background-color: red;*/
   flex: 1;
   text-align: center;
   line-height: 500px;
+  text-align: center;
+  color: white;
+  height: 100%;
 }
 
 .tools {
@@ -890,5 +909,31 @@ export default {
 .finish {
   padding: 20px;
   flex: 1
+}
+
+.yinbiao {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+  font-size: 35px;
+  color: white;
+
+  .icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .split {
+    width: 1px;
+    height: 50px;
+    background-color: rgba(255, 255, 255, 0.5);
+    margin-left: 24px;
+    margin-right: 24px;
+  }
 }
 </style>
