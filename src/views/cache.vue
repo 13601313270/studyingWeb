@@ -31,7 +31,9 @@ import Dialog from '@/components/Dialog.vue';
 const tableNameMap = {
   option: '单词创建记录',
   word: '单词库',
-  wordRecord: '单词熟练度数据'
+  wordRecord: '单词熟练度数据',
+  wordTimeRecord: '单词背诵记录',
+  enListenRecord: '英语听力记录',
 }
 export default {
   name: 'mine',
@@ -88,6 +90,10 @@ export default {
   computed: {
     cacheListText() {
       const returnTextList = [];
+      console.log('===========')
+      console.log('===========')
+      console.log('===========')
+      console.log(this.DBList)
       this.DBList.forEach(v => {
         if (tableNameMap[v]) {
           returnTextList.push(tableNameMap[v])
