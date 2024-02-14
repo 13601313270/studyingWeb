@@ -31,6 +31,10 @@
         超级单词卡
         <Icon src="word" width="120" />
       </div>
+      <div @click="chooseListen" class="englishItem">
+        听力通
+        <Icon src="listen" width="120" />
+      </div>
     </scroller>
     <scroller class="list" v-else>
       <div class="source_list" v-if="!loading">
@@ -127,6 +131,9 @@ export default {
     },
     chooseWord() {
       this.$router.push({ path: '/word' })
+    },
+    chooseListen() {
+      this.$router.push({ path: '/listen' })
     },
     choose(id) {
       this.$router.push({ path: '/source/' + id })

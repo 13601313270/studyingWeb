@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import Icon from './components/icon.vue'
 import scroller from './components/scroller.vue'
+import request from './plugin/request'
 import refresh from './components/refresh.vue'
 import loading from './components/loading.vue'
 import { init } from './plugin/allIcons'
@@ -33,6 +34,12 @@ app.component('scroller', scroller)
 app.component('refresh', refresh)
 app.component('loading', loading)
 
-init().then(()=>{
+const platform = 'iphone';
+
+app.config.globalProperties.$logAction = function (action: string) {
+  request.get('/log/' + platform + '/' + action + '?rand=' + +(Math.random() * 100000))
+}
+
+init().then(() => {
   app.use(store).use(router).mount('#app')
 })

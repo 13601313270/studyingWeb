@@ -21,5 +21,6 @@ export function pause() {
 export function stop(){
   return new Promise((resolve, reject) => {
     audio.pause()
+    audio = new Audio()
   })
 }

@@ -206,6 +206,7 @@ export default {
   },
   methods: {
     async init() {
+      this.$logAction('word');
       await this.updateWordKnowCount()
       let temp = 0//这个组的单词熟悉率为90%
       Object.keys(this.wordRecordWords[2]).sort().forEach(key => {
@@ -267,6 +268,7 @@ export default {
         }
         this.allWords = await recordApi.select('select word,deep from wordRecord where showTime <="' + getTimeStr() + '" order by showTime asc limit ' + perDay)
 
+        console.log('allWords', this.allWords)
         this.allWordsCount = this.allWords.length
 
         await this.saveStates()
@@ -276,6 +278,7 @@ export default {
         // 今天已经打开了背单词
         storage.getItem('wordsTimeStamp').then((data) => {
           this.allWords = JSON.parse(data).allWords
+          console.log('allWords', this.allWords)
           if (this.allWords.length === 0) {
             this.todayFinish = true
             return
@@ -292,6 +295,7 @@ export default {
       }
     },
     async getTestWords() {
+      this.$logAction('startTestWords');
       this.testedWordCount = 0
       let step = this.testDrawConfig.stepWord
       this.testCollection = {}
@@ -349,6 +353,7 @@ export default {
           }
         }
       }
+      this.$logAction('endTestWords');
       this.testCollectionFinish = true
     },
     initWords() {

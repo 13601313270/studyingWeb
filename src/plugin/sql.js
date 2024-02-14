@@ -91,6 +91,18 @@ let sqlConfig = {
       notNull: true
     }
   ],
+  enListenRecord: [
+    {
+      name: 'id',
+      type: Number,
+      notNull: true
+    },
+    {
+      name: 'date',
+      type: String,
+      notNull: true
+    },
+  ],
   readFinish: [
     {
       name: 'id',

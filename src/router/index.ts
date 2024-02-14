@@ -25,6 +25,7 @@ import lessonLog from '../views/lessonLog.vue'
 import addQuestion from '../views/addQuestion.vue'
 import file from '../views/file.vue'
 import word from '../views/word.vue'
+import listen from '../views/listen.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -149,7 +150,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/word',
     name: 'word',
     component: word,
-  }
+  },
+  {
+    path: '/listen',
+    name: 'listen',
+    component: listen,
+  },
 ]
 
 const router = createRouter({

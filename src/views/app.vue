@@ -189,7 +189,7 @@ export default {
       const rootPages = ['source', 'file', 'friend', 'mall', 'mine']
       let sort = [
         ...rootPages,
-        'sourceDetail', 'lessonDetail', 'lessonDetailNew', 'lessonAllChildPoiVideo', 'lessonQuestionList', 'lessonKnowledgeList', 'poiQuestion', 'lessonLog',
+        'sourceDetail', 'lessonDetail', 'word', 'listen', 'lessonDetailNew', 'lessonAllChildPoiVideo', 'lessonQuestionList', 'lessonKnowledgeList', 'poiQuestion', 'lessonLog',
         'addQuestion', 'informationDetail', 'dailyQuestion', 'zhidaoDetail', 'lessonKnowledgeDetail',
         'aboutUs', 'cache', 'agreement', 'QQ', 'userInformation','accountInfo'
       ];
