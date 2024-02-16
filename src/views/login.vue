@@ -133,7 +133,7 @@ import Check from '@/components/Check.vue'
 import Dialog from '@/components/Dialog.vue'
 import Popup from '@/components/Popup.vue'
 const WeChat = {};// weex.requireModule('WeChat');
-const modal = {};// weex.requireModule('modal');
+// const modal = {};// weex.requireModule('modal');
 
 export default {
   name: 'login',
@@ -314,13 +314,11 @@ export default {
       });
     },
     registerWeChat() {
-      alert(1);
       request.post('/weChat/register', {
         code: this.codeBak,
         phone: this.bindRuleForm.username,
         phoneCode: this.bindRuleForm.password,
       }).then(res => {
-        alert(2);
         if (res.result) {
           alert('登录成功')
           localStorage.setItem('token', res.token);
@@ -336,16 +334,18 @@ export default {
             }
           });
         } else {
-          modal.toast({
-            'message': '登录失败：' + res.msg,
-            'duration': 2.0
-          })
+          alert('登录失败：' + res.msg)
+          // modal.toast({
+          //   'message': '登录失败：' + res.msg,
+          //   'duration': 2.0
+          // })
         }
       }).catch(() => {
-        modal.toast({
-          'message': '登录失败',
-          'duration': 2.0
-        })
+        alert('登录失败：')
+        // modal.toast({
+        //   'message': '登录失败',
+        //   'duration': 2.0
+        // })
       })
     },
     async showAgreement() {

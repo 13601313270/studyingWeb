@@ -24,7 +24,7 @@
       </div>
       <div class="item">
         <text class="name">头像:</text>
-        <input type="file" single ref="inputFile" capture="camera" style="display:none" @change="uploadImg"/>
+        <input type="file" single ref="inputFile" accept="image/*" style="display:none" @change="uploadImg"/>
         <div @click="selectUploadImg" v-if="userInfo2.icon" class="userIcon">
           <pic :src="userInfo2.icon.replace('http://','https://')+'?x-oss-process=image/resize,m_fill,h_100,w_100'" :width="100"/>
         </div>
@@ -292,6 +292,7 @@ export default {
         this.showCamera = true;
       } else if(type.key === 'gallery') {
         console.log(this.$refs.inputFile)
+        // camera();
         this.$refs.inputFile.click()
       }
     },

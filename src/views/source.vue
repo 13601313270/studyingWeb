@@ -76,7 +76,7 @@ export default {
     this.subjects = await request.get('/subjectV2');
     const e = await localStorage.getItem(userSetSourceListKey);
     if (e === null) {
-      this.userSetSourceList = [this.subjects[0].id];
+      this.userSetSourceList = this.subjects.map(v => v.id);//[this.subjects[0].id];
     } else {
       if (typeof e === 'string') {
         this.userSetSourceList = JSON.parse(e);
