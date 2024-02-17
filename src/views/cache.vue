@@ -48,43 +48,73 @@ export default {
   },
   methods: {
     init() {
-      var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
-      var totalSize = 0;
-      // 执行SQL查询语句
-      db.transaction((tx) => {
-        console.log('===1===')
-        tx.executeSql("SELECT name FROM sqlite_master WHERE type='table';", [], (_, resultSet) => {
-          console.log('===2===')
-          const DBList = [];
-          for (var i = 0; i < resultSet.rows.length; i++) {
-            var tableName = resultSet.rows[i].name;
-            console.log('===3===' + tableName)
-            if (Object.keys(tableNameMap).includes(tableName)) {
-              DBList.push(tableName)
+      if (navigator.userAgent.includes('windvane')) {
+        // @ts-ignore
+        window.WindVane.call('Db', 'sql', {
+          sql: 'select * from sqlite_master where type = "table"',
+          isSelect: true,
+        }, (res) => {
+          // callBack(res)
+          this.DBList = res.data.map(v => v.name);
+        }, () => {
+        });
+      } else {
+        var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
+        var totalSize = 0;
+        // 执行SQL查询语句
+        db.transaction((tx) => {
+          console.log('===1===')
+          tx.executeSql("SELECT name FROM sqlite_master WHERE type='table';", [], (_, resultSet) => {
+            console.log('===2===')
+            const DBList = [];
+            for (var i = 0; i < resultSet.rows.length; i++) {
+              var tableName = resultSet.rows[i].name;
+              console.log('===3===' + tableName)
+              if (Object.keys(tableNameMap).includes(tableName)) {
+                DBList.push(tableName)
+              }
             }
-          }
-          console.log('===4===' + DBList)
-          this.DBList = DBList;
-        }, null);
-      });
+            console.log('===4===' + DBList)
+            this.DBList = DBList;
+          }, null);
+        });
+      }
     },
     deleteCache() {
-      var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
-      var totalSize = 0;
-      // 执行SQL查询语句
-      db.transaction((tx) => {
-        console.log('===1===')
+      if (navigator.userAgent.includes('windvane')) {
         this.DBList.forEach(v => {
           if (tableNameMap[v]) {
-            tx.executeSql('DROP TABLE ' + v, [], () => {
-              // Log a message to the console indicating that the table was deleted
-              console.log('Table tableName deleted successfully');
+            // @ts-ignore
+            window.WindVane.call('Db', 'sql', {
+              sql: 'DROP TABLE ' + v,
+              isSelect: true,
+            }, (res) => {
+
+            }, () => {
             });
           }
-        })
-      });
-      this.showDelete = false
-      this.init();
+        });
+        setTimeout(() => {
+          this.showDelete = false
+          this.init();
+        }, 500);
+      } else {
+        var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
+        var totalSize = 0;
+        // 执行SQL查询语句
+        db.transaction((tx) => {
+          this.DBList.forEach(v => {
+            if (tableNameMap[v]) {
+              tx.executeSql('DROP TABLE ' + v, [], () => {
+                // Log a message to the console indicating that the table was deleted
+                console.log('Table tableName deleted successfully');
+              });
+            }
+          })
+        });
+        this.showDelete = false
+        this.init();
+      }
     },
   },
   computed: {

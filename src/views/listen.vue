@@ -327,6 +327,7 @@ export default {
       align-items: center;
       border-radius: 24px 24px 0 0;
       justify-content: space-around;
+      padding-bottom: calc(env(safe-area-inset-bottom) / 2);
 
       .button {
         width: 160px;
