@@ -221,7 +221,7 @@ export default {
         window.WindVane.call('UMeng','init');
       }
     } catch (e) {
-
+      console.log(e)
     }
 
     // const minVersion = await this.axios.get('/globleConfig?keys=minVersion');
