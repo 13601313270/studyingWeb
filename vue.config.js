@@ -1,7 +1,5 @@
 const { defineConfig } = require('@vue/cli-service')
-const webpack = require('webpack')
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
-  .BundleAnalyzerPlugin
+
 module.exports = defineConfig({
   transpileDependencies: true,
   devServer: {
@@ -19,28 +17,5 @@ module.exports = defineConfig({
       }
     },
   },
-  publicPath: '',
-  configureWebpack: config => {
-    if (process.env.NODE_ENV === "production") {
-      // 为生产环境修改配置...
-      config.mode = "production";
-      //打包文件大小配置
-      // config["performance"] = {
-      //   "maxEntrypointSize":10000000,
-      //   "maxAssetSize":30000000
-      // }
-      config.plugins.push(new webpack.DllReferencePlugin({
-        manifest: require('./static/js/vueVendor-manifest.json'),
-      }))
-    } else {
-      config.mode = "development";
-      config.plugins.push(new webpack.DllReferencePlugin({
-        manifest: require('./static/js/vueVendor-manifest.json'),
-      }))
-      // 为开发环境修改配置...
-    }
-    if (process.env.npm_config_report) {
-      config.plugins.push(new BundleAnalyzerPlugin())
-    }
-  }
+  // publicPath: '././',
 })

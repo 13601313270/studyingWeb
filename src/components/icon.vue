@@ -1,5 +1,5 @@
 <template>
-  <img :src="showUrl" :style="style"/>
+  <img :src="(showUrl || '').replace('http://','https://')" :style="style"/>
 </template>
 <script>
 import { getAllIcons } from '../plugin/allIcons'

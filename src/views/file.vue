@@ -47,6 +47,7 @@
 import request from '@/plugin/request'
 import Button from '@/components/Button.vue'
 import share from '../plugin/share'
+import File from '@/plugin/file'
 
 export default {
   data() {
@@ -86,7 +87,7 @@ export default {
     async changeSource(course) {
       this.fileList = [];
       this.selectCourse = course.id;
-      if (navigator.userAgent.includes('windvane')) {
+      if (navigator.userAgent.includes('windvane') || navigator.userAgent.includes('studying1v1Android')) {
         this.initDownLoadList()
       } else {
         this.downLoadList = [{
@@ -106,24 +107,20 @@ export default {
       })
     },
     initDownLoadList() {
-      window.WindVane.call('File', 'getDownloadPath', {}, (result) => {
-        window.WindVane.call('File', 'fileList', { path: result.data }, (result) => {
-          this.downLoadList = result.data;
-        });
-      });
+      File.getDownLoadFileList().then(res => {
+        this.downLoadList = res;
+      })
     },
     download(file) {
       this.downLoading[file.file] = true;
-      window.WindVane.call('File', 'download', {
-        url: file.file.replace('http://', 'https://')
-      },
-        () => {
+      File.download(file.file)
+        .then(() => {
           this.downLoading[file.file] = false;
           this.initDownLoadList();
-        },
-        (err) => {
+        })
+        .catch((err) => {
           alert(JSON.stringify(err))
-        });
+        })
     },
     open(path) {
       window.WindVane.call('File', 'openFile', { path },
