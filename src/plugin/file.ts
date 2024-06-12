@@ -19,7 +19,7 @@ function download(file: string): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     if (navigator.userAgent.includes('studying1v1Android')) {
       // @ts-ignore
-      window.File.download(file.replace('http://', 'https://'))
+      // window.File.download(file.replace('http://', 'https://'))
 
       windVane('File', 'download', {
         url: file.replace('http://', 'https://')
@@ -47,8 +47,8 @@ function getDownLoadFileList() {
   return new Promise(resolve => {
     if (navigator.userAgent.includes('studying1v1Android')) {
       // @ts-ignore
-      const list = window.File.getDownLoadFileList()
-      resolve(JSON.parse(list))
+      // const list = window.File.getDownLoadFileList()
+      // resolve(JSON.parse(list))
       windVane('File', 'fileList').then(res => {
         console.log('======222', res.result)
         resolve(res.result)
