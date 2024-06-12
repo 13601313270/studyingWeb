@@ -132,6 +132,7 @@ import { onShowImg } from '../plugin/imagePreview'
 import ImgPreview from '../components/imgPreview.vue'
 import Dialog from '../components/Dialog.vue'
 import event from '../plugin/event';
+import umeng from '@/plugin/umeng';
 
 const agreementKey = 'agreementKey2022-8-7-2'
 export default {
@@ -203,9 +204,7 @@ export default {
       if (data === null) {
         this.showAgree = true;
       } else {
-        if (navigator.userAgent.includes('studying1v1')) {
-          window.WindVane.call('UMeng', 'init');
-        }
+        umeng.init()
       }
     } catch (e) {
       console.log(e)
