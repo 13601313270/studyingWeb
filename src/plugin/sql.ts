@@ -1,7 +1,14 @@
 import androidBridge from "./androidBridge";
 
 // 表配置
-let sqlConfig = {
+let sqlConfig: {
+  [key in string]: Array<{
+    name: string,
+    type: NumberConstructor | StringConstructor,
+    autoincrement?: boolean,
+    notNull?: boolean,
+  }>
+} = {
   option: [
     {
       name: 'id',
@@ -125,10 +132,10 @@ let sqlConfig = {
       autoincrement: true,
       notNull: true
     },
-    {
-      name: 'read_date',
-      notNull: true
-    },
+    // {
+    //   name: 'read_date',
+    //   notNull: true
+    // },
     {
       name: 'article_id',
       type: Number,
@@ -154,14 +161,35 @@ let sqlConfig = {
 const indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB
 
 const dbModule = {
-  sql(sql: string, callBack: any, isSelect: boolean) {
+  sql(table: string, sql: string, callBack: any, isSelect: boolean) {
     if (navigator.userAgent.includes('studying1v1Android')) {
-      androidBridge('File', 'download', {
-        // @ts-ignore
-        url: file.replace('http://', 'https://')
-      }).then(() => {
-        // @ts-ignore
-        resolve()
+      androidBridge('Db', 'sql', {
+        sql,
+        isQuery: isSelect,
+      }).then(({ result }) => {
+        if (isSelect) {
+          const list = result.map((item: any) => {
+            const itemUpdate: any = {}
+            Object.keys(item).forEach(key => {
+              const findInfo = sqlConfig[table].find(v => v.name === key)
+              if (findInfo && findInfo.type === Number) {
+                itemUpdate[key] = +(item[key])
+              } else {
+                itemUpdate[key] = item[key]
+              }
+            })
+            return itemUpdate;
+          })
+          callBack({
+            status: 'SUCCESS',
+            data: list,
+          });
+        } else {
+          callBack({
+            status: 'SUCCESS',
+            data: true,
+          });
+        }
       })
     } else if (navigator.userAgent.includes('windvane')) {
       // @ts-ignore
@@ -170,9 +198,7 @@ const dbModule = {
         isSelect: !!isSelect,
       }, (res: any) => {
         callBack(res)
-        // alert('success');
       }, () => {
-        // alert('failure: ' + JSON.stringify(e));
       });
     } else {
       if (isSelect) {
@@ -248,7 +274,12 @@ export default class {
     // @ts-ignore
     this.dbExist = new Promise<void>((resolve) => {
       if (navigator.userAgent.includes('studying1v1Android')) {
-
+        androidBridge('Db', 'sql', {
+          sql: 'create table if not exists ' + table + '(' + listStr.join(',') + ')',
+          isQuery: false,
+        }).then(() => {
+          resolve()
+        })
       } else {
         fetch('http://127.0.0.1:3011/', {
           method: 'POST',
@@ -266,7 +297,7 @@ export default class {
     return new Promise((resolve) => {
       // @ts-ignore
       this.dbExist.then(() => {
-        dbModule.sql(sql, (res: any) => {
+        dbModule.sql(this.table, sql, (res: any) => {
           if (res.status === 'SUCCESS') {
             resolve(res.data)
           }
@@ -280,6 +311,7 @@ export default class {
     // @ts-ignore
     let table = this.table
     return new Promise(async (resolve) => {
+      console.log(2.1)
       let sql = []
       let sqlBefore = `INSERT INTO ${table} (${Object.keys(allObject[0]).join(',')}) VALUES `
       for (object of allObject) {
@@ -295,8 +327,15 @@ export default class {
         sql.push(`(${value})`)
 
       }
-      dbModule.sql(sqlBefore + sql.join(','), (res: any) => {
-        resolve(res === '1')
+      console.log(2.2)
+      dbModule.sql(this.table, sqlBefore + sql.join(','), (res: any) => {
+        console.log(2.3)
+        if (navigator.userAgent.includes('studying1v1Android')) {
+          console.log(2.4)
+          resolve(true)
+        } else {
+          resolve(res === '1')
+        }
       }, false)
     })
   }

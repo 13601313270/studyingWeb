@@ -153,10 +153,12 @@ export default {
     async finish() {
       console.log(this.activeListen.id)
       let listenRecord = new sqlClass('enListenRecord')
+      console.log(111111111)
       await listenRecord.insert({
         id: this.activeListen.id,
         date: getTimeStr(),
       })
+      console.log(333333333)
       this.activeListenIsRecord = await this.getIsRecord(this.activeListen.id);
       this.initListRecord()
       // let option = new sqlClass('option')
