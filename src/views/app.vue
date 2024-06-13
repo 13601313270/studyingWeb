@@ -271,7 +271,7 @@ export default {
     agree() {
       this.showAgree = false;
       localStorage.setItem(agreementKey, (new Date()).getTime())
-      window.WindVane.call('UMeng', 'init');
+      umeng.init()
     }
   },
   computed: {

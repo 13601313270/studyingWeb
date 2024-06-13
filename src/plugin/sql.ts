@@ -1,3 +1,5 @@
+import androidBridge from "./androidBridge";
+
 // 表配置
 let sqlConfig = {
   option: [
@@ -148,48 +150,65 @@ let sqlConfig = {
   ]
 }
 
+// @ts-ignore
 const indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB
 
 const dbModule = {
-  sql(sql, callBack, isSelect) {
-    if (navigator.userAgent.includes('windvane')) {
+  sql(sql: string, callBack: any, isSelect: boolean) {
+    if (navigator.userAgent.includes('studying1v1Android')) {
+      androidBridge('File', 'download', {
+        // @ts-ignore
+        url: file.replace('http://', 'https://')
+      }).then(() => {
+        // @ts-ignore
+        resolve()
+      })
+    } else if (navigator.userAgent.includes('windvane')) {
       // @ts-ignore
       window.WindVane.call('Db', 'sql', {
         sql,
         isSelect: !!isSelect,
-      }, (res) => {
+      }, (res: any) => {
         callBack(res)
         // alert('success');
       }, () => {
         // alert('failure: ' + JSON.stringify(e));
       });
     } else {
-      var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
-      db.transaction(function (tx) {
-        if (isSelect) {
-          tx.executeSql(sql, [], function (tx, results) {
-            const list = [];
-            const len = results.rows.length;
-            for (let i = 0; i < len; i++) {
-              list.push(results.rows.item(i));
-            }
-            callBack({
-              status: 'SUCCESS',
-              data: list,
-            });
-          }, null); //查询和回调
-        } else {
-          callBack(tx.executeSql(sql));
-        }
-      });
+      alert(1)
+      fetch('http://127.0.0.1:3011/')
+      // @ts-ignore
+      // var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
+      // // @ts-ignore
+      // db.transaction(function (tx) {
+      //   if (isSelect) {
+      //     // @ts-ignore
+      //     tx.executeSql(sql, [], function (tx, results) {
+      //       const list = [];
+      //       const len = results.rows.length;
+      //       for (let i = 0; i < len; i++) {
+      //         list.push(results.rows.item(i));
+      //       }
+      //       callBack({
+      //         status: 'SUCCESS',
+      //         data: list,
+      //       });
+      //     }, null); //查询和回调
+      //   } else {
+      //     callBack(tx.executeSql(sql));
+      //   }
+      // });
     }
   }
 };//weex.requireModule('Db')
 export default class {
-  constructor(table, props) {
+  constructor(table: string, props: any) {
+    // @ts-ignore
     this.table = table
+    // @ts-ignore
     this.props = props
     let list = sqlConfig
+    // @ts-ignore
     let listStr = list[this.table].map(item => {
       let type = 'text'
       if (item.type === Number) {
@@ -198,17 +217,27 @@ export default class {
       return item.name + ' ' + type + (item.autoincrement === true ? ' primary key autoincrement' : '') + (item.notNull === true ? ' not null' : '')
     })
 
+    // @ts-ignore
     this.dbExist = new Promise((resolve) => {
-      dbModule.sql('create table if not exists ' + this.table + '(' + listStr.join(',') + ')', (res) => {
-        resolve()
-      })
+      if (navigator.userAgent.includes('studying1v1Android')) {
+
+      } else {
+        fetch('http://127.0.0.1:3011/').then(res => {
+          console.log(res)
+          alert(JSON.stringify(res))
+        })
+        // dbModule.sql('create table if not exists ' + this.table + '(' + listStr.join(',') + ')', (res) => {
+        //   resolve()
+        // })
+      }
     })
   }
 
-  select(sql) {
+  select(sql: string) {
     return new Promise((resolve) => {
+      // @ts-ignore
       this.dbExist.then(() => {
-        dbModule.sql(sql, (res) => {
+        dbModule.sql(sql, (res: any) => {
           if (res.status === 'SUCCESS') {
             resolve(res.data)
           }
@@ -217,8 +246,9 @@ export default class {
     })
   }
 
-  insert(object) {
+  insert(object: any) {
     let allObject = arguments
+    // @ts-ignore
     let table = this.table
     return new Promise(async (resolve) => {
       let sql = []
@@ -231,14 +261,14 @@ export default class {
             return '"' + item + '"'
           }
         }).join(',')
+        // @ts-ignore
         await this.dbExist
         sql.push(`(${value})`)
 
       }
-      dbModule.sql(sqlBefore + sql.join(','), (res) => {
+      dbModule.sql(sqlBefore + sql.join(','), (res: any) => {
         resolve(res === '1')
       }, false)
     })
-
   }
 }
