@@ -175,8 +175,36 @@ const dbModule = {
         // alert('failure: ' + JSON.stringify(e));
       });
     } else {
-      alert(1)
-      fetch('http://127.0.0.1:3011/')
+      if (isSelect) {
+        fetch('http://127.0.0.1:3011/', {
+          method: 'POST',
+          body: JSON.stringify({
+            sql: sql
+          }),
+        })
+          .then(res => res.json())
+          .then((results: any) => {
+            const list = [];
+            console.log('=======', results)
+            const len = results.length;
+            for (let i = 0; i < len; i++) {
+              list.push(results[i]);
+            }
+            callBack({
+              status: 'SUCCESS',
+              data: list,
+            });
+          })
+      } else {
+        fetch('http://127.0.0.1:3011/', {
+          method: 'POST',
+          body: JSON.stringify({
+            sql: sql
+          }),
+        }).then((res) => {
+          callBack(res);
+        })
+      }
       // @ts-ignore
       // var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
       // // @ts-ignore
@@ -202,8 +230,8 @@ const dbModule = {
   }
 };//weex.requireModule('Db')
 export default class {
+  table: string;
   constructor(table: string, props: any) {
-    // @ts-ignore
     this.table = table
     // @ts-ignore
     this.props = props
@@ -218,17 +246,18 @@ export default class {
     })
 
     // @ts-ignore
-    this.dbExist = new Promise((resolve) => {
+    this.dbExist = new Promise<void>((resolve) => {
       if (navigator.userAgent.includes('studying1v1Android')) {
 
       } else {
-        fetch('http://127.0.0.1:3011/').then(res => {
-          console.log(res)
-          alert(JSON.stringify(res))
+        fetch('http://127.0.0.1:3011/', {
+          method: 'POST',
+          body: JSON.stringify({
+            sql: 'create table if not exists ' + table + '(' + listStr.join(',') + ')'
+          }),
+        }).then(() => {
+          resolve()
         })
-        // dbModule.sql('create table if not exists ' + this.table + '(' + listStr.join(',') + ')', (res) => {
-        //   resolve()
-        // })
       }
     })
   }

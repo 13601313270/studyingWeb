@@ -61,30 +61,25 @@ const server = http.createServer((req, res) => {
       }
     });
   }
-
-
-  /**
-   * @Description: 创建数据库,如果用户本地没有数据库的话就创建否则跳过
-   * @CreationDate 2023-05-10 13:44:48
-   */
-  function createDataTable() {
-    /**
-     * @Description: 创建用户表
-     * @CreationDate 2023-06-01 22:53:23
-     */
-
-    db.serialize(function () {
-      db.run('create table if not exists user (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, email text, phone text);');
-    });
-    db.close();
-  }
-
   const db = connectDatabase();
-  createDataTable()
-
-  console.log(111)
-
-  res.end('Hello World\n');
+  if (req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => {
+      body += chunk.toString(); // 转换为字符串
+    });
+    req.on('end', () => {
+      const parsedData = JSON.parse(body);
+      // 处理请求体数据
+      console.log("收到sql请求：" + JSON.stringify(parsedData.sql));
+      db.all(parsedData.sql, (err, rows) => {
+        console.log(rows)
+        res.end(JSON.stringify(rows));
+      });
+      db.close();
+    });
+  } else {
+    res.end();
+  }
 });
 
 server.listen(port, hostname, () => {
