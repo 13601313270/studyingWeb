@@ -87,13 +87,7 @@ export default {
     async changeSource(course) {
       this.fileList = [];
       this.selectCourse = course.id;
-      if (navigator.userAgent.includes('windvane') || navigator.userAgent.includes('studying1v1Android')) {
-        this.initDownLoadList()
-      } else {
-        this.downLoadList = [{
-          path: 'asdf/asfd/adf/dsa/9a192d8b1a7dc652a19835f6f08098bd.pdf'
-        }];
-      }
+      this.initDownLoadList()
       this.loading = true;
       request.get('/file/list', {
         params: {
@@ -123,12 +117,7 @@ export default {
         })
     },
     open(path) {
-      window.WindVane.call('File', 'openFile', { path },
-        () => {
-        },
-        (err) => {
-          alert(JSON.stringify(err))
-        });
+      File.open(path);
     },
     share(file) {
       const url = file.file.replace('http://', 'https://');

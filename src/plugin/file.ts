@@ -22,6 +22,34 @@ function download(file: string): Promise<void> {
     }
   })
 }
+function open(file: string): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    if (navigator.userAgent.includes('studying1v1Android')) {
+      androidBridge('File', 'open', {
+        url: file
+      }).then(() => {
+        resolve()
+      })
+    } else {
+      // @ts-ignore
+      window.WindVane.call('File', 'open', {
+        url: file
+      },
+        () => {
+          resolve();
+        },
+        (err: any) => {
+          reject(err)
+        });
+    }
+  })
+  // window.WindVane.call('File', 'openFile', { path },
+  //   () => {
+  //   },
+  //   (err) => {
+  //     alert(JSON.stringify(err))
+  //   });
+}
 
 function getDownLoadFileList() {
   return new Promise(resolve => {
@@ -44,4 +72,5 @@ function getDownLoadFileList() {
 export default {
   download,
   getDownLoadFileList,
+  open,
 }
