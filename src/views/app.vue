@@ -133,6 +133,7 @@ import ImgPreview from '../components/imgPreview.vue'
 import Dialog from '../components/Dialog.vue'
 import event from '../plugin/event';
 import umeng from '@/plugin/umeng';
+import program from '@/plugin/program';
 
 const agreementKey = 'agreementKey2022-8-7-2'
 export default {
@@ -266,7 +267,7 @@ export default {
       this.$router.push('/addQuestion')
     },
     agreeDisagree() {
-      window.WindVane.call('Exit', 'exit');
+      program.exit()
     },
     agree() {
       this.showAgree = false;
