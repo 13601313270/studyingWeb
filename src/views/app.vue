@@ -323,7 +323,6 @@ export default {
   flex-direction: column;
 
   .header {
-    width: 100%;
     line-height: 88px;
     background-color: #00795c;
     color: white;

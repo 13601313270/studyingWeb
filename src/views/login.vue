@@ -132,20 +132,15 @@ import request from '@/plugin/request'
 import Check from '@/components/Check.vue'
 import Dialog from '@/components/Dialog.vue'
 import Popup from '@/components/Popup.vue'
-const WeChat = {};// weex.requireModule('WeChat');
+import WeChat from '@/plugin/WeChat';
 // const modal = {};// weex.requireModule('modal');
 
 export default {
   name: 'login',
   created() {
-    try {
-      this.isInstalledWeChat = true;
-      window.WindVane.call('WeChat', 'isInstalled', {}, ({ data }) => {
-        this.isInstalledWeChat = data;
-      });
-    } catch (e) {
-
-    }
+    WeChat.isInstalled().then((isInstalled) => {
+      this.isInstalledWeChat = isInstalled;
+    })
   },
   data() {
     return {
