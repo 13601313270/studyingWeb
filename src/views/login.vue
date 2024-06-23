@@ -281,32 +281,28 @@ export default {
       // this.showBindPhone = true;
       // return;
 
-      window.WindVane.call('WeChat', 'login', {}, ({ data }) => {
-        request.post('/weChat/login', {
-          code: data
-        }).then(res => {
-          if (res.result === true) {
-            alert('微信登录成功')
-            localStorage.setItem('token', res.token);
-            this.setToken(res.token);
-            request.get('/login/getInfo?email=' + res.account + '&token=' + res.token).then(res2 => {
-              if (res2.code === 200) {
-                localStorage.setItem('userInfo', JSON.stringify(res2.info));
-                this.setUserInfo(res2.info);
-                this.setShowLogin(false)
-                setTimeout(() => {
-                  this.$router.back();
-                }, 100)
-              }
-            });
-          } else if (res.type === 'code_error') {
-            alert('微信服务器授权失败')
-          } else if (res.type === 'not_account') {
-            this.codeBak = data;
-            this.showBindPhone = true;
-          }
-        });
-      });
+      WeChat.login().then(() => {
+        if (res.result === true) {
+          alert('微信登录成功')
+          localStorage.setItem('token', res.token);
+          this.setToken(res.token);
+          request.get('/login/getInfo?email=' + res.account + '&token=' + res.token).then(res2 => {
+            if (res2.code === 200) {
+              localStorage.setItem('userInfo', JSON.stringify(res2.info));
+              this.setUserInfo(res2.info);
+              this.setShowLogin(false)
+              setTimeout(() => {
+                this.$router.back();
+              }, 100)
+            }
+          });
+        } else if (res.type === 'code_error') {
+          alert('微信服务器授权失败')
+        } else if (res.type === 'not_account') {
+          this.codeBak = data;
+          this.showBindPhone = true;
+        }
+      })
     },
     registerWeChat() {
       request.post('/weChat/register', {

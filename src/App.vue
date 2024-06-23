@@ -1,17 +1,19 @@
 <template>
   <div class="wrapper" v-if="isTokenInit">
-    <Index/>
+    <Index />
   </div>
+  <Alert />
 </template>
 <script>
 import { computed, ref } from 'vue'
 import { mapActions } from 'vuex';
 import Index from './views/app.vue'
+import Alert from './components/Alert.vue'
 
 export default {
   created() {
     const token = localStorage.getItem('token');
-    if(token) {
+    if (token) {
       this.setToken(token)
       const userInfo = localStorage.getItem('userInfo');
       if (userInfo) {
@@ -28,7 +30,10 @@ export default {
   methods: {
     ...mapActions('main', ['setToken', 'setUserInfo'])
   },
-  components: {Index}
+  components: {
+    Index,
+    Alert,
+  }
 }
 </script>
 <style lang="less">

@@ -15,6 +15,25 @@ function isInstalled() {
     }
   })
 }
+
+function login() {
+  return new Promise<void>((resolve) => {
+    if (navigator.userAgent.includes('studying1v1Android')) {
+      androidBridge('WeChat', 'login', {
+      }).then((res) => {
+        console.log('!!!!!@@@@@@@', res)
+        resolve(res.result)
+      })
+    } else if (navigator.userAgent.includes('studying1v1')) {
+      // @ts-ignore
+      window.WindVane.call('WeChat', 'login', {}, ({ data }) => {
+
+      })
+    }
+  })
+}
+
 export default {
   isInstalled,
+  login,
 }
