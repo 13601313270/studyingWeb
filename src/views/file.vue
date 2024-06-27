@@ -92,6 +92,7 @@ export default {
       request.get('/file/list', {
         params: {
           course: course.id,
+          status: 0,
         }
       }).then(data => {
         this.fileList = data;
