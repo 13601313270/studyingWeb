@@ -209,7 +209,7 @@ export default {
     // 初次打开执行
     try {
       const data = localStorage.getItem(agreementKey)
-      if (data === null) {
+      if (data === null && isMobileDevice()) {
         this.showAgree = true;
       } else {
         umeng.init()
