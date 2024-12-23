@@ -14,6 +14,7 @@ import Button from '../components/Button.vue'
 import toast from '../plugin/toast'
 import request from '../plugin/request'
 import Icon from '@/components/icon.vue'
+import isMobileDevice from '@/plugin/isMobileDevice';
 
 export default {
   name: 'mine',
@@ -31,7 +32,7 @@ export default {
     }
   },
   created() {
-    if(localStorage.getItem('welcomeBegin')) {
+    if(localStorage.getItem('welcomeBegin') || !isMobileDevice()) {
       this.toApp()
     }
   },
