@@ -6,7 +6,7 @@
         <div class="subjectScroll">
           <div :key="subject.id" v-for="subject in subjects" @click="changeSubject(subject.id)" class="subjects_item">
             <text :key="subject.id" :class="[+selectSub === subject.id ? 'subjects_item_select' : '']">{{ subject.name
-            }}</text>
+              }}</text>
           </div>
         </div>
         <div key="end" class="subjects_item_bottomBorder" ref="subjectBorder"
@@ -276,6 +276,61 @@ export default {
           :deep .button_img {
             margin-right: 4px;
           }
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 1025px) {
+  .subjects {
+    height: 66px;
+
+    .subjects_scroll {
+      height: 100%;
+
+      .subjectScroll {
+        display: flex;
+
+        .subjects_item {
+          width: 120px;
+          min-width: auto;
+          padding: 8px;
+          font-size: 24px;
+          line-height: 50px;
+        }
+      }
+
+      .subjects_item_bottomBorder {
+        display: none;
+      }
+    }
+  }
+
+  .fileContent {
+    .sourceList {
+      width: 300px;
+
+      .sourceItem {
+        padding: 16px;
+        font-size: 32px;
+      }
+    }
+
+    .fileList {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .fileItem {
+        max-width: 600px;
+
+        .name {
+          font-size: 32px;
+        }
+
+        .buttons {
+          margin-top: 16px;
         }
       }
     }

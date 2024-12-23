@@ -1,5 +1,5 @@
 <template>
-  <div style="display:flex;flex-direction: column;">
+  <div class="source">
     <div class="subjects">
       <div class="subjects_scroll" ref="subjectScroll">
         <text ref="start" key="start"></text>
@@ -7,7 +7,7 @@
           <div :key="subject.id" v-for="subject in selectSourceList" @click="changeSubject(subject.id)"
             class="subjects_item">
             <text :key="subject.id" :class="[selectSub === subject.id ? 'subjects_item_select' : '']">{{ subject.name
-            }}</text>
+              }}</text>
           </div>
         </div>
         <div key="end" class="subjects_item_bottomBorder" ref="subjectBorder"
@@ -161,6 +161,11 @@ export default {
 </script>
 
 <style scoped lang="less">
+.source {
+  display: flex;
+  flex-direction: column;
+}
+
 .active {
   color: #00795c;
   border-bottom-style: solid;
@@ -185,7 +190,7 @@ export default {
     width: 650px;
     flex-direction: row;
     align-items: center;
-    height: 100px;
+    height: 100%;
     overflow-x: auto;
     position: relative;
 
@@ -338,5 +343,51 @@ export default {
   justify-content: center;
   height: 300px;
   padding-top: 50px;
+}
+
+@media (min-width: 1025px) {
+  .source {
+    .subjects {
+      height: 66px;
+
+      .subjects_item {
+        height: 100%;
+        padding: 0;
+        font-size: 24px;
+        line-height: 66px;
+        min-width: 120px;
+
+        .subjects_item_select {}
+      }
+
+      .subjects_item_bottomBorder {
+        display: none;
+      }
+
+      .subjects_set {
+        display: none;
+      }
+    }
+
+    .source_list {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 16px;
+      width: 100%;
+      box-sizing: border-box;
+      align-items: center;
+      justify-content: center;
+
+      .source_item {
+        width: 300px;
+        height: 200px;
+        margin: 16px 32px 0 0;
+
+        .source_item_title {
+          font-size: 28px;
+        }
+      }
+    }
+  }
 }
 </style>

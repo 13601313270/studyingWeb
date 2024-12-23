@@ -46,17 +46,20 @@
     </div>
     <div class="bottom" :style="{}"
       v-if="!['lessonDetail', 'lessonDetailNew', 'lessonAllChildPoiVideo', 'lessonLog'].includes($route.name) && $route.name !== 'welcome'">
-      <div class="bottom_link" @click="to('/source')">
+      <div class="bottom_link" :class="[tabType === 'source' ? 'bottom_link_active' : 'bottom_link_blur']"
+        @click="to('/source')">
         <icon class="bottom_link_icon" width="40" height="40" :src="tabType === 'source' ? 'main_active' : 'main'" />
         <text class="bottom_link_text"
           :class="[tabType === 'source' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">课程</text>
       </div>
-      <div class="bottom_link" @click="to('/file')">
+      <div class="bottom_link" :class="[tabType === 'file' ? 'bottom_link_active' : 'bottom_link_blur']"
+        @click="to('/file')">
         <icon class="bottom_link_icon" width="40" height="40" :src="tabType === 'file' ? 'file_active' : 'file'" />
         <text class="bottom_link_text"
           :class="[tabType === 'file' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">资料库</text>
       </div>
-      <div class="bottom_link" @click="to('/friend')" v-if="channel !== 'huawei'">
+      <div class="bottom_link" :class="[tabType === 'friend' ? 'bottom_link_active' : 'bottom_link_blur']"
+        @click="to('/friend')" v-if="channel !== 'huawei'">
         <icon class="bottom_link_icon" width="40" height="40"
           :src="tabType === 'friend' ? 'friend_active' : 'friend'" />
         <text class="bottom_link_text"
@@ -73,7 +76,8 @@
       <!--                <icon class="bottom_link_icon" width="40" height="40" :src="tabType==='mall'?'mall_active':'mall'"/>-->
       <!--                <text class="bottom_link_text" :class="[tabType==='mall'?'bottom_link_text_active':'bottom_link_text_blur']">商城</text>-->
       <!--            </div>-->
-      <div class="bottom_link" @click="to('/mine')">
+      <div class="bottom_link" :class="[tabType === 'mine' ? 'bottom_link_active' : 'bottom_link_blur']"
+        @click="to('/mine')">
         <icon class="bottom_link_icon" width="40" height="40" :src="tabType === 'mine' ? 'user_active' : 'user'" />
         <text class="bottom_link_text"
           :class="[tabType === 'mine' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">我的</text>
@@ -119,6 +123,7 @@
         </div>
       </div>
     </div>
+    <div class="ba">吉ICP备2024023809号-1</div>
   </div>
 </template>
 <script>
@@ -134,6 +139,7 @@ import Dialog from '../components/Dialog.vue'
 import event from '../plugin/event';
 import umeng from '@/plugin/umeng';
 import program from '@/plugin/program';
+import isMobileDevice from '@/plugin/isMobileDevice'
 
 const agreementKey = 'agreementKey2022-8-7-2'
 export default {
@@ -150,6 +156,7 @@ export default {
       channel: match ? match[1] : '',
       mastUpdate: false,// 是否需要升级app
       lastVersion: null,// 当前运行最低版本
+      isMobileDevice: isMobileDevice()
     }
   },
   created() {
@@ -490,6 +497,10 @@ export default {
   }
 }
 
+.ba {
+  display: none;
+}
+
 .inner-leave-active {
   position: absolute;
   z-index: 1;
@@ -630,5 +641,84 @@ export default {
 
 .right-enter-to {
   transform: translateX(0px);
+}
+
+@media (min-width: 1025px) {
+
+  /* 中等屏幕宽度下的样式 */
+  .app_content {
+    .header {
+      height: 66px;
+
+      .header_web_name {
+        width: 66px;
+
+        .header_web_name_back {
+          width: 66px;
+          height: 66px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          .header_web_name_back_img {
+            margin: 0;
+            width: 48px !important;
+            height: 48px !important;
+          }
+        }
+      }
+
+      .header_links {
+        flex-grow: 0;
+        width: 275px;
+
+        .header_links_web_name {
+          font-size: 28px;
+          line-height: 66px;
+        }
+      }
+    }
+
+    .bottom {
+      height: 66px;
+      left: 240px;
+      width: 600px;
+      position: absolute;
+      border: none;
+      top: 0;
+
+      .bottom_link {
+        height: 66px;
+
+        .bottom_link_icon {
+          width: 32px !important;
+          height: 32px !important;
+        }
+
+        .bottom_link_text {
+          font-size: 22px;
+          margin: 0;
+        }
+
+        &.bottom_link_blur {
+          background-color: #00795c;
+
+          .bottom_link_icon {
+            display: none;
+          }
+
+          .bottom_link_text {
+            color: white;
+          }
+        }
+      }
+    }
+
+    .ba {
+      display: block;
+      padding: 8px;
+      border-top: solid 1px #eee;
+    }
+  }
 }
 </style>
