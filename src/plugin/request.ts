@@ -9,7 +9,7 @@ const service = axios.create({
 		// 设置后端需要的传参类型
 		'Content-Type': 'application/json',
 		// 'token': localStorage.getItem('token') || '',
-		'X-Requested-With': 'XMLHttpRequest',
+		// 'X-Requested-With': 'XMLHttpRequest',
 	},
 })
 
