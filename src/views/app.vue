@@ -123,7 +123,7 @@
         </div>
       </div>
     </div>
-    <div class="ba">吉ICP备2024023809号-1</div>
+    <div class="ba"><a href="https://beian.miit.gov.cn" target="_blank">吉ICP备2024023809号-1</a></div>
   </div>
 </template>
 <script>
@@ -718,6 +718,11 @@ export default {
       display: block;
       padding: 8px;
       border-top: solid 1px #eee;
+
+      a {
+        color: #333;
+        font-size: 14px;
+      }
     }
   }
 }
