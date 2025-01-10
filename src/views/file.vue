@@ -273,7 +273,7 @@ export default {
           padding-left: 14px;
           padding-right: 14px;
 
-          :deep .button_img {
+          :deep(.button_img) {
             margin-right: 4px;
           }
         }
