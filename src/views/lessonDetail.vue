@@ -107,7 +107,7 @@ export default {
         &.ios {
             padding-bottom: 20px;
         }
-        /deep/ .tools {
+        :deep(.tools) {
             padding-bottom: env(safe-area-inset-bottom);
         }
     }

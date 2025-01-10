@@ -123,7 +123,13 @@
         </div>
       </div>
     </div>
-    <div class="ba"><a href="https://beian.miit.gov.cn" target="_blank">吉ICP备2024023809号-1</a></div>
+    <div class="ba">
+      <a class="ga" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=22020302000326" target="_blank">
+        <img src="https://yingshijiaoyusystem.oss-cn-beijing.aliyuncs.com/ga.png" />
+        吉公网安备22020302000326号
+      </a>
+      <a href="https://beian.miit.gov.cn" target="_blank">吉ICP备2024023809号-1</a>
+    </div>
   </div>
 </template>
 <script>
@@ -715,13 +721,24 @@ export default {
     }
 
     .ba {
-      display: block;
+      display: flex;
+      flex-direction: row;
       padding: 8px;
       border-top: solid 1px #eee;
 
       a {
         color: #333;
         font-size: 14px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        margin-right: 12px;
+      }
+
+      .ga {
+        img {
+          height: 14px;
+        }
       }
     }
   }
