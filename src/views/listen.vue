@@ -2,8 +2,9 @@
   <div class="content">
     <!-- <div class="title">每日5段</div> -->
     <div ref="allDaysList" class="allDaysList">
-      <div class="list">
-        <div v-for="(item, index) in list" class="item" :class="{ active: activeListen && activeListen.id === item.id }">
+      <div class="list" @scroll="scroll" ref="scroll">
+        <div v-for="(item, index) in list" class="item"
+          :class="{ active: activeListen && activeListen.id === item.id }">
           <div class="info">
             <div>{{ item.title }}</div>
             <div style="display: flex;flex-direction: row;align-items: center;">
@@ -80,6 +81,8 @@ export default {
   data() {
     return {
       page: 1,
+      loading: false,
+      hasEnd: false,
       list: [],
       activeListenIndex: -1,
       activeListen: null,
@@ -131,8 +134,16 @@ export default {
       this.play(next, nextIndex);
     },
     async init() {
+      if (this.hasEnd || this.loading) {
+        return;
+      }
+      this.loading = true;
       this.list = await request.get('/en/listen/enListenSourceList?page=' + this.page)
+      if (this.list.length === 0) {
+        this.hasEnd = true;
+      }
       this.initListRecord();
+      this.loading = false;
       this.$nextTick(() => {
         this.domLoad()
       })
@@ -153,12 +164,10 @@ export default {
     async finish() {
       console.log(this.activeListen.id)
       let listenRecord = new sqlClass('enListenRecord')
-      console.log(111111111)
       await listenRecord.insert({
         id: this.activeListen.id,
         date: getTimeStr(),
       })
-      console.log(333333333)
       this.activeListenIsRecord = await this.getIsRecord(this.activeListen.id);
       this.initListRecord()
       // let option = new sqlClass('option')
@@ -172,6 +181,29 @@ export default {
       this.activeListenIsRecord = await this.getIsRecord(this.activeListen.id);
       this.initListRecord()
     },
+    async scroll() {
+      if (this.hasEnd || this.loading) {
+        return;
+      }
+      const scrollDom = this.$refs.scroll;
+      scrollDom.scrollTop
+      scrollDom.clientHeight
+      window.aaa = scrollDom;
+      if (scrollDom.scrollHeight - scrollDom.scrollTop - scrollDom.clientHeight < 100) {
+        this.loading = true;
+        this.page++;
+        const list = await request.get('/en/listen/enListenSourceList?page=' + this.page)
+        if (list.length === 0) {
+          this.hasEnd = true;
+          return;
+        }
+        this.list = [...this.list, ...list];
+        setTimeout(() => {
+          this.loading = false;
+        }, 1000)
+      }
+      console.log(scrollDom.scrollHeight - scrollDom.scrollTop - scrollDom.clientHeight)
+    }
   },
   computed: {
     ...mapGetters('main', ['UserInterfaceStyle']),

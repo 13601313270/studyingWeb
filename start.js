@@ -53,6 +53,7 @@ let DB_PATH = path.join(__dirname, '/Etc.End.db')
 const server = http.createServer((req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/plain');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
 
   function connectDatabase() {
     return new sqlite3.Database(DB_PATH, (err) => {
