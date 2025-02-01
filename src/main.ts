@@ -7,7 +7,6 @@ import scroller from './components/scroller.vue'
 import request from './plugin/request'
 import refresh from './components/refresh.vue'
 import loading from './components/loading.vue'
-import { init } from './plugin/allIcons'
 
 const app = createApp(App)
 
@@ -40,6 +39,7 @@ app.config.globalProperties.$logAction = function (action: string) {
   request.get('/log/' + platform + '/' + action + '?rand=' + +(Math.random() * 100000))
 }
 
-init().then(() => {
-  app.use(store).use(router).mount('#app')
-})
+app.use(store)
+  .use(router)
+  .mount('#app')
+
