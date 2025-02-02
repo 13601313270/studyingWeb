@@ -200,6 +200,19 @@ const dbModule = {
         callBack(res)
       }, () => {
       });
+    } else if (navigator.userAgent.includes('iPhone')) {
+      console.log('sqlsqlsq=====select', sql)
+      debugger;
+      // @ts-ignore
+      window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+        type: 'sql',
+        sql: sql,
+        isQuery: !!isSelect,
+      }).then((res: any) => {
+        console.log('sqlsqlsq=====select---result', res)
+        console.log('sqlsqlsq=====select---result', JSON.parse(res))
+        callBack(JSON.parse(res))
+      })
     } else {
       if (isSelect) {
         fetch('http://127.0.0.1:3011/', {
@@ -280,6 +293,16 @@ export default class {
         }).then(() => {
           resolve()
         })
+      } else if (navigator.userAgent.includes('iPhone')) {
+        console.log('sqlsqlsql---exist')
+        // @ts-ignore
+        window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+          type: 'sql',
+          sql: 'create table if not exists ' + table + '(' + listStr.join(',') + ')',
+          isQuery: false,
+        }).then((res: any) => {
+          resolve(res)
+        })
       } else {
         fetch('http://127.0.0.1:3011/', {
           method: 'POST',
@@ -322,8 +345,10 @@ export default class {
             return '"' + item + '"'
           }
         }).join(',')
+        console.log('2.1.1')
         // @ts-ignore
         await this.dbExist
+        console.log('2.1.2')
         sql.push(`(${value})`)
 
       }
