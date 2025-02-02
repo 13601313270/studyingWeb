@@ -3,8 +3,9 @@
     <div class="index">
       <text v-if="!todayFinish" style="color:white;font-family: iconfont;">今日剩余：{{ allWords.length }}</text>
       <text v-else> </text>
-      <text style="color:white;font-family: iconfont;" v-if="Math.abs(knowWordCount[0] - knowWordCount[1]) < 50">您的词汇量：{{
-        parseInt(knowWordCount) }}</text>
+      <text style="color:white;font-family: iconfont;"
+        v-if="Math.abs(knowWordCount[0] - knowWordCount[1]) < 50">您的词汇量：{{
+          parseInt(knowWordCount) }}</text>
       <text style="color:white;font-family: iconfont;" v-else>您的词汇量：{{ parseInt(knowWordCount[0]) }}~{{
         parseInt(knowWordCount[1]) }}</text>
     </div>
@@ -14,7 +15,7 @@
       <div class="yinbiao">
         <div>
           <div v-if="info.ph_en" @click="play(info.ph_en_mp3)">英：{{ info.ph_en
-          }}</div>
+            }}</div>
           <div class="icon" v-if="info.en_mp3" @click="play(info.en_mp3)">
             <Icon src="play" width="36" />
           </div>
@@ -63,7 +64,8 @@
           <text class="word_test_tips">第一次进入，将要进行测试，校验你的词汇量。大约需要10分钟，150个单词左右。</text>
           <div style="display: flex;flex-direction: row;justify-content: space-between">
             <text style="color:white;font-family: iconfont;">已测单词数:{{ testedWordCount }}</text>
-            <text style="color:white;font-family: iconfont;">评估词汇量:{{ testedWordCount > 20 ? (parseInt(youWordCount[0]) +
+            <text style="color:white;font-family: iconfont;">评估词汇量:{{ testedWordCount > 20 ? (parseInt(youWordCount[0])
+              +
               '~' + parseInt(youWordCount[1])) : '样本太少' }}</text>
           </div>
           <div class="testCollectionList">
@@ -112,7 +114,8 @@
               <scroller style="flex:1">
                 <!--<text style="font-family: iconfont;">英:[{{testWordInfo.ph_en}}]  美:[{{testWordInfo.ph_am}}]</text>-->
                 <text style="font-family: iconfont;" v-for="item in testWordInfo.meaning"
-                  :style="{ color: UserInterfaceStyle === 1 ? 'white' : 'black' }">{{ item.part }}{{ item.means.join(';')
+                  :style="{ color: UserInterfaceStyle === 1 ? 'white' : 'black' }">{{ item.part }}{{
+                    item.means.join(';')
                   }}</text>
               </scroller>
             </div>
@@ -134,7 +137,7 @@
 
 <script>
 import sqlClass from '@/plugin/sql'
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import request from '../plugin/request'
 import Button from '../components/Button'
 import Icon from '../components/icon'
@@ -188,6 +191,7 @@ export default {
     }
   },
   async created() {
+    this.setPath([{ name: '超级单词卡' }]);
     let option = new sqlClass('option')
     if ((await option.select('select count(*) as count from option where name="wordTestFinish"'))[0].count === 0) {
       this.showTestTransform = true
@@ -205,6 +209,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('main', ['setPath']),
     async init() {
       this.$logAction('word');
       await this.updateWordKnowCount()

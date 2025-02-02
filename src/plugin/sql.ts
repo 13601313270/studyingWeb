@@ -200,9 +200,8 @@ const dbModule = {
         callBack(res)
       }, () => {
       });
-    } else if (navigator.userAgent.includes('iPhone')) {
-      console.log('sqlsqlsq=====select', sql)
-      debugger;
+      // @ts-ignore
+    } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
       // @ts-ignore
       window.webkit.messageHandlers.jsUseWKWebView.postMessage({
         type: 'sql',
@@ -211,7 +210,10 @@ const dbModule = {
       }).then((res: any) => {
         console.log('sqlsqlsq=====select---result', res)
         console.log('sqlsqlsq=====select---result', JSON.parse(res))
-        callBack(JSON.parse(res))
+        callBack({
+          status: 'SUCCESS',
+          data: JSON.parse(res),
+        })
       })
     } else {
       if (isSelect) {
@@ -293,8 +295,8 @@ export default class {
         }).then(() => {
           resolve()
         })
-      } else if (navigator.userAgent.includes('iPhone')) {
-        console.log('sqlsqlsql---exist')
+        // @ts-ignore
+      } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
         // @ts-ignore
         window.webkit.messageHandlers.jsUseWKWebView.postMessage({
           type: 'sql',
@@ -318,9 +320,13 @@ export default class {
 
   select(sql: string) {
     return new Promise((resolve) => {
+      console.log('isReaded---0.1');
       // @ts-ignore
       this.dbExist.then(() => {
+        console.log('isReaded---0.2');
+        console.log('sql----->', sql)
         dbModule.sql(this.table, sql, (res: any) => {
+          console.log('isReaded---0.3', res);
           if (res.status === 'SUCCESS') {
             resolve(res.data)
           }

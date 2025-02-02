@@ -3,7 +3,9 @@
     <div class="header" v-if="$route.name !== 'welcome'">
       <div class="header_web_name">
         <div class="header_web_name_back" @click="clickBack">
-          <icon class="header_web_name_back_img" width="48" height="48" :src="isInRootPage ? 'icons' : 'back'" />
+          <img v-if="isInRootPage" class="header_web_name_back_img" src="../icons/icons.png" />
+          <img v-else class="header_web_name_back_img" src="../icons/back.png" />
+          <!-- <icon class="header_web_name_back_img" width="48" height="48" :src="isInRootPage ? 'icons' : 'back'" /> -->
         </div>
       </div>
       <div class="header_links">
@@ -366,6 +368,8 @@ export default {
         opacity: 0.8;
 
         &_img {
+          width: 48px;
+          height: 48px;
           margin-top: 16px;
           margin-left: 10px;
         }

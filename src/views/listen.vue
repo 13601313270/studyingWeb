@@ -54,7 +54,7 @@
 
 <script>
 import sqlClass from '@/plugin/sql'
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import request from '../plugin/request'
 import Button from '../components/Button'
 import Icon from '../components/icon'
@@ -92,9 +92,11 @@ export default {
   },
   async created() {
     this.$logAction('listen');
+    this.setPath([{ name: '听力通' }]);
     this.init();
   },
   methods: {
+    ...mapActions('main', ['setPath']),
     async play(item, index) {
       this.activeListenIndex = index;
       this.activeListen = item;
@@ -105,8 +107,9 @@ export default {
     },
     async getIsRecord(id) {
       const listenRecord = new sqlClass('enListenRecord')
+      console.log('isReaded---0');
       const isReaded = await listenRecord.select('select * from enListenRecord where id=' + id)
-      console.log(isReaded);
+      console.log('isReaded---1', isReaded);
       if (isReaded.length > 0) {
         return true;
       } else {
