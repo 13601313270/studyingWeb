@@ -8,7 +8,7 @@ function download(file: string): Promise<void> {
       }).then(() => {
         resolve()
       })
-    } else {
+    } else if (navigator.userAgent.includes('windvane')) {
       // @ts-ignore
       window.WindVane.call('File', 'download', {
         url: file.replace('http://', 'https://')
@@ -19,6 +19,15 @@ function download(file: string): Promise<void> {
         (err: any) => {
           reject(err)
         });
+      // @ts-ignore
+    } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
+      // @ts-ignore
+      window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+        type: 'FileDownload',
+        url: file.replace('http://', 'https://'),
+      }).then((res: any) => {
+        resolve();
+      })
     }
   })
 }
@@ -30,7 +39,7 @@ function open(file: string): Promise<void> {
       }).then(() => {
         resolve()
       })
-    } else {
+    } else if (navigator.userAgent.includes('windvane')) {
       // @ts-ignore
       window.WindVane.call('File', 'open', {
         url: file
@@ -41,6 +50,17 @@ function open(file: string): Promise<void> {
         (err: any) => {
           reject(err)
         });
+      // @ts-ignore
+    } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
+      // @ts-ignore
+      window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+        type: 'openDownloadFile',
+        fileName: file,
+      }).then((res: any) => {
+        console.log('openDownloadFile', res)
+        console.log('openDownloadFile', JSON.parse(res))
+        resolve();
+      })
     }
   })
   // window.WindVane.call('File', 'openFile', { path },
@@ -57,7 +77,7 @@ function getDownLoadFileList() {
       androidBridge('File', 'fileList').then(res => {
         resolve(res.result)
       })
-    } else {
+    } else if (navigator.userAgent.includes('windvane')) {
       // @ts-ignore
       window.WindVane.call('File', 'getDownloadPath', {}, (result) => {
         // @ts-ignore
@@ -65,6 +85,16 @@ function getDownLoadFileList() {
           resolve(result.data)
         });
       });
+      // @ts-ignore
+    } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
+      // @ts-ignore
+      window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+        type: 'downloadFileList',
+      }).then((res: any) => {
+        console.log('downloadFileList', res)
+        console.log('downloadFileList', JSON.parse(res))
+        resolve(JSON.parse(res));
+      })
     }
   })
 }

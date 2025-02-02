@@ -107,6 +107,9 @@ export default {
       })
     },
     download(file) {
+      if (this.downLoading[file.file]) {
+        return;
+      }
       this.downLoading[file.file] = true;
       File.download(file.file)
         .then(() => {

@@ -116,6 +116,10 @@ export default {
 
     },
     lesson(item, newContent, turn) {
+      if (!item.hasContent) {
+        // alert('维护中')
+        return;
+      }
       if (item.hasChildPoiVideo && !turn) {
         alert(this.moreVideoIsOpen[item.id + ''])
         this.moreVideoIsOpen[item.id + ''] = true;//!this.moreVideoIsOpen[item.id+''];

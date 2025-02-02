@@ -50,19 +50,19 @@
       v-if="!['lessonDetail', 'lessonDetailNew', 'lessonAllChildPoiVideo', 'lessonLog'].includes($route.name) && $route.name !== 'welcome'">
       <div class="bottom_link" :class="[tabType === 'source' ? 'bottom_link_active' : 'bottom_link_blur']"
         @click="to('/source')">
-        <icon class="bottom_link_icon" width="40" height="40" :src="tabType === 'source' ? 'main_active' : 'main'" />
+        <icon class="bottom_link_icon" width="44" height="44" :src="tabType === 'source' ? 'main_active' : 'main'" />
         <text class="bottom_link_text"
           :class="[tabType === 'source' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">课程</text>
       </div>
       <div class="bottom_link" :class="[tabType === 'file' ? 'bottom_link_active' : 'bottom_link_blur']"
         @click="to('/file')">
-        <icon class="bottom_link_icon" width="40" height="40" :src="tabType === 'file' ? 'file_active' : 'file'" />
+        <icon class="bottom_link_icon" width="44" height="44" :src="tabType === 'file' ? 'file_active' : 'file'" />
         <text class="bottom_link_text"
           :class="[tabType === 'file' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">资料库</text>
       </div>
       <div class="bottom_link" :class="[tabType === 'friend' ? 'bottom_link_active' : 'bottom_link_blur']"
         @click="to('/friend')" v-if="channel !== 'huawei'">
-        <icon class="bottom_link_icon" width="40" height="40"
+        <icon class="bottom_link_icon" width="44" height="44"
           :src="tabType === 'friend' ? 'friend_active' : 'friend'" />
         <text class="bottom_link_text"
           :class="[tabType === 'friend' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">学习圈</text>
@@ -80,7 +80,7 @@
       <!--            </div>-->
       <div class="bottom_link" :class="[tabType === 'mine' ? 'bottom_link_active' : 'bottom_link_blur']"
         @click="to('/mine')">
-        <icon class="bottom_link_icon" width="40" height="40" :src="tabType === 'mine' ? 'user_active' : 'user'" />
+        <icon class="bottom_link_icon" width="44" height="44" :src="tabType === 'mine' ? 'user_active' : 'user'" />
         <text class="bottom_link_text"
           :class="[tabType === 'mine' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">我的</text>
       </div>
@@ -297,7 +297,7 @@ export default {
       return this.$store.getters['main/path']
     },
     tabType() {
-      if (['source', 'sourceDetail', 'lessonDetail', 'lessonDetailNew', 'lessonQuestionList', 'poiQuestion', 'lessonKnowledgeList', 'lessonKnowledgeDetail', 'lessonAllChildPoiVideo'].includes(this.$route.name)) {
+      if (['source', 'sourceDetail', 'lessonDetail', 'lessonDetailNew', 'lessonQuestionList', 'poiQuestion', 'lessonKnowledgeList', 'lessonKnowledgeDetail', 'lessonAllChildPoiVideo', 'listen', 'word'].includes(this.$route.name)) {
         return 'source';
       } else if (['file'].includes(this.$route.name)) {
         return 'file';
@@ -452,17 +452,17 @@ export default {
     position: relative;
 
     &_icon {
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
     }
 
     &_text {
-      font-size: 24px;
-      line-height: 24px;
+      font-size: 28px;
+      line-height: 28px;
       height: 24px;
       color: #5a5e5d;
       text-align: center;
-      margin-top: 10px;
+      margin-left: 8px;
 
       &_active {
         color: #1a2e27;
