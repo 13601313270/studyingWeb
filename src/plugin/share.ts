@@ -24,6 +24,18 @@ function share(title: string, url: string, desc: string, img: string) {
       }, () => {
         // alert('failure: ' + JSON.stringify(e));
       });
+      // @ts-ignore
+    } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
+      // @ts-ignore
+      window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+        type: 'share',
+        title,
+        url,
+        desc,
+        img: img || '',
+      }).then((res: any) => {
+        resolve();
+      })
     } else {
       alert('分享' + ':' + title + "|" + url)
     }

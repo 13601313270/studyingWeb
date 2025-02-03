@@ -17,6 +17,14 @@ function exit(): Promise<void> {
         (err: any) => {
           reject(err)
         });
+        // @ts-ignore
+    } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
+      // @ts-ignore
+      window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+        type: 'exit',
+      }).then((res: any) => {
+        resolve();
+      })
     }
   })
 }
