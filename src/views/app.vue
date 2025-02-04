@@ -89,9 +89,6 @@
     <Dialog title="服务协议和隐私政策" :show="showAgree && $route.name !== 'agreement'">
       <div class="argument-inner" v-if="showAgree && $route.name !== 'agreement'">
         <div>
-          <text class="argument-title">服务协议和隐私政策</text>
-        </div>
-        <div>
           <text class="argument_content">请您务必审慎阅读、充分理解“服务协议”和“隐私政策”各条款。您可以阅读</text>
           <div style="display: flex;flex-direction: row">
             <text class="argument_link" @click="gotoAgreementPage">“服务协议”</text>

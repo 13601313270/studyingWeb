@@ -281,7 +281,7 @@ export default {
       // this.showBindPhone = true;
       // return;
 
-      WeChat.login().then(() => {
+      WeChat.login().then((res) => {
         if (res.result === true) {
           alert('微信登录成功')
           localStorage.setItem('token', res.token);
@@ -299,7 +299,7 @@ export default {
         } else if (res.type === 'code_error') {
           alert('微信服务器授权失败')
         } else if (res.type === 'not_account') {
-          this.codeBak = data;
+          this.codeBak = res.code;
           this.showBindPhone = true;
         }
       })
