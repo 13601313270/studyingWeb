@@ -2040,19 +2040,23 @@ window.webViewerOpenFileViaURL = void 0;
   window.webViewerOpenFileViaURL = function webViewerOpenFileViaURL(file) {
     if (file && file.lastIndexOf('file:', 0) === 0) {
       PDFViewerApplication.setTitleUsingUrl(file);
-      var xhr = new XMLHttpRequest();
-      xhr.onload = function () {
-        PDFViewerApplication.open(new Uint8Array(xhr.response));
-      };
-      try {
-        xhr.open('GET', file);
-        xhr.responseType = 'arraybuffer';
-        xhr.send();
-      } catch (ex) {
-        PDFViewerApplication.l10n.get('loading_error', null, 'An error occurred while loading the PDF.').then(function (msg) {
-          PDFViewerApplication.error(msg, ex);
-        });
+      function base64ToArrayBuffer(base64) {
+        const binaryString = window.atob(base64); // 将Base64字符串转换为二进制字符串
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        return bytes.buffer; // 返回ArrayBuffer
       }
+      // @ts-ignore
+      window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+        type: 'readDownloadFileBuffer',
+        fileUrl: file,
+      }).then((base64) => {
+        const buffer = base64ToArrayBuffer(base64)
+        PDFViewerApplication.open(new Uint8Array(buffer));
+      })
       return;
     }
     if (file) {
@@ -3700,6 +3704,7 @@ function webViewerLoad() {
   window.PDFViewerApplication = pdfjsWebApp.PDFViewerApplication;
   pdfjsWebApp.PDFViewerApplication.run(config);
 }
+window.webViewerLoad = webViewerLoad;
 if (document.readyState === 'interactive' || document.readyState === 'complete') {
   webViewerLoad();
 } else {
