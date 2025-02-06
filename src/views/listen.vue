@@ -1,8 +1,13 @@
 <template>
   <div class="content">
+    <div class="cate">
+      <div class="cateItem active">考试对话</div>
+      <div class="cateItem">单词</div>
+      <div class="cateItem">语法</div>
+    </div>
     <!-- <div class="title">每日5段</div> -->
     <div ref="allDaysList" class="allDaysList">
-      <div class="list" @scroll="scroll" ref="scroll">
+      <div class="list" @scroll="scroll" ref="scrollDom">
         <div v-for="(item, index) in list" class="item"
           :class="{ active: activeListen && activeListen.id === item.id }">
           <div class="info">
@@ -13,14 +18,14 @@
             </div>
           </div>
           <div :class="activeListen && activeListen.id === item.id ? 'stop' : 'play'"
-            @click="activeListen && activeListen.id === item.id ? stop() : play(item, index)">
+            @click="activeListen && activeListen.id === item.id ? stopVue() : playItem(item, index)">
             <Icon :src="activeListen && activeListen.id === item.id ? 'stop' : 'play'" width="42" />
           </div>
         </div>
       </div>
     </div>
     <div v-if="activeListen" class="activeListen">
-      <div class="activeBack" @click="stop()"></div>
+      <div class="activeBack" @click="stopVue()"></div>
       <div class="inner">
         <div class="activeListenContent">
           <div>听力正文</div>
@@ -40,7 +45,7 @@
           <div class="button" @click="replay">
             <Icon src="recycle_white"></Icon>
           </div>
-          <div class="button" @click="activeIsPlay ? parse() : play(activeListen)">
+          <div class="button" @click="activeIsPlay ? parse() : playItem(activeListen, activeListenIndex)">
             <Icon :src="activeIsPlay ? 'stop' : 'play'" />
           </div>
           <div class="button" @click="next">
@@ -52,166 +57,164 @@
   </div>
 </template>
 
-<script>
+<script lang="ts" setup>
 import sqlClass from '@/plugin/sql'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, useStore } from 'vuex'
 import request from '../plugin/request'
-import Button from '../components/Button'
-import Icon from '../components/icon'
+import Button from '../components/Button.vue'
+import Icon from '../components/icon.vue'
 import { play, pause, stop } from '../plugin/audio'
-import storage from '../plugin/localStorage.ts'
+import { onMounted, ref, nextTick } from 'vue'
 
 function getTimeStr(sleep = 0) {
   let time = new Date()
   time.setTime(time.getTime() + 86400000 * (sleep))
-  let year = time.getYear() + 1900
-  let month = time.getMonth() + 1
+  let year = time.getFullYear()
+  let month: number | string = time.getMonth() + 1
   if (month < 10) {
     month = '0' + month
   }
-  let day = time.getDate()
+  let day: number | string = time.getDate()
   if (day < 10) {
     day = '0' + day
   }
   return year + '-' + month + '-' + day
 }
 
-export default {
-  name: 'word',
-  data() {
-    return {
-      page: 1,
-      loading: false,
-      hasEnd: false,
-      list: [],
-      activeListenIndex: -1,
-      activeListen: null,
-      activeListenIsRecord: false,
-      activeIsPlay: false,
-    }
-  },
-  async created() {
-    this.$logAction('listen');
-    this.setPath([{ name: '听力通' }]);
-    this.init();
-  },
-  methods: {
-    ...mapActions('main', ['setPath']),
-    async play(item, index) {
-      this.activeListenIndex = index;
-      this.activeListen = item;
-      this.activeListenIsRecord = await this.getIsRecord(this.activeListen.id);
+const store = useStore();
+const page = ref<number>(1)
+const loading = ref<boolean>(false)
+const hasEnd = ref<boolean>(false)
+const list = ref<Array<any>>([])
+const activeListenIndex = ref<number>(-1)
+const activeListen = ref<any>(null)
+const activeListenIsRecord = ref<boolean>(false)
+const activeIsPlay = ref<boolean>(false)
+const allDaysList = ref();
+const scrollDom = ref();
 
-      this.activeIsPlay = true;
-      play(item.file.originUrl)
-    },
-    async getIsRecord(id) {
-      const listenRecord = new sqlClass('enListenRecord')
-      console.log('isReaded---0');
-      const isReaded = await listenRecord.select('select * from enListenRecord where id=' + id)
-      console.log('isReaded---1', isReaded);
-      if (isReaded.length > 0) {
-        return true;
-      } else {
-        return false;
-      }
-    },
-    parse() {
-      this.activeIsPlay = false;
-      pause()
-    },
-    stop() {
-      this.activeListen = null;
-      this.activeIsPlay = false;
-      pause()
-    },
-    replay() {
-      stop()
-      this.activeIsPlay = true;
-      play(this.activeListen.file.originUrl)
-    },
-    next() {
-      const nextIndex = this.activeListenIndex === this.list.length - 1 ? 0 : this.activeListenIndex + 1
-      this.stop();
-      const next = this.list[nextIndex]
-      this.play(next, nextIndex);
-    },
-    async init() {
-      if (this.hasEnd || this.loading) {
-        return;
-      }
-      this.loading = true;
-      this.list = await request.get('/en/listen/enListenSourceList?page=' + this.page)
-      if (this.list.length === 0) {
-        this.hasEnd = true;
-      }
-      this.initListRecord();
-      this.loading = false;
-      this.$nextTick(() => {
-        this.domLoad()
-      })
-    },
-    async initListRecord() {
-      for (let i = 0; i < this.list.length; i++) {
-        const isReaded = await this.getIsRecord(this.list[i].id)
-        this.list[i].isReaded = isReaded;
-      }
-    },
-    domLoad() {
-      var container = this.$refs.allDaysList
-      console.log('container', container)
-      if (container) {
-        container.scrollLeft = container.scrollWidth;
-      }
-    },
-    async finish() {
-      console.log(this.activeListen.id)
-      let listenRecord = new sqlClass('enListenRecord')
-      await listenRecord.insert({
-        id: this.activeListen.id,
-        date: getTimeStr(),
-      })
-      this.activeListenIsRecord = await this.getIsRecord(this.activeListen.id);
-      this.initListRecord()
-      // let option = new sqlClass('option')
-      // let config = await option.select('select * from option where name="perDay"')
-      // let perDay = parseInt(config[0].val)
-    },
-    async notFinish() {
-      console.log(this.activeListen.id)
-      const listenRecord = new sqlClass('enListenRecord')
-      const isReaded = await listenRecord.select('delete from enListenRecord where id=' + this.activeListen.id)
-      this.activeListenIsRecord = await this.getIsRecord(this.activeListen.id);
-      this.initListRecord()
-    },
-    async scroll() {
-      if (this.hasEnd || this.loading) {
-        return;
-      }
-      const scrollDom = this.$refs.scroll;
-      scrollDom.scrollTop
-      scrollDom.clientHeight
-      window.aaa = scrollDom;
-      if (scrollDom.scrollHeight - scrollDom.scrollTop - scrollDom.clientHeight < 100) {
-        this.loading = true;
-        this.page++;
-        const list = await request.get('/en/listen/enListenSourceList?page=' + this.page)
-        if (list.length === 0) {
-          this.hasEnd = true;
-          return;
-        }
-        this.list = [...this.list, ...list];
-        setTimeout(() => {
-          this.loading = false;
-        }, 1000)
-      }
-      console.log(scrollDom.scrollHeight - scrollDom.scrollTop - scrollDom.clientHeight)
+onMounted(() => {
+  // this.$logAction('listen');
+  store.dispatch('main/setPath', [{ name: '听力通' }])
+  init();
+})
+
+async function playItem(item: any, index: number) {
+  activeListenIndex.value = index;
+  activeListen.value = item;
+  activeListenIsRecord.value = await getIsRecord(activeListen.value.id);
+
+  activeIsPlay.value = true;
+  play(item.file.originUrl)
+}
+async function getIsRecord(id: number) {
+  const listenRecord = new sqlClass('enListenRecord')
+  // console.log('isReaded---0');
+  const isReaded: any = await listenRecord.select('select * from enListenRecord where id=' + id)
+  // console.log('isReaded---1', isReaded);
+  if (isReaded.length > 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
+function parse() {
+  activeIsPlay.value = false;
+  pause()
+}
+function stopVue() {
+  activeListen.value = null;
+  activeIsPlay.value = false;
+  pause()
+}
+function replay() {
+  stop()
+  activeIsPlay.value = true;
+  play(activeListen.value.file.originUrl)
+}
+function next() {
+  const nextIndex = activeListenIndex.value === list.value.length - 1 ? 0 : activeListenIndex.value + 1
+  stopVue();
+  const next = list.value[nextIndex]
+  playItem(next, nextIndex);
+}
+async function init() {
+  if (hasEnd.value || loading.value) {
+    return;
+  }
+  loading.value = true;
+  list.value = await request.get('/en/listen/enListenSourceList?page=' + page.value)
+  if (list.value.length === 0) {
+    hasEnd.value = true;
+  }
+  initListRecord();
+  loading.value = false;
+  setTimeout(() => {
+
+  })
+  nextTick(() => {
+    domLoad()
+  })
+}
+async function initListRecord() {
+  for (let i = 0; i < list.value.length; i++) {
+    const isReaded = await getIsRecord(list.value[i].id)
+    list.value[i].isReaded = isReaded;
+  }
+}
+function domLoad() {
+  var container = allDaysList.value
+  console.log('container', container)
+  if (container) {
+    container.scrollLeft = container.scrollWidth;
+  }
+}
+async function finish() {
+  console.log(activeListen.value.id)
+  let listenRecord = new sqlClass('enListenRecord')
+  console.log(getTimeStr())
+  // await listenRecord.insert({
+  //   id: activeListen.value.id,
+  //   date: getTimeStr(),
+  // })
+  // activeListenIsRecord.value = await getIsRecord(activeListen.value.id);
+  // initListRecord()
+
+
+
+
+  // let option = new sqlClass('option')
+  // let config = await option.select('select * from option where name="perDay"')
+  // let perDay = parseInt(config[0].val)
+}
+async function notFinish() {
+  console.log(activeListen.value.id)
+  const listenRecord = new sqlClass('enListenRecord')
+  const isReaded = await listenRecord.select('delete from enListenRecord where id=' + activeListen.value.id)
+  activeListenIsRecord.value = await getIsRecord(activeListen.value.id);
+  initListRecord()
+}
+async function scroll() {
+  if (hasEnd.value || loading.value) {
+    return;
+  }
+  const scrollDom2 = scrollDom.value;
+  scrollDom2.scrollTop
+  scrollDom2.clientHeight
+  if (scrollDom2.scrollHeight - scrollDom2.scrollTop - scrollDom2.clientHeight < 100) {
+    loading.value = true;
+    page.value++;
+    const listRes: any[] = await request.get('/en/listen/enListenSourceList?page=' + page.value)
+    if (listRes.length === 0) {
+      hasEnd.value = true;
+      return;
     }
-  },
-  computed: {
-    ...mapGetters('main', ['UserInterfaceStyle']),
-  },
-  components: { Button, Icon },
+    list.value = [...list.value, ...listRes];
+    setTimeout(() => {
+      loading.value = false;
+    }, 1000)
+  }
+  // console.log(scrollDom2.scrollHeight - scrollDom2.scrollTop - scrollDom2.clientHeight)
 }
 </script>
 
@@ -223,6 +226,23 @@ export default {
   flex-direction: column;
   box-sizing: border-box;
   overflow-y: hidden;
+  flex-direction: row;
+
+  .cate {
+    width: 200px;
+    flex-shrink: 0;
+    background-color: #cbcbcb;
+
+    .cateItem {
+      height: 88px;
+      line-height: 88px;
+      text-align: center;
+
+      &.active {
+        background-color: white;
+      }
+    }
+  }
 
   .title {
     margin: 32px;
@@ -242,25 +262,25 @@ export default {
     &::-webkit-scrollbar {
       height: 0;
     }
-  }
 
-  .list {
-    width: 750px;
-    flex-shrink: 0;
-    // margin: 25px;
-    padding: 12px;
-    box-sizing: border-box;
-    overflow-y: auto;
-    // border: solid 1px black;
-    border-radius: 8px;
-    // scroll-snap-align: center;
+    .list {
+      width: 100%;
+      flex-shrink: 0;
+      // margin: 25px;
+      padding: 12px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      // border: solid 1px black;
+      border-radius: 8px;
+      // scroll-snap-align: center;
 
-    &:first-child {
-      // margin-left: 100px;
-    }
+      &:first-child {
+        // margin-left: 100px;
+      }
 
-    &:last-child {
-      // margin-right: 100px;
+      &:last-child {
+        // margin-right: 100px;
+      }
     }
   }
 

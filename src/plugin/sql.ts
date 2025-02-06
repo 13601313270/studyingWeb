@@ -226,7 +226,7 @@ const dbModule = {
           .then(res => res.json())
           .then((results: any) => {
             const list = [];
-            console.log('=======', results)
+            // console.log('=======', results)
             const len = results.length;
             for (let i = 0; i < len; i++) {
               list.push(results[i]);
@@ -272,10 +272,8 @@ const dbModule = {
 };//weex.requireModule('Db')
 export default class {
   table: string;
-  constructor(table: string, props: any) {
+  constructor(table: string) {
     this.table = table
-    // @ts-ignore
-    this.props = props
     let list = sqlConfig
     // @ts-ignore
     let listStr = list[this.table].map(item => {
@@ -320,13 +318,13 @@ export default class {
 
   select(sql: string) {
     return new Promise((resolve) => {
-      console.log('isReaded---0.1');
+      // console.log('isReaded---0.1');
       // @ts-ignore
       this.dbExist.then(() => {
-        console.log('isReaded---0.2');
-        console.log('sql----->', sql)
+        // console.log('isReaded---0.2');
+        // console.log('sql----->', sql)
         dbModule.sql(this.table, sql, (res: any) => {
-          console.log('isReaded---0.3', res);
+          // console.log('isReaded---0.3', res);
           if (res.status === 'SUCCESS') {
             resolve(res.data)
           }
