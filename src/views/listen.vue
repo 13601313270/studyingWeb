@@ -9,6 +9,7 @@
     <!-- <div class="title">每日5段</div> -->
     <div ref="allDaysList" class="allDaysList">
       <Button v-if="cateActive" class="changeButton" text="换一组" @click="init(cateActive)"></Button>
+      <Calendar :chooseList="chooseList" />
       <!-- <div>!!{{ useTime }}!!</div> -->
       <div class="list" @scroll="scroll" ref="scrollDom">
         <div v-for="(item, index) in list" class="item"
@@ -69,6 +70,7 @@ import Icon from '../components/icon.vue'
 import { play, pause, stop } from '../plugin/audio'
 import { onMounted, ref, nextTick, onUnmounted } from 'vue'
 import Loading from '@/plugin/loading'
+import Calendar from '../components/Calendar/index.vue'
 
 function getTimeStr(sleep = 0) {
   let time = new Date()
@@ -113,6 +115,7 @@ const allDaysList = ref();
 const scrollDom = ref();
 const cateActive = ref<cateType>();
 const useTime = ref<number>(0)
+const chooseList = ref<string[]>([])
 
 type cateType = 'qa' | 'word' | 'difficult' | 'book' | 'speech'
 
@@ -155,9 +158,10 @@ onMounted(async () => {
     }
   }, 1000)
   let handle = new sqlClass('enListenTimeRecord')
-  const result = await handle.select('select * from enListenTimeRecord where `date`="' + getTimeStr() + '"')
+  const result: any[] = await handle.select('select * from enListenTimeRecord') as any[]
   console.log('==========')
-  console.log(result);
+  console.log(result.map(v => v.date));
+  chooseList.value = result.map(v => v.date);
 })
 onUnmounted(async () => {
   stopVue();
