@@ -100,10 +100,46 @@ let sqlConfig: {
       notNull: true
     }
   ],
+  // 听力时常记录
+  enListenTimeRecord: [
+    {
+      name: 'id',
+      type: Number,
+      autoincrement: true,
+      notNull: true
+    },
+    {
+      name: 'date',
+      type: String,
+      notNull: true
+    },
+    {
+      name: 'timeSecond',
+      type: Number,
+      notNull: true
+    },
+  ],
   enListenRecord: [
     {
       name: 'id',
       type: Number,
+      notNull: true
+    },
+    {
+      name: 'date',
+      type: String,
+      notNull: true
+    },
+  ],
+  enListenRecordNew: [
+    {
+      name: 'id',
+      type: Number,
+      notNull: true
+    },
+    {
+      name: 'cate',
+      type: String,
       notNull: true
     },
     {
@@ -242,9 +278,11 @@ const dbModule = {
           body: JSON.stringify({
             sql: sql
           }),
-        }).then((res) => {
-          callBack(res);
         })
+          .then(res => res.json())
+          .then((res) => {
+            callBack(!!res);
+          })
       }
       // @ts-ignore
       // var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
@@ -332,13 +370,27 @@ export default class {
       })
     })
   }
+  run(sql: string, isSelect: boolean) {
+    return new Promise(async (resolve) => {
+      dbModule.sql(this.table, sql, (res: any) => {
+        if (navigator.userAgent.includes('studying1v1Android')) {
+          resolve(true)
+        } else {
+          console.log(2.5)
+          console.log(res)
+          resolve(res)
+        }
+      }, isSelect)
+    })
+  }
 
   insert(object: any) {
     let allObject = arguments
     // @ts-ignore
     let table = this.table
+    let self = this;
     return new Promise(async (resolve) => {
-      console.log(2.1)
+      // console.log(2.1)
       let sql = []
       let sqlBefore = `INSERT INTO ${table} (${Object.keys(allObject[0]).join(',')}) VALUES `
       for (object of allObject) {
@@ -349,23 +401,15 @@ export default class {
             return '"' + item + '"'
           }
         }).join(',')
-        console.log('2.1.1')
+        // console.log('2.1.1')
         // @ts-ignore
         await this.dbExist
-        console.log('2.1.2')
+        // console.log('2.1.2')
         sql.push(`(${value})`)
-
       }
-      console.log(2.2)
-      dbModule.sql(this.table, sqlBefore + sql.join(','), (res: any) => {
-        console.log(2.3)
-        if (navigator.userAgent.includes('studying1v1Android')) {
-          console.log(2.4)
-          resolve(true)
-        } else {
-          resolve(res === '1')
-        }
-      }, false)
+      self.run(sqlBefore + sql.join(','), false).then(res => {
+        resolve(res)
+      })
     })
   }
 }

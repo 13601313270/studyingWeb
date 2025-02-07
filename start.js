@@ -72,17 +72,17 @@ const server = http.createServer((req, res) => {
       const parsedData = JSON.parse(body);
       // 处理请求体数据
       console.log("收到sql请求：" + JSON.stringify(parsedData.sql));
-      if (parsedData.sql.match(/^INSERT/)) {
+      if (parsedData.sql.match(/^SELECT|select/)) {
+        db.all(parsedData.sql, (err, rows) => {
+          console.log(rows)
+          res.end(JSON.stringify(rows));
+        });
+      } else {
         db.run(parsedData.sql, (err) => {
           if (err) {
             console.log(err)
           }
           res.end(err ? '0' : '1');
-        });
-      } else {
-        db.all(parsedData.sql, (err, rows) => {
-          console.log(rows)
-          res.end(JSON.stringify(rows));
         });
       }
       db.close();

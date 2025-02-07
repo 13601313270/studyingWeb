@@ -24,8 +24,6 @@ const Toast = (options: IProps):ResultParams => {
     const destory =  ()=> {
         const t = setTimeout(() => {
           render(null, container)
-          //@ts-ignore
-          window.aaa = container;
           document.body.removeChild(container)
           clearTimeout(t)
       },500);

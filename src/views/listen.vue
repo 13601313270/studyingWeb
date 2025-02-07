@@ -1,19 +1,22 @@
 <template>
   <div class="content">
     <div class="cate">
-      <div class="cateItem active">考试对话</div>
-      <div class="cateItem">单词</div>
-      <div class="cateItem">语法</div>
+      <div v-for="item in cateList">
+        <div class="cateItem" @click="init(item.id)" :class="{ active: item.id === cateActive }">{{ item.name }}
+        </div>
+      </div>
     </div>
     <!-- <div class="title">每日5段</div> -->
     <div ref="allDaysList" class="allDaysList">
+      <Button v-if="cateActive" class="changeButton" text="换一组" @click="init(cateActive)"></Button>
+      <!-- <div>!!{{ useTime }}!!</div> -->
       <div class="list" @scroll="scroll" ref="scrollDom">
         <div v-for="(item, index) in list" class="item"
           :class="{ active: activeListen && activeListen.id === item.id }">
           <div class="info">
             <div>{{ item.title }}</div>
             <div style="display: flex;flex-direction: row;align-items: center;">
-              <div>难度：{{ item.difficult }}</div>
+              <div v-if="item.difficult">难度：{{ item.difficult }}</div>
               <span v-if="item.isReaded" class="listFinish">已完成</span>
             </div>
           </div>
@@ -34,7 +37,7 @@
               item.importArticle
             }}
           </div>
-          <div>题目：</div>
+          <div v-if="activeListen.content">题目：</div>
           <div v-html="activeListen.content"></div>
         </div>
         <div class="tools">
@@ -59,12 +62,13 @@
 
 <script lang="ts" setup>
 import sqlClass from '@/plugin/sql'
-import { mapActions, mapGetters, useStore } from 'vuex'
+import { useStore } from 'vuex'
 import request from '../plugin/request'
 import Button from '../components/Button.vue'
 import Icon from '../components/icon.vue'
 import { play, pause, stop } from '../plugin/audio'
-import { onMounted, ref, nextTick } from 'vue'
+import { onMounted, ref, nextTick, onUnmounted } from 'vue'
+import Loading from '@/plugin/loading'
 
 function getTimeStr(sleep = 0) {
   let time = new Date()
@@ -81,36 +85,113 @@ function getTimeStr(sleep = 0) {
   return year + '-' + month + '-' + day
 }
 
+type SoundItem = {
+  id: number,
+  title: string;
+  difficult?: number;
+  isReaded: boolean;
+  file: {
+    content: Array<{
+      importArticle: string;
+      voice: string;
+    }>;
+    originUrl: string;
+  },
+  content?: string;
+}
+
 const store = useStore();
 const page = ref<number>(1)
 const loading = ref<boolean>(false)
 const hasEnd = ref<boolean>(false)
-const list = ref<Array<any>>([])
+const list = ref<Array<SoundItem>>([])
 const activeListenIndex = ref<number>(-1)
-const activeListen = ref<any>(null)
+const activeListen = ref<SoundItem | null>(null)
 const activeListenIsRecord = ref<boolean>(false)
 const activeIsPlay = ref<boolean>(false)
 const allDaysList = ref();
 const scrollDom = ref();
+const cateActive = ref<cateType>();
+const useTime = ref<number>(0)
 
-onMounted(() => {
+type cateType = 'qa' | 'word' | 'difficult' | 'book' | 'speech'
+
+const cateList = ref<Array<{
+  id: cateType,
+  name: string,
+}>>([
+  {
+    id: 'qa',
+    name: '考试对话',
+  },
+  {
+    id: 'word',
+    name: '听单词',
+  },
+  // {
+  //   id: 'difficult',
+  //   name: '疑难句',
+  // },
+  // {
+  //   id: 'book',
+  //   name: '有声读物',
+  // },
+  // {
+  //   id: 'speech',
+  //   name: '真人演讲',
+  // },
+])
+
+let date: Date = new Date();
+let interval: number = 0;
+onMounted(async () => {
   // this.$logAction('listen');
   store.dispatch('main/setPath', [{ name: '听力通' }])
-  init();
+  init('qa');
+  interval = setInterval(() => {
+    console.log(1)
+    if (activeIsPlay.value) {
+      useTime.value++;
+    }
+  }, 1000)
+  let handle = new sqlClass('enListenTimeRecord')
+  const result = await handle.select('select * from enListenTimeRecord where `date`="' + getTimeStr() + '"')
+  console.log('==========')
+  console.log(result);
+})
+onUnmounted(async () => {
+  stopVue();
+  if (interval) {
+    clearInterval(interval)
+  }
+  if (useTime.value) {
+    let handle = new sqlClass('enListenTimeRecord')
+    const result: any[] = await handle.select('select * from enListenTimeRecord where `date`="' + getTimeStr() + '"') as any[]
+    if (result.length) {
+      handle.run('update enListenTimeRecord set timeSecond=timeSecond+' + useTime.value + ' where `date`="' + getTimeStr() + '"', false)
+    } else {
+      handle.insert({
+        date: getTimeStr(),
+        timeSecond: useTime.value,
+      })
+    }
+  }
 })
 
-async function playItem(item: any, index: number) {
+async function playItem(item: SoundItem, index: number) {
   activeListenIndex.value = index;
   activeListen.value = item;
   activeListenIsRecord.value = await getIsRecord(activeListen.value.id);
 
   activeIsPlay.value = true;
+  console.log('play-')
+  date = new Date()
   play(item.file.originUrl)
 }
 async function getIsRecord(id: number) {
-  const listenRecord = new sqlClass('enListenRecord')
-  // console.log('isReaded---0');
-  const isReaded: any = await listenRecord.select('select * from enListenRecord where id=' + id)
+  const listenRecord = new sqlClass('enListenRecordNew')
+  // console.log('isReaded---0---' + id);
+  const isReaded: any = await listenRecord.select('select * from enListenRecordNew where id=' + id + ' and cate="' + cateActive.value + '"')
   // console.log('isReaded---1', isReaded);
   if (isReaded.length > 0) {
     return true;
@@ -130,7 +211,9 @@ function stopVue() {
 function replay() {
   stop()
   activeIsPlay.value = true;
-  play(activeListen.value.file.originUrl)
+  if (activeListen.value) {
+    play(activeListen.value.file.originUrl)
+  }
 }
 function next() {
   const nextIndex = activeListenIndex.value === list.value.length - 1 ? 0 : activeListenIndex.value + 1
@@ -138,20 +221,53 @@ function next() {
   const next = list.value[nextIndex]
   playItem(next, nextIndex);
 }
-async function init() {
-  if (hasEnd.value || loading.value) {
+async function getListPage() {
+  let result: SoundItem[] = [];
+  if (cateActive.value === 'word') {
+    const resultWord: any[] = await request.get('/en/listen/word?page=' + page.value + '&pageSize=10')
+    console.log(result)
+    result = resultWord.map(item => {
+      return {
+        id: item.id,
+        title: item.word,
+        // difficult: item.count / 100,
+        isReaded: false,
+        file: {
+          content: [{
+            importArticle: item.word,
+            voice: '单词',
+          }, {
+            importArticle: item.exampleSentence,
+            voice: '例句',
+          }],
+          originUrl: item.exampleSentenceUrl,
+        },
+        // content: item.exampleSentence,
+      };
+    })
+  } else {
+    result = await request.get('/en/listen/enListenSource?page=' + page.value + '&pageSize=10')
+  }
+  return result;
+}
+async function init(cateId: cateType) {
+  const handle = Loading()
+  hasEnd.value = false;
+  page.value = 1;
+  cateActive.value = cateId
+  if (loading.value) {
     return;
   }
   loading.value = true;
-  list.value = await request.get('/en/listen/enListenSourceList?page=' + page.value)
+  let result: SoundItem[] = await getListPage()
+  scrollDom.value.scrollTop = 0;
+  list.value = result;
   if (list.value.length === 0) {
     hasEnd.value = true;
   }
   initListRecord();
+  handle.destory();
   loading.value = false;
-  setTimeout(() => {
-
-  })
   nextTick(() => {
     domLoad()
   })
@@ -170,27 +286,30 @@ function domLoad() {
   }
 }
 async function finish() {
-  console.log(activeListen.value.id)
-  let listenRecord = new sqlClass('enListenRecord')
+  let listenRecord = new sqlClass('enListenRecordNew')
+  if (activeListen.value === null) {
+    return
+  }
+
   console.log(getTimeStr())
-  // await listenRecord.insert({
-  //   id: activeListen.value.id,
-  //   date: getTimeStr(),
-  // })
-  // activeListenIsRecord.value = await getIsRecord(activeListen.value.id);
-  // initListRecord()
-
-
-
-
+  await listenRecord.insert({
+    id: activeListen.value.id,
+    cate: cateActive.value,
+    date: getTimeStr(),
+  })
+  activeListenIsRecord.value = await getIsRecord(activeListen.value.id);
+  initListRecord()
   // let option = new sqlClass('option')
-  // let config = await option.select('select * from option where name="perDay"')
+  // let config: any = await option.select('select * from option where name="perDay"')
   // let perDay = parseInt(config[0].val)
 }
 async function notFinish() {
+  if (activeListen.value === null) {
+    return;
+  }
   console.log(activeListen.value.id)
-  const listenRecord = new sqlClass('enListenRecord')
-  const isReaded = await listenRecord.select('delete from enListenRecord where id=' + activeListen.value.id)
+  const listenRecord = new sqlClass('enListenRecordNew')
+  const isReaded = await listenRecord.select('delete from enListenRecordNew where id=' + activeListen.value.id)
   activeListenIsRecord.value = await getIsRecord(activeListen.value.id);
   initListRecord()
 }
@@ -198,18 +317,22 @@ async function scroll() {
   if (hasEnd.value || loading.value) {
     return;
   }
+  return;// 改成了按钮点击，而不是滚动加载
+  console.log(1)
   const scrollDom2 = scrollDom.value;
   scrollDom2.scrollTop
   scrollDom2.clientHeight
   if (scrollDom2.scrollHeight - scrollDom2.scrollTop - scrollDom2.clientHeight < 100) {
     loading.value = true;
     page.value++;
-    const listRes: any[] = await request.get('/en/listen/enListenSourceList?page=' + page.value)
+    const listRes: SoundItem[] = await getListPage()
+    loading.value = false;
     if (listRes.length === 0) {
       hasEnd.value = true;
       return;
     }
     list.value = [...list.value, ...listRes];
+    initListRecord()
     setTimeout(() => {
       loading.value = false;
     }, 1000)
@@ -253,8 +376,8 @@ async function scroll() {
 
   .allDaysList {
     display: flex;
-    overflow-y: auto;
-    flex-direction: row;
+    flex-direction: column;
+    flex-grow: 1;
     // overflow-x: auto;
     // scroll-snap-type: x mandatory;
 
@@ -263,13 +386,16 @@ async function scroll() {
       height: 0;
     }
 
+    .changeButton {
+      margin: 16px;
+    }
+
     .list {
       width: 100%;
-      flex-shrink: 0;
-      // margin: 25px;
+      flex: 1;
+      overflow-y: auto;
       padding: 12px;
       box-sizing: border-box;
-      overflow-y: auto;
       // border: solid 1px black;
       border-radius: 8px;
       // scroll-snap-align: center;
