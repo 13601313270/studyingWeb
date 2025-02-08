@@ -1,4 +1,10 @@
 <template>
+  <div class="header_others">
+    <div class="logButton" @click="showTimeDialog = true">
+      <Icon src="log" width="48" height="48" />
+      <span>连读{{ dayContinuous }}天</span>
+    </div>
+  </div>
   <div class="content">
     <div class="cate">
       <div v-for="item in cateList">
@@ -6,11 +12,14 @@
         </div>
       </div>
     </div>
-    <!-- <div class="title">每日5段</div> -->
     <div ref="allDaysList" class="allDaysList">
-      <Button v-if="cateActive" class="changeButton" text="换一组" @click="init(cateActive)"></Button>
-      <Calendar :chooseList="chooseList" />
-      <!-- <div>!!{{ useTime }}!!</div> -->
+      <div>
+        <Button v-if="cateActive" class="changeButton" text="换一组" @click="init(cateActive)"></Button>
+      </div>
+
+      <Dialog :show="showTimeDialog" title="听力时常记录" @close="showTimeDialog = false">
+        <Calendar :chooseList="chooseList" />
+      </Dialog>
       <div class="list" @scroll="scroll" ref="scrollDom">
         <div v-for="(item, index) in list" class="item"
           :class="{ active: activeListen && activeListen.id === item.id }">
@@ -68,9 +77,10 @@ import request from '../plugin/request'
 import Button from '../components/Button.vue'
 import Icon from '../components/icon.vue'
 import { play, pause, stop } from '../plugin/audio'
-import { onMounted, ref, nextTick, onUnmounted } from 'vue'
+import { onMounted, ref, nextTick, onUnmounted, computed } from 'vue'
 import Loading from '@/plugin/loading'
 import Calendar from '../components/Calendar/index.vue'
+import Dialog from '@/components/Dialog.vue'
 
 function getTimeStr(sleep = 0) {
   let time = new Date()
@@ -115,7 +125,11 @@ const allDaysList = ref();
 const scrollDom = ref();
 const cateActive = ref<cateType>();
 const useTime = ref<number>(0)
-const chooseList = ref<string[]>([])
+const chooseList = ref<Array<{
+  date: string,
+  timeSecond: number,
+}>>([])
+const showTimeDialog = ref<boolean>(false)
 
 type cateType = 'qa' | 'word' | 'difficult' | 'book' | 'speech'
 
@@ -159,9 +173,9 @@ onMounted(async () => {
   }, 1000)
   let handle = new sqlClass('enListenTimeRecord')
   const result: any[] = await handle.select('select * from enListenTimeRecord') as any[]
-  console.log('==========')
-  console.log(result.map(v => v.date));
-  chooseList.value = result.map(v => v.date);
+  // console.log('==========')
+  // console.log(result.map(v => v));
+  chooseList.value = result;
 })
 onUnmounted(async () => {
   stopVue();
@@ -343,9 +357,46 @@ async function scroll() {
   }
   // console.log(scrollDom2.scrollHeight - scrollDom2.scrollTop - scrollDom2.clientHeight)
 }
+const dayContinuous = computed(() => {
+  const allDate = chooseList.value.map(v => v.date);
+  let dayCount = 0;
+  for (let i = 1; i < 10; i++) {
+    const dayStrItem = getTimeStr(i * -1);
+    if (allDate.includes(dayStrItem)) {
+      dayCount++
+    } else {
+      break;
+    }
+  }
+  // 算上今天
+  if (allDate.includes(getTimeStr())) {
+    dayCount++
+  }
+  return dayCount;
+})
 </script>
 
 <style scoped lang="less">
+.header_others {
+  margin-right: 8px;
+  height: 88px;
+  top: env(safe-area-inset-top);
+  display: flex;
+  align-items: center;
+  position: fixed;
+  right: 0;
+
+  .logButton {
+    height: 56px;
+    border: solid 1px white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    color: white;
+    padding: 4px 8px;
+  }
+}
+
 .content {
   height: 100%;
   width: 750px;
