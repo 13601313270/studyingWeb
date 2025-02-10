@@ -20,9 +20,9 @@ export default {
 
 <style scoped lang="less">
 .switch {
-  width: 64px;
-  height: 32px;
-  border-radius: 16px;
+  width: 128px;
+  height: 64px;
+  border-radius: 32px;
   background-color: #b1adad;
 
   &Open {
@@ -31,16 +31,16 @@ export default {
 }
 
 .switchInner {
-  width: 28px;
-  height: 28px;
-  margin-top: 2px;
+  width: 56px;
+  height: 56px;
+  margin-top: 4px;
 
-  margin-left: 2px;
+  margin-left: 4px;
   background-color: white;
-  border-radius: 14px;
+  border-radius: 28px;
 
   &Open {
-    margin-left: 33px;
+    margin-left: 68px;
   }
 }
 </style>
