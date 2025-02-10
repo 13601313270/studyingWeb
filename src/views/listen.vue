@@ -22,7 +22,7 @@
         <div class="setHourTitle">设置每日提醒时间</div>
         <div class="setHourContent">
           <Switch :value="listenHourIsOpen" @input="SwitchListennotification" />
-          <div v-if="listenHourIsOpen" @click="daySelectShow = true">{{ listenHour === null ? '未设置' :
+          <div class="hourText" v-if="listenHourIsOpen" @click="daySelectShow = true">{{ listenHour === null ? '未设置' :
             HourToStr(listenHour)
             }}</div>
           <Select :show="daySelectShow" title="选择提醒时间" @close="daySelectShow = false" :list="dayHourList"
@@ -671,5 +671,9 @@ const dayContinuous = computed(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+
+  .hourText {
+    margin-left: 16px;
+  }
 }
 </style>
