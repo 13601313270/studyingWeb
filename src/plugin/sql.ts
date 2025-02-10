@@ -100,7 +100,7 @@ let sqlConfig: {
       notNull: true
     }
   ],
-  // 听力时常记录
+  // 听力时长记录
   enListenTimeRecord: [
     {
       name: 'id',

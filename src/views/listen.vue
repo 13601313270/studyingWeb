@@ -16,7 +16,7 @@
       <div>
         <Button v-if="cateActive" class="changeButton" text="换一组" @click="init(cateActive)"></Button>
       </div>
-      <Dialog :show="showTimeDialog" title="听力时常记录" @close="showTimeDialog = false">
+      <Dialog :show="showTimeDialog" title="听力时长记录" @close="showTimeDialog = false">
         <Calendar :chooseList="chooseList" />
         <div class="splitLine"></div>
         <div class="setHourTitle">设置每日提醒时间</div>
