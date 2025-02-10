@@ -16,9 +16,19 @@
       <div>
         <Button v-if="cateActive" class="changeButton" text="换一组" @click="init(cateActive)"></Button>
       </div>
-
       <Dialog :show="showTimeDialog" title="听力时常记录" @close="showTimeDialog = false">
         <Calendar :chooseList="chooseList" />
+        <div class="splitLine"></div>
+        <div class="setHourTitle">设置每日提醒时间</div>
+        <div class="setHourContent">
+          <Switch :value="listenHourIsOpen" @input="SwitchListennotification" />
+          <div v-if="listenHourIsOpen" @click="daySelectShow = true">{{ listenHour === null ? '未设置' :
+            HourToStr(listenHour)
+            }}</div>
+          <Select :show="daySelectShow" title="选择提醒时间" @close="daySelectShow = false" :list="dayHourList"
+            @select="Listennotification">
+          </Select>
+        </div>
       </Dialog>
       <div class="list" @scroll="scroll" ref="scrollDom">
         <div v-for="(item, index) in list" class="item"
@@ -76,11 +86,14 @@ import { useStore } from 'vuex'
 import request from '../plugin/request'
 import Button from '../components/Button.vue'
 import Icon from '../components/icon.vue'
+import { notification, removeNotification } from "../plugin/notification"
 import { play, pause, stop } from '../plugin/audio'
 import { onMounted, ref, nextTick, onUnmounted, computed } from 'vue'
 import Loading from '@/plugin/loading'
 import Calendar from '../components/Calendar/index.vue'
 import Dialog from '@/components/Dialog.vue'
+import Switch from '@/components/switch.vue'
+import Select from '@/components/Select.vue'
 
 function getTimeStr(sleep = 0) {
   let time = new Date()
@@ -130,6 +143,20 @@ const chooseList = ref<Array<{
   timeSecond: number,
 }>>([])
 const showTimeDialog = ref<boolean>(false)
+const daySelectShow = ref<boolean>(false)
+type HourInfoItem = {
+  key: number,
+  title: string
+}
+function HourToStr(hour: number) {
+  return hour > 12 ? "下午" + (hour - 12).toString() : "上午" + hour.toString()
+}
+const dayHourList = ref<Array<HourInfoItem>>(Array(24).fill(null).map((v, i) => {
+  return {
+    key: i,
+    title: HourToStr(i)
+  }
+}))
 
 type cateType = 'qa' | 'word' | 'difficult' | 'book' | 'speech'
 
@@ -158,6 +185,11 @@ const cateList = ref<Array<{
   //   name: '真人演讲',
   // },
 ])
+const listenHourIsOpen = ref<boolean>(!!localStorage.getItem('listenHour'))
+const listenHour = ref<number | null>((() => {
+  const hour = localStorage.getItem('listenHour');
+  return hour === null ? hour : parseInt(hour)
+})())
 
 let date: Date = new Date();
 let interval: number = 0;
@@ -238,6 +270,25 @@ function next() {
   stopVue();
   const next = list.value[nextIndex]
   playItem(next, nextIndex);
+}
+function SwitchListennotification(val: boolean) {
+  listenHourIsOpen.value = val;
+  if (val === false) {
+    localStorage.removeItem('listenHour')
+    // alert('关闭')
+    listenHour.value = null;
+    removeNotification()
+  }
+}
+function Listennotification(type: HourInfoItem) {
+  listenHour.value = type.key;
+  daySelectShow.value = false;
+  localStorage.setItem('listenHour', type.key.toString())
+  notification('听力通知', '坚持每天听力，能够快速提升听力水平', type.key, 0, 0).then(() => {
+    alert('添加提醒成功')
+  }).catch(() => {
+    alert('添加提醒失败，请检查权限设置')
+  })
 }
 async function getListPage() {
   let result: SoundItem[] = [];
@@ -433,9 +484,9 @@ const dayContinuous = computed(() => {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+
     // overflow-x: auto;
     // scroll-snap-type: x mandatory;
-
     /* 隐藏水平滚动条 */
     &::-webkit-scrollbar {
       height: 0;
@@ -601,5 +652,24 @@ const dayContinuous = computed(() => {
   padding: 8px;
   border-radius: 4px;
   margin-left: 32px;
+}
+
+.splitLine {
+  width: 100%;
+  height: 1px;
+  background-color: #c8c8c8;
+}
+
+.setHourTitle {
+  font-size: 32px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.setHourContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

@@ -63,6 +63,10 @@
         <div>账户信息</div>
         <icon class="right" src="right_black" />
       </div>
+      <div class="actionItem" @click="testNotification">
+        <div>测试通知</div>
+        <icon class="right" src="right_black" />
+      </div>
     </div>
     <div class="actions" v-if="userInfo && userInfo.account">
       <div class="actionItem" @click="showLogout = true">
@@ -109,6 +113,7 @@ import Button from '../components/Button.vue'
 import Dialog from '../components/Dialog.vue'
 import request from '@/plugin/request'
 import share from '@/plugin/share'
+import notification from "../plugin/notification"
 import { showImg } from '../plugin/imagePreview'
 
 // var modal = weex.requireModule('modal');
@@ -201,6 +206,9 @@ export default {
     showImgDetail(img) {
       showImg(img)
     },
+    testNotification() {
+      notification('mine页面', '通知喽', 23, 20, 20);
+    }
   },
   components: { pic, Button, Dialog },
   watch: {
