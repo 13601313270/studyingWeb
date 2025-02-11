@@ -10,13 +10,13 @@
       <!--<text style="color: #ff736b">{{wrong}}</text>-->
       <div class="form" :model="ruleForm" :rules="rules">
         <div class="el-form-item" label="账号" prop="username">
-          <text style="color:rgb(0,40,31);">手机号</text>
+          <text class="text" style="color:rgb(0,40,31);">手机号</text>
           <div class="loginInput">
             <input v-model="ruleForm.username" />
           </div>
         </div>
         <div class="el-form-item" label="密码" prop="password" style="margin-top: 20px">
-          <text style="color:rgb(0,40,31);">验证码</text>
+          <text class="text" style="color:rgb(0,40,31);">验证码</text>
           <div style="display: flex;">
             <div class="loginInput passport">
               <input v-model="ruleForm.password" />
@@ -61,7 +61,7 @@
     </div>
     <div class="checkContent">
       <Check :value="isSelectRule" @check="wxcCheckBoxItemChecked" />
-      <div>
+      <div class="desc">
         我已同意<span class="agree" @click="showAgreement">《服务协议》</span>与<span class="agree"
           @click="showAgreement">《隐私条款》</span>
       </div>
@@ -73,7 +73,7 @@
     </div>
     <div style="height: 200px;"></div>
     <Popup :title="agreementInfo.title" :show="showRuleContent" :zIndex="1000" @close="showRuleContent = false">
-      <div style="height: 100%;overflow:auto;font-size: 14px;">
+      <div class="agreementInfoPopUp">
         <div>{{ agreementInfo.content }}</div>
       </div>
     </Popup>
@@ -417,6 +417,10 @@ export default {
   .agree {
     color: #24248f;
   }
+
+  .desc {
+    font-size: 32px;
+  }
 }
 
 .instead_button {
@@ -527,6 +531,7 @@ export default {
 
     .text {
       color: rgb(0, 40, 31);
+      font-size: 32px;
       margin-bottom: 12px;
     }
 
@@ -574,5 +579,12 @@ export default {
       font-size: 24px;
     }
   }
+}
+
+.agreementInfoPopUp {
+  height: 100%;
+  overflow: auto;
+  font-size: 32px;
+  padding: 16px;
 }
 </style>
