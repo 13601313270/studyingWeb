@@ -214,6 +214,7 @@ function onClick(e) {
     display: flex;
     justify-content: space-around;
     padding: 16px 8px;
+    font-size: 32px;
     align-items: center;
   
     .iconBgc {
@@ -253,6 +254,7 @@ function onClick(e) {
   
       &.today {
         border: solid 1px black;
+        border-radius: 4px;
         // &::after {
         //   position: absolute;
         //   bottom: 2px;

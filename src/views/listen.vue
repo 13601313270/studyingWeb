@@ -444,6 +444,7 @@ const dayContinuous = computed(() => {
     align-items: center;
     color: white;
     padding: 4px 8px;
+    font-size: 28px;
   }
 }
 
@@ -465,6 +466,7 @@ const dayContinuous = computed(() => {
       height: 88px;
       line-height: 88px;
       text-align: center;
+      font-size: 32px;
 
       &.active {
         background-color: white;
@@ -554,6 +556,7 @@ const dayContinuous = computed(() => {
 
     .info {
       flex-grow: 1;
+      font-size: 28px;
     }
 
     .play {
