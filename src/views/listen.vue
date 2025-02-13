@@ -280,13 +280,11 @@ function SwitchListennotification(val: boolean) {
   }
 }
 function Listennotification(type: HourInfoItem) {
-  listenHour.value = type.key;
-  daySelectShow.value = false;
-  localStorage.setItem('listenHour', type.key.toString())
   notification('听力通知', '坚持每天听力，能够快速提升听力水平', type.key, 0, 0).then(() => {
+    listenHour.value = type.key;
+    daySelectShow.value = false;
+    localStorage.setItem('listenHour', type.key.toString())
     alert('添加提醒成功')
-  }).catch(() => {
-    alert('添加提醒失败，请检查权限设置')
   })
 }
 async function getListPage() {

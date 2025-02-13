@@ -1,7 +1,21 @@
+import androidBridge from "./androidBridge";
+
 export function notification(title: string, body: string, hour: number, minute: number, second: number) {
   return new Promise<void>((resolve, reject) => {
     if (navigator.userAgent.includes('studying1v1Android')) {
-
+      androidBridge('Notification', 'sent', {
+        title,
+        body,
+        hour,
+        minute,
+        second,
+      }).then((res) => {
+        if (res.result) {
+          resolve()
+        } else {
+          reject()
+        }
+      })
     } else if (navigator.userAgent.includes('windvane')) {
 
       // @ts-ignore
@@ -18,6 +32,7 @@ export function notification(title: string, body: string, hour: number, minute: 
         if (res) {
           resolve();
         } else {
+          alert('添加提醒失败，请检查权限设置')
           reject()
         }
       })
