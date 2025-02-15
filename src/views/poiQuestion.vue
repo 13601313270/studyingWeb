@@ -91,22 +91,22 @@
               </div>
             </div>
           </div>
-          <div>
+          <div class="answer">
             <text class="item_list_check_item_title">正确答案:</text>
             <text class="item_list_check_item_answer" v-if="lookQuestion.list && lookQuestion.list.length">
               {{ lookQuestion.list.map(v => v.answer).join('') }}
             </text>
             <text class="item_list_check_item_answer" v-else>{{ lookQuestion.answer }}</text>
           </div>
-          <text v-if="lookQuestion.childPoi.length > 0" class="item_list_check_item_title">题型:</text>
-          <div v-if="lookQuestion.childPoi.length > 0" class="item_list_check_item_poiTypeList">
-            <childPoiButton v-for="childPoi in lookQuestion.childPoi" :child-poi="childPoi"
-              style="margin-right: 10px;margin-bottom: 10px" />
+          <div v-if="lookQuestion.childPoi.length > 0" class="poiTypeList">
+            <text v-if="lookQuestion.childPoi.length > 0" class="title">题型:</text>
+            <childPoiButton v-for="childPoi in lookQuestion.childPoi" :child-poi="childPoi" class="item" />
           </div>
-          <text class="item_list_check_item_title">解答:</text>
-          <div v-if="isCheck" style="padding: 20px;">
+          <div class="answerNav">
+            <text class="item_list_check_item_title">解答:</text>
+          </div>
+          <div v-if="isCheck" class="answerContent">
             <div v-if="lookQuestion.list && lookQuestion.list.length">
-
               <div v-for="qaItem in lookQuestion.list">
                 <div v-if="qaItem.explanation && qaItem.explanation.match(/https?:\/\//)">
                   <div @click="showImgDetail(qaItem.explanation)">
@@ -115,7 +115,7 @@
                   </div>
                 </div>
                 <div v-else>
-                  <div v-html="qaItem.explanation" style="padding: 10px;"></div>
+                  <div v-html="qaItem.explanation"></div>
                 </div>
               </div>
             </div>
@@ -126,9 +126,25 @@
               </div>
             </div>
             <div v-else>
-              <div v-html="lookQuestion.explanation" style="padding: 10px;"></div>
+              <div v-html="lookQuestion.explanation"></div>
             </div>
           </div>
+          <div class="questionAIAnswer">
+            <div class="teacherContent">
+              <img class="icon" src="../icons/teacher1.png" />
+              <div>
+                <div class="name">AI李老师</div>
+                <div class="desc">AI生成内容仅供参考，一切以学校教学为准</div>
+              </div>
+            </div>
+            <div v-if="questionAIAnswer[lookQaIndex] !== undefined" class="answer">
+              {{ questionAIAnswer[lookQaIndex] || '思考中...' }}
+            </div>
+            <div v-else class="askAi">
+              <Button @click="askAi(lookQuestion.id)" text="依旧不懂?试着问问AI" />
+            </div>
+          </div>
+
           <div class="shareBottom">
             <Button @click="share(lookQuestion.id)" icon="share" text="点击分享此题目，看看朋友们会不会？" />
           </div>
@@ -154,6 +170,7 @@
 
 <script>
 import { mapActions } from 'vuex';
+import calcNumber from 'calc-number'
 import childPoiButton from "../components/childPoiButton.vue";
 import pic from '../components/icon';
 import Button from "@/components/Button";
@@ -181,7 +198,8 @@ export default {
       imgsSize: {},
       floatImg: '',
       lookQaIndex: 0,
-      iOS: navigator.userAgent.includes('iPhone')
+      iOS: navigator.userAgent.includes('iPhone'),
+      questionAIAnswer: {},
     }
   },
   computed: {
@@ -345,6 +363,47 @@ export default {
         borderColor: isAllRight ? 'rgb(43,106,42)' : 'rgb(237,36,21)',
         color: isAllRight ? 'rgb(23,56,22)' : 'rgb(164,63,26)'
       }
+    },
+    askAi() {
+      let self = this;
+      let usage = {};
+      const questionInfo = this.question[this.lookQaIndex];
+      const eventSource = new EventSource('https://api.studying1v1.com/question/aiExplanation/' + questionInfo['id']);
+      this.questionAIAnswer[this.lookQaIndex] = '';
+      eventSource.onopen = function () {
+        self.questionAIAnswer[self.lookQaIndex] = '';
+        console.log('连接已打开');
+      };
+
+      eventSource.onmessage = function (event) {
+        const jsonStr = event.data.replace(/^data:\s/, '');
+        const json = JSON.parse(jsonStr)
+        usage = json.usage;
+        self.questionAIAnswer[self.lookQaIndex] += json.result;
+      };
+
+      // eventSource.onerror = function (event) {
+      //   console.error('发生错误:', event);
+      // };
+      eventSource.addEventListener('error', (event) => {
+        if (event.eventPhase === EventSource.CLOSED) {
+          console.log(usage);
+
+
+          console.log('Connection was closed.');
+          eventSource.close()
+          // 计算消费价格
+          const allPrice = usage.prompt_tokens * 0.0008 + usage.completion_tokens * 0.002;
+          console.log('allPrice', allPrice / 1000);
+
+          const runStr = `(${usage.prompt_tokens} * ${0.0008} + ${usage.completion_tokens} * ${0.002})/1000`;
+          console.log('费用：' + calcNumber(runStr))
+
+          // self.questionAIAnswer[self.lookQaIndex] = charGPTStr;
+        } else {
+          console.error('An error occurred:', event);
+        }
+      });
     }
   },
   components: { Button, childPoiButton, pic }
@@ -486,6 +545,46 @@ export default {
     overflow: scroll;
   }
 
+  .answer {
+    margin-top: 16px;
+  }
+
+  .poiTypeList {
+    padding-left: 10px;
+    padding-right: 32px;
+    margin-top: 32px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+
+    .title {
+      font-size: 36px;
+      margin-bottom: 10px;
+      margin-right: 16px;
+    }
+
+    .item {
+      margin-right: 10px;
+      margin-bottom: 10px
+    }
+  }
+
+  .answerNav {
+    display: flex;
+    margin-top: 16px;
+  }
+
+  .answerContent {
+    padding: 0 30px;
+
+    :deep(p) {
+      margin: 0;
+      font-size: 32px;
+      line-height: 40px;
+    }
+  }
+
   &_item {
     width: 690px;
     margin-left: 32px;
@@ -517,16 +616,6 @@ export default {
     &_answer {
       margin-left: 32px;
       font-size: 36px;
-    }
-
-    &_poiTypeList {
-      padding-top: 12px;
-      padding-left: 32px;
-      padding-right: 32px;
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      align-items: center
     }
   }
 
@@ -580,6 +669,7 @@ export default {
 
 .shareBottom {
   padding: 30px;
+  margin-top: 66px;
   margin-bottom: 130px;
 
   .button {
@@ -750,6 +840,46 @@ export default {
     .count {
       font-size: 24px;
     }
+  }
+}
+
+.askAi {
+  padding: 30px;
+}
+
+.questionAIAnswer {
+  margin: 30px;
+  border: solid 1px #333;
+  border-radius: 16px;
+  padding: 16px;
+
+  .teacherContent {
+    display: flex;
+    align-items: center;
+
+    .icon {
+      width: 100px;
+      height: 100px;
+      border-radius: 16px;
+    }
+
+    .name {
+      font-size: 52px;
+      color: #333;
+      margin-left: 16px;
+    }
+
+    .desc {
+      font-size: 28px;
+      color: #aaa;
+      margin-left: 16px;
+    }
+
+  }
+
+  .answer {
+    margin-top: 16px;
+    font-size: 32px;
   }
 }
 </style>

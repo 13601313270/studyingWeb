@@ -191,14 +191,16 @@
                 console.log('----3----')
                 this.textIndex = this.playIndex;
                 if (this.list[this.playIndex] && this.list[this.playIndex].after !== undefined) {
-                    for (let i = 0; i < this.list[this.playIndex].after.length; i++) {
-                        let item = this.list[this.playIndex].after[i];
-                        if (item.type === 'say') {
-                            await play(item.value);
-                        } else if (item.type === 'img') {
-                            this.loadImg.push(item.value);
-                        } else if (item.type === 'imgClear') {
-                            this.loadImg.splice(this.loadImg.length - item.value);
+                    if(this.list[this.playIndex].after) {
+                        for (let i = 0; i < this.list[this.playIndex].after.length; i++) {
+                            let item = this.list[this.playIndex].after[i];
+                            if (item.type === 'say') {
+                                await play(item.value);
+                            } else if (item.type === 'img') {
+                                this.loadImg.push(item.value);
+                            } else if (item.type === 'imgClear') {
+                                this.loadImg.splice(this.loadImg.length - item.value);
+                            }
                         }
                     }
                 }

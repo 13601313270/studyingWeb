@@ -63,10 +63,10 @@
         <div>账户信息</div>
         <icon class="right" src="right_black" />
       </div>
-      <div class="actionItem" @click="testNotification">
+      <!-- <div class="actionItem" @click="testNotification">
         <div>测试通知</div>
         <icon class="right" src="right_black" />
-      </div>
+      </div> -->
     </div>
     <div class="actions" v-if="userInfo && userInfo.account">
       <div class="actionItem" @click="showLogout = true">
