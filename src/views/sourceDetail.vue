@@ -5,32 +5,21 @@
         <div v-for="item in list" :key="item.id" class="lesson_item">
           <text class="lesson_item_title">{{ item.title }}</text>
 
-          <div class="user_to_poi_list">
-            <div v-for="(poi, key) in item.poi" :key="poi.id">
-              <text class="user_to_poi_item">{{ key + 1 }}、{{ poi.name }}</text>
-            </div>
-          </div>
-          <div v-if="item.hasChildPoiVideo">
-            <div class="video_list">
-              <div class="title">课 程</div>
-              <div class="list">
-                <Button v-if="item.hasChildPoiVideo" text="知识点预习" icon="video"
-                  @click="lesson(item, item.newContent, true)" />
-                <Button v-if="item.hasChildPoiVideo" text="题型讲解" icon="video" @click="lessonAllChildPoiVideo(item)" />
+          <div class="video_list">
+            <div class="title">课 程</div>
+            <div class="list">
+              <div v-for="(poi, key) in item.poi" :key="poi.id" class="item">
+                <text class="user_to_poi_item">{{ key + 1 }}、{{ poi.name }}</text>
+                <Button class="playButton" text="播放" icon="video" :disabled="!poi.hasVideo"
+                  @click="lesson(poi)" />
               </div>
             </div>
-            <div class="action_links">
-              <Button text="题   库" icon="question" @click="gotoQuestion(item)" />
-              <Button v-if="item.lessonKnowledgeExist" text="知识点" icon="light" @click="gotoKnowledge(item)" />
-            </div>
           </div>
-          <div class="action_links" v-else>
-            <Button text="课   程" icon="video" :disabled="!item.hasContent" @click="lesson(item, item.newContent)" />
+          <div class="action_links">
             <Button text="题   库" icon="question" @click="gotoQuestion(item)" />
             <Button v-if="item.lessonKnowledgeExist" text="知识点" icon="light" @click="gotoKnowledge(item)" />
             <!--<wxc-button class="action_link" text="掌握统计" @wxcButtonClicked="$set(item,'isShow',!item.isShow)" type="white"/>-->
           </div>
-
           <div v-if="item.isShow" class="data_list">
             <div class="data_list_tip"></div>
             <div class="data_list_tip2"></div>
@@ -94,7 +83,7 @@ export default {
         this.info = data;
         this.setPath([{ name: this.info.name }]);
       });
-      request.get('/source/' + this.$route.params.id + '/lessonsV2').then(data => {
+      request.get('/source/' + this.$route.params.id + '/lessonsV3').then(data => {
         this.list = data;
       });
       // request.get('/source/' + this.$route.params.id + '/poi').then(data => {
@@ -113,23 +102,20 @@ export default {
           this.score = data;
         }
       });
-
     },
-    lesson(item, newContent, turn) {
-      if (!item.hasContent) {
+    lesson(item) {
+      
+      if (!item.hasVideo) {
         // alert('维护中')
         return;
       }
-      if (item.hasChildPoiVideo && !turn) {
-        alert(this.moreVideoIsOpen[item.id + ''])
-        this.moreVideoIsOpen[item.id + ''] = true;//!this.moreVideoIsOpen[item.id+''];
-      } else {
-        if (newContent) {
-          this.$router.push('/lessonNew/' + item.id);
-        } else {
-          this.$router.push('/lesson/' + item.id);
-        }
-      }
+      console.log('item,item', item)
+      this.$router.push('/poiLesson/' + item.id);
+      // if (item.hasVideo) {
+      //   alert(this.moreVideoIsOpen[item.id + ''])
+      //   this.moreVideoIsOpen[item.id + ''] = true;//!this.moreVideoIsOpen[item.id+''];
+      // } else {
+      // }
     },
     lessonAllChildPoiVideo(item) {
       this.$router.push('/lessonAllChildPoiVideo/' + item.id);
@@ -290,8 +276,7 @@ export default {
 .video_list {
   margin-top: 15px;
   margin-bottom: 15px;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding: 20px;
   border-radius: 10px;
   background-color: rgba(74, 121, 108, 0.2);
 
@@ -302,9 +287,22 @@ export default {
   }
 
   .list {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
+    .item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 40px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    .user_to_poi_list {}
+
+    .playButton {
+      flex-shrink: 0;
+    }
   }
 }
 
@@ -425,6 +423,7 @@ export default {
       .user_to_poi_list {
         margin-top: 12px;
         margin-left: 12px;
+        margin-right: 12px;
         flex-grow: 1;
 
         .user_to_poi_item {

@@ -188,7 +188,7 @@ export default {
       const rootPages = ['source', 'file', 'friend', 'mall', 'mine']
       let sort = [
         ...rootPages,
-        'sourceDetail', 'lessonDetail', 'word', 'listen', 'lessonDetailNew', 'lessonAllChildPoiVideo', 'lessonQuestionList', 'lessonKnowledgeList', 'poiQuestion', 'lessonLog',
+        'sourceDetail', 'lessonDetail', 'word', 'listen', 'lessonDetailNew', 'poiLessonDetail', 'lessonAllChildPoiVideo', 'lessonQuestionList', 'lessonKnowledgeList', 'poiQuestion', 'lessonLog',
         'addQuestion', 'informationDetail', 'dailyQuestion', 'zhidaoDetail', 'lessonKnowledgeDetail',
         'aboutUs', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo'
       ];
@@ -294,7 +294,7 @@ export default {
       return this.$store.getters['main/path']
     },
     tabType() {
-      if (['source', 'sourceDetail', 'lessonDetail', 'lessonDetailNew', 'lessonQuestionList', 'poiQuestion', 'lessonKnowledgeList', 'lessonKnowledgeDetail', 'lessonAllChildPoiVideo', 'listen', 'word'].includes(this.$route.name)) {
+      if (['source', 'sourceDetail', 'lessonDetail', 'lessonDetailNew', 'poiLessonDetail', 'lessonQuestionList', 'poiQuestion', 'lessonKnowledgeList', 'lessonKnowledgeDetail', 'lessonAllChildPoiVideo', 'listen', 'word'].includes(this.$route.name)) {
         return 'source';
       } else if (['file'].includes(this.$route.name)) {
         return 'file';

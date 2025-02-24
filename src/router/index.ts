@@ -5,6 +5,7 @@ import welcome from '../views/welcome.vue'
 import source from '../views/source.vue'
 import sourceDetail from '../views/sourceDetail.vue'
 import lessonDetail from '../views/lessonDetail.vue'
+import poiLessonDetail from '../views/poiLessonDetail.vue'
 import lessonDetailNew from '../views/lessonDetailNew.vue';
 import lessonAllChildPoiVideo from '../views/lessonAllChildPoiVideo.vue';
 import lessonQuestionList from '../views/lessonQuestionList.vue';
@@ -50,6 +51,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/lesson/:id',
     name: 'lessonDetail',
     component: lessonDetail,
+  },
+  {
+    path: '/poiLesson/:id',
+    name: 'poiLessonDetail',
+    component: poiLessonDetail,
   },
   {
     path: '/lessonNew/:id',
