@@ -158,7 +158,12 @@ async function playStepOfIndex() {
     for (let i = 0; i < list.value[playIndex.value].before.length; i++) {
       let item = list.value[playIndex.value].before[i];
       if (item.type === 'say') {
-        await play(item.value);
+        try {
+          await play(item.value);
+        } catch (e) {
+          debugger
+          return;
+        }
       } else if (item.type === 'img') {
         loadImg.value.push(item.value);
       } else if (item.type === 'imgClear') {
@@ -173,7 +178,12 @@ async function playStepOfIndex() {
       for (let i = 0; i < list.value[playIndex.value].after.length; i++) {
         let item = list.value[playIndex.value].after[i];
         if (item.type === 'say') {
-          await play(item.value);
+          try {
+            await play(item.value);
+          } catch (e) {
+            debugger
+            return;
+          }
         } else if (item.type === 'img') {
           loadImg.value.push(item.value);
         } else if (item.type === 'imgClear') {
