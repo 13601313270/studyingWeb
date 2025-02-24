@@ -117,7 +117,7 @@ onMounted(() => {
   loadImg.value = [];
 })
 
-async function playStep() {
+async function playStepOfIndex() {
   console.log('----1----', list.value)
   if (playIndex.value >= list.value.length) {
     emit('end')
@@ -182,13 +182,14 @@ async function playStep() {
       }
     }
   }
+  console.log('==========index==========')
   playIndex.value++;
-  playStep();
+  playStepOfIndex();
 }
 function playVideo() {
   isPlaying.value = true;
   isPlayed.value = true;
-  playStep()
+  playStepOfIndex()
 }
 async function firstPlay() {
   emit('firstPlay')
