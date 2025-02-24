@@ -7,7 +7,7 @@
           <div :key="subject.id" v-for="subject in selectSourceList" @click="changeSubject(subject.id)"
             class="subjects_item">
             <text :key="subject.id" :class="[selectSub === subject.id ? 'subjects_item_select' : '']">{{ subject.name
-            }}</text>
+              }}</text>
           </div>
         </div>
         <div key="end" class="subjects_item_bottomBorder" ref="subjectBorder"
@@ -49,7 +49,7 @@
         </div>
       </div>
       <div class="loading" v-else>
-        <div style="font-size:32px;">加载中...</div>
+        <div>加载中...</div>
       </div>
     </scroller>
   </div>
@@ -131,7 +131,15 @@ export default {
     async refresh() {
       this.loading = true;
       try {
-        this.list = await request.get('/subjectSourceV2/' + this.selectSub);
+        const res = await Promise.all([
+          request.get('/subjectSourceV2/' + this.selectSub),
+          new Promise(resolve => {
+            setTimeout(() => {
+              resolve()
+            }, 300)// 因为接口太快的话，loading时间太短，loading状态闪现而过。所以方案是，即使接口很快，也等待0.3秒，用户体验更顺滑一些。
+          })
+        ]);
+        this.list = res[0]
         this.loading = false;
       } catch (e) {
         this.loadError = true;
@@ -285,6 +293,11 @@ export default {
   overflow: auto;
   width: 100%;
   background-color: rgba(0, 0, 0, 0.06);
+
+  .loading {
+    font-size: 44px;
+    color: #999;
+  }
 }
 
 .source_list {
