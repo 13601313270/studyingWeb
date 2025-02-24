@@ -1,7 +1,6 @@
 <template>
-  <!-- {{ userInfo }} -->
-  <div class="content" v-if="content">
-    <VideoLesson :content="content" @firstPlay="firstPlay" @playStep="playStep" @end="end"
+  <div class="content">
+    <VideoLesson v-if="content" :content="content" @firstPlay="firstPlay" @playStep="playStep" @end="end"
       :actions="[{ text: '去做题', action: gotoQuestion }]" />
   </div>
 </template>
@@ -13,6 +12,7 @@ import VideoLesson from "../components/video.vue";
 import request from '@/plugin/request'
 import { stop } from '../plugin/audio'
 import { Store } from '@/store';
+import Loading from '@/plugin/loading';
 
 const router = useRouter()
 const route = useRoute()
@@ -26,8 +26,9 @@ const recordId = ref<any>(null)
 const isEnd = ref<boolean>(false)
 
 onMounted(() => {
-  let self = this;
+  const handle = Loading()
   request.get('/lesson/' + route.params.id + '/detail').then((data: any) => {
+    handle.destory()
     content.value = data.content;
     title.value = data.title;
     course.value = data.course;
@@ -71,15 +72,6 @@ function back() {
 onBeforeRouteLeave(() => {
   stop();
 })
-
-const a = {
-  methods: {
-    ...mapActions('main', ['setPath']),
-  },
-  computed: {
-    ...mapGetters('main', ['userInfo'])
-  },
-}
 </script>
 
 <style scoped lang="less">
@@ -89,7 +81,7 @@ const a = {
   flex-direction: column;
   align-items: stretch;
   justify-content: space-between;
-  background-color: #39723a;
+  background-color: #39723a !important;
   height: 100%;
   box-sizing: border-box;
 

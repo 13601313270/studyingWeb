@@ -25,7 +25,7 @@ const Loading = (options?: IProps): ResultParams => {
       window.aaa = container;
       document.body.removeChild(container)
       clearTimeout(t)
-    }, 500);
+    }, 300);
   }
   return {
     destory
