@@ -7,7 +7,7 @@
           <div :key="subject.id" v-for="subject in selectSourceList" @click="changeSubject(subject.id)"
             class="subjects_item">
             <text :key="subject.id" :class="[selectSub === subject.id ? 'subjects_item_select' : '']">{{ subject.name
-              }}</text>
+            }}</text>
           </div>
         </div>
         <div key="end" class="subjects_item_bottomBorder" ref="subjectBorder"
@@ -37,7 +37,11 @@
       </div>
     </scroller>
     <scroller class="list" v-else>
-      <div class="source_list" v-if="!loading">
+      <div class="source_list error" v-if="!loading && loadError">
+        <div class="text">加载失败，请点击重试。</div>
+        <Button v-if="loadError" @click="refresh" type="white" text="重新加载"></Button>
+      </div>
+      <div class="source_list" v-else-if="!loading">
         <div v-for="item in list" :key="item.id" class="source_item" @click="choose(item.id)">
           <img class="source_item_img" style="width:100%" v-if="item.img"
             :src="item.img.replace('http://', 'https://')" />
@@ -45,8 +49,7 @@
         </div>
       </div>
       <div class="loading" v-else>
-        <text style="font-size:32px;">loading...</text>
-        <Button style="margin-top: 100px;width:200px;" @click="refresh" type="white">重新加载</Button>
+        <div style="font-size:32px;">加载中...</div>
       </div>
     </scroller>
   </div>
@@ -69,7 +72,8 @@ export default {
       showSourceSelect: false,
       selectSub: -1,
       list: [],
-      loading: false
+      loading: false,
+      loadError: false,
     }
   },
   async created() {
@@ -126,8 +130,13 @@ export default {
     },
     async refresh() {
       this.loading = true;
-      this.list = await request.get('/subjectSourceV2/' + this.selectSub);
-      this.loading = false;
+      try {
+        this.list = await request.get('/subjectSourceV2/' + this.selectSub);
+        this.loading = false;
+      } catch (e) {
+        this.loadError = true;
+        this.loading = false;
+      }
     },
     chooseWord() {
       this.$router.push({ path: '/word' })
@@ -283,6 +292,16 @@ export default {
   padding-bottom: 100px;
   padding-left: 50px;
   width: 650px;
+
+  &.error {
+    margin-top: 150px;
+
+    .text {
+      text-align: center;
+      font-size: 32px;
+      margin-bottom: 150px;
+    }
+  }
 }
 
 .source_item {
