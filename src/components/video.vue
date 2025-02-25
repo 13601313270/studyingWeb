@@ -1,7 +1,7 @@
 <template>
   <div class="videoContent" v-if="list.length > 0">
     <!-- {{ allDuration }}+++{{ playIndex }} +++ {{ nowDuration }} -->
-    <scroller class="background">
+    <div class="background" ref="scrollDom" @touchstart="touchstart" @touchend="touchend">
       <div class="banshu" v-if="textIndex > -1">
         <div v-for="(item, key) in list.slice(0, textIndex + 1)" class="item" :class="{ active: (textIndex === key) }">
           <!-- {{ item.duration }} -->
@@ -24,7 +24,8 @@
       <div class="temp_say" style="flex-grow: 1;padding: 10px;overflow: auto;text-align: center;">
         <img v-for="(item, imgIndex) in loadImg" :key="imgIndex" :src="item" style="width: 80%" />
       </div>
-    </scroller>
+      <div class="fillHeight"></div>
+    </div>
     <!--底部播放功能条-->
     <div class="tools" v-if="isPlayed">
       <div class="progress" v-if="allHasDuration && allDuration > 1">
@@ -67,7 +68,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import Button from '../components/Button.vue'
 import icon from '../components/icon.vue';
 import { play, pause } from '../plugin/audio'
@@ -101,6 +102,7 @@ const list = ref<Array<Leaf & {
   deep: number,
   duration: number,// 内部所有after说话时间汇总
 }>>([])
+const scrollDom = ref();
 const loadImg = ref<Array<any>>([])
 const playIndex = ref<number>(0)
 const textIndex = ref<number>(-1)
@@ -109,9 +111,10 @@ const isPlayed = ref<boolean>(false)
 const allHasDuration = ref<boolean>(false)
 const allDuration = ref<number>(0)
 const allDurationFormat = ref<string>('')
+let scrolling = false;
 
 const emit = defineEmits(["end", 'playStep', 'firstPlay'])
-
+let interval;
 onMounted(() => {
   // 判断是否都有音频计算了时间
   let hasDuration = true;
@@ -160,14 +163,32 @@ onMounted(() => {
   loadImg.value = [];
 })
 
+function touchstart() {
+  console.log(1)
+  scrolling = true
+}
+function touchend() {
+  console.log(2)
+  scrolling = false
+  setTimeout(() => {
+    scrollToActive()
+  }, 1000)
+}
+function scrollToActive() {
+  if (scrolling === false && isPlaying.value) {
+    console.log('scrollToActive', scrollDom.value)
+    scrollDom.value.scrollTop = 1000000;
+  }
+}
+
 async function playStepOfIndex() {
-  console.log('----1----', list.value)
   if (playIndex.value >= list.value.length) {
     emit('end')
     return
   } else {
     emit('playStep', playIndex.value)
   }
+  scrollToActive()
   textIndex.value = playIndex.value - 1;
   // 重置当前 playIndex 之前的图片状态
   if (playIndex.value > 0) {
@@ -196,7 +217,6 @@ async function playStepOfIndex() {
       }
     }
   }
-  console.log('----2----')
   if (list.value[playIndex.value] && list.value[playIndex.value].before !== undefined) {
     for (let i = 0; i < list.value[playIndex.value].before.length; i++) {
       let item = list.value[playIndex.value].before[i];
@@ -214,7 +234,6 @@ async function playStepOfIndex() {
       }
     }
   }
-  console.log('----3----')
   textIndex.value = playIndex.value;
   if (list.value[playIndex.value] && list.value[playIndex.value].after !== undefined) {
     if (list.value[playIndex.value].after) {
@@ -310,11 +329,12 @@ const nowDuration = computed(() => {
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  scroll-behavior: smooth;
 
   .banshu {
     min-width: 200px;
     padding: 10px;
-    overflow-y: auto;
 
     .item {
       display: flex;
@@ -384,6 +404,11 @@ const nowDuration = computed(() => {
     padding: 10px;
     overflow: auto;
     text-align: center;
+  }
+
+  .fillHeight {
+    height: 30vh;
+    flex-shrink: 0;
   }
 }
 

@@ -24,7 +24,7 @@ service.interceptors.request.use(
 			// @ts-ignore
 			config.headers.token = userInfo.account + '@@' + localStorage.getItem('token')
 		}
-		console.log('!!!!!!!!!',config)
+		// console.log('!!!!!!!!!',config)
 		return config
 	},
 	function (error) {
