@@ -28,7 +28,6 @@ const isEnd = ref<boolean>(false)
 onMounted(() => {
   const handle = Loading()
   request.get('/poi/' + route.params.id + '/video').then((data: any) => {
-    console.log('==========1111', data)
     handle.destory()
     content.value = data.content;
     title.value = data.name;

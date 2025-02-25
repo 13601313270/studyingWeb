@@ -1,17 +1,22 @@
 <template>
   <div class="videoContent" v-if="list.length > 0">
+    <!-- {{ allDuration }}+++{{ playIndex }} +++ {{ nowDuration }} -->
     <scroller class="background">
       <div class="banshu" v-if="textIndex > -1">
-        <div v-for="(item, key) in list.slice(0, textIndex + 1)" class="item">
-          <text class="h1" :style="{ fontWeight: (textIndex === key) ? 'bold' : 'default' }" v-if="item.deep === 1">{{
+        <div v-for="(item, key) in list.slice(0, textIndex + 1)" class="item" :class="{ active: (textIndex === key) }">
+          <!-- {{ item.duration }} -->
+          <text class="h1" v-if="item.deep === 1">{{
             (item.index + 1) + '、' + item.title }}</text>
-          <text class="h2" :style="{ fontWeight: (textIndex === key) ? 'bold' : 'default' }"
-            v-else-if="item.deep === 2">{{ (item.index + 1) + '.' + item.title }}</text>
-          <text class="h3" :style="{ fontWeight: (textIndex === key) ? 'bold' : 'default' }"
-            v-else-if="item.deep === 3">{{ (item.index + 1) + '.' + item.title }}</text>
-          <text class="h4" :style="{ fontWeight: (textIndex === key) ? 'bold' : 'default' }"
-            v-else-if="item.deep === 4">{{ (item.index + 1) + '.' + item.title }}</text>
-          <text class="h5" :style="{ fontWeight: (textIndex === key) ? 'bold' : 'default' }" v-else>{{
+          <text class="h2" v-else-if="item.deep === 2">{{ (item.index + 1) +
+            '.'
+            + item.title }}</text>
+          <text class="h3" v-else-if="item.deep === 3">{{ (item.index + 1) +
+            '.'
+            + item.title }}</text>
+          <text class="h4" v-else-if="item.deep === 4">{{ (item.index + 1) +
+            '.'
+            + item.title }}</text>
+          <text class="h5" v-else>{{
             (item.index + 1) + '.' + item.title }}</text>
           <text class="desc" v-if="item.desc">{{ item.desc }}</text>
         </div>
@@ -22,16 +27,28 @@
     </scroller>
     <!--底部播放功能条-->
     <div class="tools" v-if="isPlayed">
-      <div class="tools_button_group">
-        <div @click="prev()" class="tools_button">
-          <icon src="back" width="40" height="40" />
+      <div class="progress" v-if="allHasDuration && allDuration > 1">
+        <div class="progressBar">
+          <div class="left" :style="{ width: (nowDuration / allDuration * 100) + '%' }"></div>
+          <div class="slip" :style="{ left: (nowDuration / allDuration * 100) + '%' }"></div>
         </div>
-        <div @click="isPlaying ? pauseVideo() : playVideo()" class="tools_button">
-          <icon v-if="!isPlaying" src="play" width="40" height="40" />
-          <icon v-else src="stop" width="40" height="40" />
+        <div class="allDuration">
+          {{ allDurationFormat }}
         </div>
-        <div @click="next()" class="tools_button tools_button_last">
-          <icon src="right" width="40" height="40" />
+      </div>
+
+      <div class="toolsInner">
+        <div class="button_group">
+          <div @click="prev()" class="tools_button">
+            <icon src="back" width="40" height="40" />
+          </div>
+          <div @click="isPlaying ? pauseVideo() : playVideo()" class="tools_button">
+            <icon v-if="!isPlaying" src="play" width="40" height="40" />
+            <icon v-else src="stop" width="40" height="40" />
+          </div>
+          <div @click="next()" class="tools_button tools_button_last">
+            <icon src="right" width="40" height="40" />
+          </div>
         </div>
       </div>
     </div>
@@ -50,7 +67,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import Button from '../components/Button.vue'
 import icon from '../components/icon.vue';
 import { play, pause } from '../plugin/audio'
@@ -66,32 +83,43 @@ type Leaf = {
   title: string,
   desc?: string,// 编辑器没有了
   after: Array<{
-    type: 'say' | 'img',
+    type: 'say',
+    value: string,
+    duration: number,
+  } | {
+    type: 'img',
     value: string,
   } | {
     type: 'imgClear',
     value: number,
   }>,
+
   child: Leaf[],
 }
 const list = ref<Array<Leaf & {
   index: number,
   deep: number,
+  duration: number,// 内部所有after说话时间汇总
 }>>([])
 const loadImg = ref<Array<any>>([])
 const playIndex = ref<number>(0)
 const textIndex = ref<number>(-1)
 const isPlaying = ref<boolean>(false)
 const isPlayed = ref<boolean>(false)
+const allHasDuration = ref<boolean>(false)
+const allDuration = ref<number>(0)
+const allDurationFormat = ref<string>('')
 
 const emit = defineEmits(["end", 'playStep', 'firstPlay'])
 
 onMounted(() => {
-  let self = this;
+  // 判断是否都有音频计算了时间
+  let hasDuration = true;
 
   function update(dataArr: Leaf[], deep: number) {
     dataArr.forEach((data, index) => {
       let item: any = { deep, index };
+      let duration = 0;
       if (data.before) {
         item.before = data.before;
       }
@@ -103,16 +131,31 @@ onMounted(() => {
       }
       if (data.after) {
         item.after = data.after;
+        data.after.forEach(v => {
+          if (v.type === 'say') {
+            if (!v.duration) {
+              hasDuration = false;
+            } else {
+              duration += v.duration;
+            }
+          }
+        })
       }
+      item.duration = duration;
       list.value.push(item);
       if (data.child) {
         update(data.child, deep + 1)
       }
     });
   }
-
   update(props.content, 1);
-  console.log('this.content', props.content)
+  allHasDuration.value = hasDuration;
+  allDuration.value = Math.round(list.value.map(v => v.duration).reduce((a, b) => a + b))
+  // 将时长格式化为分钟和秒
+  const minutes = Math.floor(allDuration.value / 60);
+  const seconds = Math.floor(allDuration.value % 60);
+  const formattedDuration = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  allDurationFormat.value = formattedDuration
   textIndex.value = -1;
   loadImg.value = [];
 })
@@ -223,6 +266,12 @@ function pauseVideo() {
   pause();
   isPlaying.value = false;
 }
+const nowDuration = computed(() => {
+  if (playIndex.value === 0) {
+    return 0;
+  }
+  return Math.round(list.value.slice(0, playIndex.value).map(v => v.duration).reduce((a, b) => a + b))
+})
 </script>
 
 <style scoped lang="less">
@@ -309,6 +358,17 @@ function pauseVideo() {
         padding-left: 100px;
       }
 
+      &.active {
+        background-color: #64a466;
+        padding: 4px 12px;
+        border-radius: 4px;
+        font-weight: bold;
+
+        >* {
+          margin-bottom: auto !important;
+        }
+      }
+
       .desc {
         font-size: 20px;
         margin-bottom: 10px;
@@ -331,21 +391,72 @@ function pauseVideo() {
   background-color: #356a36;
   border-top: solid 1px #29572a;
   padding-top: 10px;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 10px) !important;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
-  height: 90px;
   flex-grow: 0;
   flex-shrink: 0;
+  position: relative;
 
-  &_button_group {
+  .progress {
+    width: 100%;
+    box-sizing: border-box;
+    padding-left: 4%;
+    padding-right: 4%;
     display: flex;
-    width: 390px;
-    height: 80px;
-    border-radius: 20px;
+    align-items: center;
+    margin-top: 12px;
+    margin-bottom: 24px;
+    position: relative;
+
+    .progressBar {
+      flex-grow: 1;
+      height: 6px;
+      background-color: #b7b7b7;
+      border-radius: 3px;
+      position: relative;
+
+      .left {
+        position: absolute;
+        height: 6px;
+        background-color: #043505;
+      }
+
+      .slip {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        border-radius: 8px;
+        background-color: #043505;
+        // background-color: #04350547;
+        transform: translate(-5px, -5px);
+      }
+    }
+
+    .allDuration {
+      flex-shrink: 0;
+      position: absolute;
+      right: 4%;
+      bottom: -40px;
+      color: #b7b7b7;
+    }
+  }
+
+  .toolsInner {
+    display: flex;
     flex-direction: row;
     justify-content: center;
-    background-color: #b66320;
+
+    .button_group {
+      display: flex;
+      width: 390px;
+      height: 80px;
+      border-radius: 20px;
+      flex-direction: row;
+      justify-content: center;
+      background-color: #b66320;
+    }
   }
 
   &_button {
