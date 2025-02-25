@@ -56,8 +56,9 @@
               item.importArticle
             }}
           </div>
+          <br />
           <div v-if="activeListen.content">题目：</div>
-          <div v-html="activeListen.content"></div>
+          <div v-html="activeListen.content?.replaceAll('\n', '<br/>')"></div>
         </div>
         <div class="tools">
           <div class="button" :class="{ finish: activeListenIsRecord }"
