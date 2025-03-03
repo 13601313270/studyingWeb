@@ -10,6 +10,7 @@ import lessonDetailNew from '../views/lessonDetailNew.vue';
 import lessonAllChildPoiVideo from '../views/lessonAllChildPoiVideo.vue';
 import lessonQuestionList from '../views/lessonQuestionList.vue';
 import poiQuestion from '../views/poiQuestion.vue';
+import poiLessonQuestionList from '../views/poiLessonQuestionList.vue';
 import lessonKnowledgeList from '../views/lessonKnowledgeList.vue';
 import lessonKnowledgeDetail from '../views/lessonKnowledgeDetail.vue'
 import mine from '../views/mine.vue';
@@ -76,6 +77,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/poi/:id/question/:difficult/:page',
     name: 'poiQuestion',
     component: poiQuestion,
+  },
+  {
+    path: '/poiLesson/:id/questionList',
+    name: 'poiLessonQuestionList',
+    component: poiLessonQuestionList,
   },
   {
     path: '/lesson/:id/knowledge',

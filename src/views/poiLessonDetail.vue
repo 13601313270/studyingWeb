@@ -63,7 +63,7 @@ function end() {
   isEnd.value = true;
 }
 function gotoQuestion() {
-  router.push('/lesson/' + route.params.id + '/questionList');
+  router.push('/poiLesson/' + route.params.id + '/questionList');
 }
 function back() {
   router.replace('/source/' + course.value);

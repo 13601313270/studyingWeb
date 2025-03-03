@@ -1,0 +1,173 @@
+<template>
+  <div>
+    <div style="height: 100%">
+      <div class="content">
+        <div class="lessons">
+          <text class="lessons_title">{{ poiInfo.name }}入门</text>
+          <div class="lessons_content">
+            <text class="question_page_button" v-for="quizIndex in getPageCount(1)"
+              @click="quizQuestions(1, quizIndex - 1)">题组 {{ quizIndex }}</text>
+          </div>
+        </div>
+        <div class="lessons">
+          <text class="lessons_title">{{ poiInfo.name }}基础</text>
+          <div class="lessons_content">
+            <text class="question_page_button" v-for="quizIndex in getPageCount(3)"
+              @click="quizQuestions(3, quizIndex - 1)">题组 {{ quizIndex }}</text>
+          </div>
+        </div>
+        <div class="lessons">
+          <text class="lessons_title">{{ poiInfo.name }}加强</text>
+          <div class="lessons_content">
+            <text class="question_page_button" v-for="quizIndex in getPageCount(5)"
+              @click="quizQuestions(5, quizIndex - 1)">题组 {{ quizIndex}}</text>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { mapActions } from 'vuex';
+import request from '../plugin/request'
+
+export default {
+  name: 'lessonQuestionList',
+  created() {
+    this.init()
+    // this.logAction('lessonQuestionList');
+  },
+  activated() {
+    if (this.id !== this.$route.params.id) {
+      this.init()
+    }
+  },
+  data() {
+    return {
+      id: -1,
+      poiInfo: [],
+      countList: []
+    }
+  },
+  methods: {
+    ...mapActions('main', ['setPath']),
+    init() {
+      this.id = this.$route.params.id;
+      request.get('/poi/' + this.$route.params.id + '/info').then(res => {
+        this.poiInfo = res;
+      });
+      request.get('/poi/' + this.$route.params.id + '/questionCount').then(res => {
+        this.countList = res;
+      });
+    },
+    getPageCount(difficult) {
+      let item = this.countList.find(item => {
+        return item.difficult === difficult;
+      });
+      if (item) {
+        return Math.max(Math.min(Math.round(item.count / 20), 20), 1);
+      } else {
+        return 0;
+      }
+    },
+    quizQuestions(difficult, page) {
+      this.$router.push('/poi/' + this.$route.params.id + '/question/' + difficult + '/' + page);
+    },
+  }
+}
+</script>
+
+<style scoped lang="less">
+.content {
+  width: 750px;
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f8f8f8;
+}
+
+.lessons {
+  display: flex;
+  margin: 15px;
+  position: relative;
+  flex-direction: column;
+  width: 650px;
+  border-style: solid;
+  border-color: #e0e0e0;
+  border-width: 2px;
+  background-color: white;
+  float: left;
+  flex-shrink: 0;
+  padding: 30px 20px 10px;
+  box-sizing: border-box;
+  border-radius: 18px;
+
+  &_title {
+    font-size: 42px;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  &_content {
+    display: flex;
+    width: 600px;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap
+  }
+}
+
+.question_page {
+  display: flex;
+  flex-direction: row;
+
+  &_button {
+    width: 160px;
+    text-align: center;
+    line-height: 80px;
+    font-size: 32px;
+    color: #353535;
+    float: left;
+    height: 80px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #54796e;
+    border-radius: 20px;
+    margin: 10px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .content {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    .lessons {
+      width: 325px;
+      padding: 16px;
+      margin: 16px;
+      height: 464px;
+
+      .lessons_title {
+        font-size: 24px;
+        margin-bottom: 8px;
+      }
+
+      .lessons_content {
+        width: 100%;
+
+        .question_page_button {
+          font-size: 20px;
+          height: 40px;
+          line-height: 44px;
+          width: 84px;
+          margin: 4px;
+        }
+      }
+    }
+  }
+}
+</style>
