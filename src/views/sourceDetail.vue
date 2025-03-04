@@ -4,18 +4,18 @@
       <div class="lessons">
         <div v-for="item in list" :key="item.id" class="lesson_item">
           <text class="lesson_item_title">{{ item.title }}</text>
-
-          <div class="video_list">
+          <div class="video_list" v-if="item.poi.find(v => v.hasVideo)">
             <div class="title">课 程</div>
             <div class="list">
               <div v-for="(poi, key) in item.poi" :key="poi.id" class="item">
                 <text class="user_to_poi_item">{{ key + 1 }}、{{ poi.name }}</text>
-                <Button class="playButton" text="播放" icon="video" :disabled="!poi.hasVideo"
-                  @click="lesson(poi)" />
+                <Button class="playButton" text="播放" icon="video" :disabled="!poi.hasVideo" @click="poiLesson(poi)" />
               </div>
             </div>
           </div>
           <div class="action_links">
+            <Button v-if="!item.poi.find(v => v.hasVideo)" text="课   程" icon="video" :disabled="!item.hasContent"
+              @click="lesson(item, item.newContent)" />
             <Button text="题   库" icon="question" @click="gotoQuestion(item)" />
             <Button v-if="item.lessonKnowledgeExist" text="知识点" icon="light" @click="gotoKnowledge(item)" />
             <!--<wxc-button class="action_link" text="掌握统计" @wxcButtonClicked="$set(item,'isShow',!item.isShow)" type="white"/>-->
@@ -103,19 +103,25 @@ export default {
         }
       });
     },
-    lesson(item) {
-      
+    poiLesson(item) {
       if (!item.hasVideo) {
-        // alert('维护中')
+        alert('维护中')
         return;
       }
       console.log('item,item', item)
       this.$router.push('/poiLesson/' + item.id);
-      // if (item.hasVideo) {
-      //   alert(this.moreVideoIsOpen[item.id + ''])
-      //   this.moreVideoIsOpen[item.id + ''] = true;//!this.moreVideoIsOpen[item.id+''];
-      // } else {
-      // }
+    },
+    lesson(item) {
+      if (!item.hasContent) {
+        // alert('维护中')
+        return;
+      }
+      if (item.hasChildPoiVideo && !turn) {
+        alert(this.moreVideoIsOpen[item.id + ''])
+        this.moreVideoIsOpen[item.id + ''] = true;//!this.moreVideoIsOpen[item.id+''];
+      } else {
+        this.$router.push('/lesson/' + item.id);
+      }
     },
     lessonAllChildPoiVideo(item) {
       this.$router.push('/lessonAllChildPoiVideo/' + item.id);
