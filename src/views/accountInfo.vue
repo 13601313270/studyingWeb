@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>
+    <div v-if="userInfo2">
       <div class="header">
         <pic
           v-if="userInfo2.icon"

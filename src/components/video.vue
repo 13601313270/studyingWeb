@@ -21,8 +21,8 @@
           <text class="desc" v-if="item.desc">{{ item.desc }}</text>
         </div>
       </div>
-      <div class="temp_say" style="flex-grow: 1;padding: 10px;overflow: auto;text-align: center;">
-        <img v-for="(item, imgIndex) in loadImg" :key="imgIndex" :src="item" style="width: 80%" />
+      <div class="temp_say">
+        <img v-for="(item, imgIndex) in loadImg" :key="imgIndex" :src="item.replace(/^http:/,'https:')" style="width: 80%" />
       </div>
       <div class="fillHeight"></div>
     </div>
@@ -400,9 +400,7 @@ const nowDuration = computed(() => {
   }
 
   .temp_say {
-    flex-grow: 1;
     padding: 10px;
-    overflow: auto;
     text-align: center;
   }
 
