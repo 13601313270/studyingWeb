@@ -113,7 +113,7 @@ import Button from '../components/Button.vue'
 import Dialog from '../components/Dialog.vue'
 import request from '@/plugin/request'
 import share from '@/plugin/share'
-import notification from "../plugin/notification"
+import { notification } from "../plugin/notification"
 import { showImg } from '../plugin/imagePreview'
 
 // var modal = weex.requireModule('modal');

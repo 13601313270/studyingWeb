@@ -129,7 +129,7 @@
               <div v-html="lookQuestion.explanation"></div>
             </div>
           </div>
-          <div class="questionAIAnswer">
+          <!-- <div class="questionAIAnswer">
             <div class="teacherContent">
               <img class="icon" src="../icons/teacher1.png" />
               <div>
@@ -143,7 +143,7 @@
             <div v-else class="askAi">
               <Button @click="askAi(lookQuestion.id)" text="依旧不懂?试着问问AI" />
             </div>
-          </div>
+          </div> -->
 
           <div class="shareBottom">
             <Button @click="share(lookQuestion.id)" icon="share" text="点击分享此题目，看看朋友们会不会？" />
