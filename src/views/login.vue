@@ -211,7 +211,7 @@ export default {
               this.setShowLogin(false)
               setTimeout(() => {
                 this.$router.back();
-              }, 3000)
+              }, 100)
               // this.$router.replace('/source');
             }
           });
