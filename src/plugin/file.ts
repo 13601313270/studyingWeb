@@ -28,6 +28,8 @@ function download(file: string): Promise<void> {
       }).then((res: any) => {
         resolve();
       })
+    } else {
+      console.log('模拟download', file)
     }
   })
 }

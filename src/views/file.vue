@@ -1,5 +1,5 @@
 <template>
-  <div style="display:flex;flex-direction: column;">
+  <div style="display:flex;flex-direction: column;height: 100%;">
     <div class="subjects">
       <div class="subjects_scroll" ref="subjectScroll">
         <text ref="start" key="start"></text>
@@ -42,12 +42,28 @@
       </div>
     </div>
   </div>
+  <Dialog :show="showConinueUrl!==''" title="提示" @close="showConinueUrl=''">
+    <div class="chooseUseType">
+      <BuyVIPDesc />
+      <div class="chooseUseTypeInfo" v-if="showConinueUrl">
+        您是免费用户，今日可免费试用次数还剩<span class="time">{{ showConinueTimes.times.fileDownload }}</span>次，是否继续使用？
+      </div>
+      <div class="chooseUseTypeTools">
+        <Button @click="continueUse" text="继续免费试用"></Button>
+        <Button @click="CallbuyVip" primary class="buyVip" text="成为VIP不限量"></Button>
+      </div>
+    </div>
+  </Dialog>
 </template>
 <script>
 import request from '@/plugin/request'
 import Button from '@/components/Button.vue'
 import share from '../plugin/share'
 import File from '@/plugin/file'
+import Dialog from '@/components/Dialog.vue';
+import BuyVIPDesc from './buyVIPDesc.vue';
+import toast from '@/plugin/toast';
+import { buyVip } from '@/plugin/buyVip';
 
 export default {
   data() {
@@ -61,6 +77,14 @@ export default {
       loading: false,
       downLoading: {
 
+      },
+      // 确认次数弹窗
+      showConinueUrl: '',
+      showConinueTimes: {
+        isVip: false,
+        times: {
+          fileDownload: 0,
+        }
       },
     }
   },
@@ -106,19 +130,48 @@ export default {
         this.downLoadList = res;
       })
     },
-    download(file) {
-      if (this.downLoading[file.file]) {
-        return;
-      }
-      this.downLoading[file.file] = true;
-      File.download(file.file)
+    downloadFile(file) {
+      this.downLoading[file] = true;
+      File.download(file)
         .then(() => {
-          this.downLoading[file.file] = false;
+          this.downLoading[file] = false;
           this.initDownLoadList();
         })
         .catch((err) => {
           alert(JSON.stringify(err))
         })
+    },
+    async download(file) {
+      if (this.downLoading[file.file]) {
+        return;
+      }
+      // 校验
+      const data = await request.get('/user/checkFuncTimes');
+      this.showConinueTimes = data;
+      if (this.showConinueTimes.isVip) {
+        this.downloadFile(file.file);
+      } else {
+        this.showConinueUrl = file.file;
+      }
+    },
+    async continueUse() {
+      const result = await request.post('/user/useFuncTimes', {
+        func: 'fileDownload'
+      });
+      if (result) {
+        this.downloadFile(this.showConinueUrl);
+        this.showConinueUrl = '';
+      } else {
+        toast({
+          'message': '今日免费权限用尽',
+          'duration': 3000
+        })
+      }
+    },
+    CallbuyVip() {
+      buyVip().then(() => {
+        this.showConinueUrl = '';
+      })
     },
     open(path) {
       File.open(path);
@@ -139,7 +192,9 @@ export default {
     }
   },
   components: {
-    Button
+    Button,
+    Dialog,
+    BuyVIPDesc
   }
 }
 </script>
@@ -336,6 +391,25 @@ export default {
           margin-top: 16px;
         }
       }
+    }
+  }
+}
+.chooseUseType {
+  .chooseUseTypeInfo {
+    .time {
+      font-weight: bold;
+      margin: 0 8px;
+    }
+  }
+
+  .chooseUseTypeTools {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    >div {
+      margin: 8px;
+      flex-grow: 1;
     }
   }
 }
