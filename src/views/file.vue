@@ -42,10 +42,10 @@
       </div>
     </div>
   </div>
-  <Dialog :show="showConinueUrl!==''" title="提示" @close="showConinueUrl=''">
+  <Dialog :show="showConinueUrl!==''||showConinueOpenPath!==''" title="提示" @close="showConinueUrl='',showConinueOpenPath=''">
     <div class="chooseUseType">
       <BuyVIPDesc />
-      <div class="chooseUseTypeInfo" v-if="showConinueUrl">
+      <div class="chooseUseTypeInfo" v-if="showConinueUrl || showConinueOpenPath">
         您是免费用户，今日可免费试用次数还剩<span class="time">{{ showConinueTimes.times.fileDownload }}</span>次，是否继续使用？
       </div>
       <div class="chooseUseTypeTools">
@@ -79,7 +79,8 @@ export default {
 
       },
       // 确认次数弹窗
-      showConinueUrl: '',
+      showConinueUrl: '',// 下载
+      showConinueOpenPath: '',// 打开
       showConinueTimes: {
         isVip: false,
         times: {
@@ -159,8 +160,13 @@ export default {
         func: 'fileDownload'
       });
       if (result) {
-        this.downloadFile(this.showConinueUrl);
-        this.showConinueUrl = '';
+        if(this.showConinueUrl) {
+          this.downloadFile(this.showConinueUrl);
+          this.showConinueUrl = '';
+        } else if(this.showConinueOpenPath){
+          File.open(this.showConinueOpenPath);
+          this.showConinueOpenPath = '';
+        }
       } else {
         toast({
           'message': '今日免费权限用尽',
@@ -171,10 +177,17 @@ export default {
     CallbuyVip() {
       buyVip().then(() => {
         this.showConinueUrl = '';
+        this.showConinueOpenPath = '';
       })
     },
-    open(path) {
-      File.open(path);
+    async open(path) {
+      const data = await request.get('/user/checkFuncTimes');
+      this.showConinueTimes = data;
+      if (this.showConinueTimes.isVip) {
+        File.open(path);
+      } else {
+        this.showConinueOpenPath = path;
+      }
     },
     share(file) {
       const url = file.file.replace('http://', 'https://');
