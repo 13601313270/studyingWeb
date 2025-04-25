@@ -18,9 +18,9 @@ export function buyVip(): Promise<void> {
       })
     }
     const handle = Loading();
-    setTimeout(() => {
-      handle.destory()// 如果用户没有走完购买程序，取消了，那么得能销毁。估计3秒，可以唤醒系统支付
-    }, 3000)
+    // setTimeout(() => {
+    //   handle.destory()// 如果用户没有走完购买程序，取消了，那么得能销毁。估计3秒，可以唤醒系统支付
+    // }, 3000)
     // @ts-ignore
     if (window.Bridge) {
       androidBridge('pay', 'alipay').then((res) => {
@@ -45,11 +45,13 @@ export function buyVip(): Promise<void> {
       // @ts-ignore
       window.buy = function (result) {
         handle.destory()
-        toast({
-          'message': '感谢打赏',
-          'duration': 3000
-        })
-        bridgeSuccess()
+        if (result !== 'error') {
+          toast({
+            'message': '感谢打赏' + result,
+            'duration': 3000
+          })
+          bridgeSuccess()
+        }
       }
       // ios的bridge
       // @ts-ignore

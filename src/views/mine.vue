@@ -134,17 +134,14 @@ import toast from '@/plugin/toast'
 export default {
   name: 'mine',
   created() {
-    // localStorage.getItem('userInfo', (e) => {
-    //     this.userInfo2 = JSON.parse(e.data);
-    // })
-
     if (this.userInfo && this.userInfo.account) {
       request.get('/user/getInfo').then(res => {
         this.userInfo2 = res;
+        setTimeout(() => {
+          this.showIsPayed = this.userInfo2 && this.userInfo2.isVip;
+        }, 200)
       });
     }
-    // this.setRightButton([])
-    // this.logAction('mine');
   },
   data() {
     return {
@@ -164,6 +161,9 @@ export default {
     login() {
       request.get('/user/getInfo').then(res => {
         this.userInfo2 = res;
+        setTimeout(() => {
+          this.showIsPayed = this.userInfo2 && this.userInfo2.isVip;
+        }, 200)
       });
     },
     score() {
