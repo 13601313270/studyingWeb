@@ -129,7 +129,7 @@
               <div v-html="lookQuestion.explanation"></div>
             </div>
           </div>
-          <!-- <div class="questionAIAnswer">
+          <div class="questionAIAnswer">
             <div class="teacherContent">
               <img class="icon" src="../icons/teacher1.png" />
               <div>
@@ -143,8 +143,7 @@
             <div v-else class="askAi">
               <Button @click="askAi(lookQuestion.id)" text="依旧不懂?试着问问AI" />
             </div>
-          </div> -->
-
+          </div>
           <div class="shareBottom">
             <Button @click="share(lookQuestion.id)" icon="share" text="点击分享此题目，看看朋友们会不会？" />
           </div>
@@ -166,6 +165,17 @@
       </scroller>
     </div>
   </div>
+  <Dialog :show="showBuyVip" title="提示" @close="showBuyVip=false">
+    <div class="chooseUseType">
+      <BuyVIPDesc />
+      <div class="chooseUseTypeInfo" v-if="showBuyVip">
+        您是免费用户，试题AI解析只有VIP用户可用。
+      </div>
+      <div class="chooseUseTypeTools">
+        <Button @click="CallbuyVip" primary class="buyVip" text="成为VIP不限量"></Button>
+      </div>
+    </div>
+  </Dialog>
 </template>
 
 <script>
@@ -176,7 +186,10 @@ import pic from '../components/icon';
 import Button from "@/components/Button";
 import request from '../plugin/request'
 import share from '../plugin/share'
+import Dialog from '@/components/Dialog.vue';
+import BuyVIPDesc from './buyVIPDesc.vue';
 import { showImg } from '../plugin/imagePreview'
+import { buyVip } from '@/plugin/buyVip';
 
 export default {
   name: 'poiQuestion',
@@ -200,6 +213,7 @@ export default {
       lookQaIndex: 0,
       iOS: navigator.userAgent.includes('iPhone'),
       questionAIAnswer: {},
+      showBuyVip: false,
     }
   },
   computed: {
@@ -364,11 +378,20 @@ export default {
         color: isAllRight ? 'rgb(23,56,22)' : 'rgb(164,63,26)'
       }
     },
-    askAi() {
+    async askAi() {
+      const data = await request.get('/user/checkFuncTimes');
+      console.log('data', data);
+      if (!data.isVip) {
+        this.showBuyVip = true;
+        return;
+      }
       let self = this;
       let usage = {};
       const questionInfo = this.question[this.lookQaIndex];
-      const eventSource = new EventSource('https://api.studying1v1.com/question/aiExplanation/' + questionInfo['id']);
+      const userInfo = JSON.parse(localStorage.getItem('userInfo')||'{}');
+      const token = userInfo.account + '@@' + localStorage.getItem('token');
+
+      const eventSource = new EventSource('https://api.studying1v1.com/question/aiExplanation/' + questionInfo['id']+'?token='+token);
       this.questionAIAnswer[this.lookQaIndex] = '';
       eventSource.onopen = function () {
         self.questionAIAnswer[self.lookQaIndex] = '';
@@ -404,9 +427,20 @@ export default {
           console.error('An error occurred:', event);
         }
       });
-    }
+    },
+    CallbuyVip() {
+      buyVip().then(() => {
+        this.showBuyVip = false;
+      })
+    },
   },
-  components: { Button, childPoiButton, pic }
+  components: {
+    Button,
+    childPoiButton,
+    pic,
+    Dialog,
+    BuyVIPDesc,
+  }
 }
 </script>
 
@@ -880,6 +914,25 @@ export default {
   .answer {
     margin-top: 16px;
     font-size: 32px;
+  }
+}
+.chooseUseType {
+  .chooseUseTypeInfo {
+    .time {
+      font-weight: bold;
+      margin: 0 8px;
+    }
+  }
+
+  .chooseUseTypeTools {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    >div {
+      margin: 8px;
+      flex-grow: 1;
+    }
   }
 }
 </style>

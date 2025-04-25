@@ -13,9 +13,9 @@
           <td class="good">不限</td>
         </tr>
         <tr>
-          <td>试题AI解析每日</td>
-          <td class="warning">10次</td>
-          <td class="good">不限</td>
+          <td>试题AI解析</td>
+          <td class="warning">不支持</td>
+          <td class="good">支持</td>
         </tr>
         <tr>
           <td>资料下载</td>
