@@ -1,22 +1,21 @@
 <template>
   <div class="button" :class="{ button_disabled: disabled, primary, warning, error }">
-    <icon :src="icon" width="36" height="36" class="button_img" />
+    <Icon :src="icon" width="36" height="36" class="button_img" />
     <text class="button_text">{{ text }}</text>
   </div>
 </template>
 
-<script>
-export default {
-  name: "Button",
-  props: {
-    text: String,
-    icon: String,
-    warning: Boolean,
-    error: Boolean,
-    primary: Boolean,
-    disabled: Boolean,
-  }
-}
+<script lang="ts" setup>
+import Icon from './icon.vue';
+
+defineProps({
+  text: String,
+  icon: String,
+  warning: Boolean,
+  error: Boolean,
+  primary: Boolean,
+  disabled: Boolean,
+});
 </script>
 
 <style scoped lang="less">

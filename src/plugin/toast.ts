@@ -16,7 +16,7 @@ export interface ResultParams {
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const Toast = (options: IProps):ResultParams => {
     const container = document.createElement('div')
-    container.setAttribute('style','position: fixed;top: 0;border-radius: 1.33333vw;box-shadow: 0 0 40px -5px rgba(0,0,0,0.5);left: 50%;top: 10%;transform: translateX(-50%);');
+    container.setAttribute('style','position: fixed;top: 0;border-radius: 1.33333vw;box-shadow: 0 0 40px -5px rgba(0,0,0,0.5);left: 50%;top: 10%;transform: translateX(-50%);z-index:2');
     const opt = {...defaultOpt,...options}
     const vm = createVNode(toastTemplate, opt, options.message) // 创建vNode
     render(vm, container)

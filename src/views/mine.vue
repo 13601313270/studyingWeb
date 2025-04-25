@@ -26,6 +26,10 @@
       <!--                <text class="coin_text">金币</text>-->
       <!--                <text class="coin_text">{{userInfo2.coin}}</text>-->
       <!--            </div>-->
+      <div class="payed" :style="{ opacity: showIsPayed ? '1' : '0', transform: showIsPayed ? '' : 'scale(2)' }">
+        <img src="../icons/isPayed.png" />
+        <span>金主爸爸</span>
+      </div>
     </div>
     <div v-else class="user">
       <div class="info" style="display: flex;flex-direction: row;align-items: center;">
@@ -51,10 +55,14 @@
         <div>关于我们</div>
         <icon class="right" src="right_black" />
       </div>
-      <!-- <div class="actionItem" v-if="isiOS" @click="score">
-                <div>给App评分</div>
-                <icon class="right" src="right_black"/>
-            </div> -->
+      <div class="actionItem" v-if="isiOS" @click="score">
+        <div>给App评分</div>
+        <icon class="right" src="right_black" />
+      </div>
+      <div class="actionItem" @click="pay" v-if="userInfo && userInfo.account">
+        <div>打赏作者</div>
+        <icon class="right" src="right_black" />
+      </div>
       <div class="actionItem" @click="$router.push('/cache')">
         <div>缓存设置</div>
         <icon class="right" src="right_black" />
@@ -115,6 +123,9 @@ import request from '@/plugin/request'
 import share from '@/plugin/share'
 import { notification } from "../plugin/notification"
 import { showImg } from '../plugin/imagePreview'
+import toScore from '@/plugin/toScore';
+import { buyVip } from '@/plugin/buyVip';
+import toast from '@/plugin/toast'
 
 // var modal = weex.requireModule('modal');
 // const localStorage = weex.requireModule('storage');
@@ -142,6 +153,7 @@ export default {
       list: [],
       showSharePic: false,
       showLogout: false,
+      showIsPayed: false,
     }
   },
   computed: {
@@ -155,7 +167,16 @@ export default {
       });
     },
     score() {
-      // weex.requireModule('AppScore').active();
+      toScore()
+    },
+    pay() {
+      buyVip().then(() => {
+        request.get('/user/getInfo')
+          .then(res => {
+            self.showIsPayed = false;
+            this.setUserInfo(res);
+          })
+      })
     },
     refresh() {
       request.get('/source/list').then(res => {
@@ -216,6 +237,10 @@ export default {
       if (this.userInfo && this.userInfo.account) {
         request.get('/user/getInfo').then(res => {
           this.userInfo2 = res;
+          // 动画是等页面滑动结束后，再展开因为滑动过程这个position: fixed的图标，会造成计算位置错误
+          setTimeout(() => {
+            this.showIsPayed = this.userInfo2 && this.userInfo2.isVip;
+          }, 200)
         });
       }
     }
@@ -301,6 +326,30 @@ export default {
     color: grey;
     font-size: 32px;
     text-align: center;
+  }
+}
+
+.payed {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  pointer-events: none;
+  align-items: center;
+  position: fixed;
+  z-index: 2000;
+  top: calc(var(--safe-area-inset-top) + 108px);
+  right: 32px;
+  transition: transform 1s;
+
+  >img {
+    width: 120px;
+    height: 120px;
+    border-radius: 60px;
+    overflow: hidden;
+  }
+
+  >span {
+    font-size: 26px;
   }
 }
 

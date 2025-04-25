@@ -130,6 +130,16 @@
       <a href="https://beian.miit.gov.cn" target="_blank">吉ICP备2024023809号-1</a>
     </div>
   </div>
+  <Dialog :show="showBuySuccess" title="恭喜您获得VIP权限" @close="showBuySuccess = false">
+    <BuyVIPDesc />
+    <div class="buySuccess">
+      <img src="../icons/isPayed.png" />
+      <div>购买成功，恭喜您获得VIP权限！！</div>
+      <div class="tools">
+        <Button text="我知道了" @click="showBuySuccess = false"></Button>
+      </div>
+    </div>
+  </Dialog>
 </template>
 <script>
 import { useStore, mapActions, mapGetters } from 'vuex';
@@ -145,6 +155,8 @@ import event from '../plugin/event';
 import umeng from '@/plugin/umeng';
 import program from '@/plugin/program';
 import isMobileDevice from '@/plugin/isMobileDevice'
+import BuyVIPDesc from './buyVIPDesc.vue';
+import { setBuyVipCallback } from '@/plugin/buyVip'
 
 const agreementKey = 'agreementKey2022-8-7-2'
 export default {
@@ -161,7 +173,8 @@ export default {
       channel: match ? match[1] : '',
       mastUpdate: false,// 是否需要升级app
       lastVersion: null,// 当前运行最低版本
-      isMobileDevice: isMobileDevice()
+      isMobileDevice: isMobileDevice(),
+      showBuySuccess: false,
     }
   },
   created() {
@@ -169,6 +182,10 @@ export default {
       this.setShowLogin(true)
     }
     window.onClickBack = this.clickBack;
+
+    setBuyVipCallback(() => {
+      this.showBuySuccess = true;
+    })
 
     window.addEventListener("offline", () => {
       this.isOffline = true;
@@ -311,7 +328,7 @@ export default {
       return ['source', 'friend', 'file', 'mall', 'mine'].includes(this.$route.name);
     }
   },
-  components: { icon, Button, Login, ImgPreview, Dialog }
+  components: { icon, Button, Login, ImgPreview, Dialog, BuyVIPDesc }
 }
 </script>
 <style lang="less" scoped>
@@ -742,6 +759,27 @@ export default {
         }
       }
     }
+  }
+}
+
+.buySuccess {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 32px;
+
+  >img {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .tools {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
   }
 }
 </style>

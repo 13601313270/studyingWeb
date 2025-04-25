@@ -15,159 +15,154 @@
           </div>
           <div class="action_links">
             <Button v-if="!item.poi.find(v => v.hasVideo)" text="课   程" icon="video" :disabled="!item.hasContent"
-              @click="lesson(item, item.newContent)" />
+              @click="lesson(item)" />
             <Button text="题   库" icon="question" @click="gotoQuestion(item)" />
             <Button v-if="item.lessonKnowledgeExist" text="知识点" icon="light" @click="gotoKnowledge(item)" />
-            <!--<wxc-button class="action_link" text="掌握统计" @wxcButtonClicked="$set(item,'isShow',!item.isShow)" type="white"/>-->
-          </div>
-          <div v-if="item.isShow" class="data_list">
-            <div class="data_list_tip"></div>
-            <div class="data_list_tip2"></div>
-            <div v-for="(poi, key) in item.poi" :key="poi.id" style="position:relative;">
-              <text class="user_to_poi_item">{{ key + 1 }}、{{ poi.name }}</text>
-              <div class="score" v-if="true || getPoiScore(poi.id) !== false">
-                <text class="tip" :style="{ flex: getPoiScore(poi.id).good, minWidth: '100px' }"
-                  style="background-color: #7ac29c;"></text>
-                <text class="tip" :style="{ flex: getPoiScore(poi.id).bad }" style="background-color: #d46c56;"></text>
-              </div>
-              <div class="score" v-if="true || getPoiScore(poi.id) !== false"
-                style="position:absolute;top:45px;width:550px;">
-                <text class="tip" :style="{ flex: 1 }">{{ getPoiScore(poi.id).good }}正确
-                </text>
-                <text class="tip" :style="{ flex: 1 }" style="text-align: right;">{{ getPoiScore(poi.id).bad }}错误
-                </text>
-              </div>
-              <div v-else class="no_score">
-                <text style="color:#888888;font-size: 30px;">未进行过测验</text>
-              </div>
-            </div>
           </div>
         </div>
       </div>
     </scroller>
   </div>
+  <Dialog :show="showConinuePoiLesson" title="提示" @close="closeDialog">
+    <div class="chooseUseType">
+      <BuyVIPDesc />
+      <div class="chooseUseTypeInfo" v-if="showConinuePoiLesson">
+        您是免费用户，今日可免费试用次数还剩<span class="time">{{ showConinueTimes.times.poiLesson }}</span>次，是否继续使用？
+      </div>
+      <div class="chooseUseTypeTools">
+        <Button @click="continueUse" text="继续免费试用"></Button>
+        <Button @click="CallbuyVip" primary class="buyVip" text="成为VIP不限量"></Button>
+      </div>
+    </div>
+  </Dialog>
 </template>
 
-<script>
+<script lang="ts" setup>
 import { mapActions, mapGetters } from 'vuex';
-import Button from "@/components/Button";
-import Pic from "@/components/icon";
+import { ref, onActivated, computed } from 'vue';
+import Dialog from '@/components/Dialog.vue';
+import { useStore } from 'vuex';
+import { useRoute, useRouter } from 'vue-router';
+import Button from "@/components/Button.vue";
 import request from '@/plugin/request'
+import BuyVIPDesc from './buyVIPDesc.vue';
+import { buyVip } from '@/plugin/buyVip';
+import toast from '@/plugin/toast';
 
-export default {
-  name: 'sourceDetail',
-  async activated() {
-    this.refresh();
-    // this.logAction('sourceDetail');
-  },
-  data() {
-    return {
-      list: [],
-      info: {},
-      poi: [],
-      question: [],
-      nameRules: [
-        v => !!v || 'email is required',
-        v => v.length <= 30 || 'Name must be less than 10 characters'
-      ],
-      score: [],
-      poiScore: [],
-      buyError: '',
-      moreVideoIsOpen: {}
-    }
-  },
-  methods: {
-    ...mapActions('main', ['setPath']),
-    refresh() {
-      request.get('/source/' + this.$route.params.id + '/info').then(data => {
-        this.info = data;
-        this.setPath([{ name: this.info.name }]);
-      });
-      request.get('/source/' + this.$route.params.id + '/lessonsV3').then(data => {
-        this.list = data;
-      });
-      // request.get('/source/' + this.$route.params.id + '/poi').then(data => {
-      //     this.poi = data;
-      //     request.post('/userInPois', {
-      //         ids: this.poi.map(item => parseInt(item.id))
-      //     }).then(res => {
-      //         // weex.requireModule('MyModule').alertMe(JSON.stringify(res));
-      //         this.poiScore = res;
-      //     });
-      // });
-      request.get('/userInLesson?course=' + this.$route.params.id).then(data => {
-        if (data.error) {
+const router = useRouter();
+const route = useRoute();
+const store = useStore();
 
-        } else {
-          this.score = data;
-        }
-      });
-    },
-    poiLesson(item) {
-      if (!item.hasVideo) {
-        alert('维护中')
-        return;
-      }
-      console.log('item,item', item)
-      this.$router.push('/poiLesson/' + item.id);
-    },
-    lesson(item) {
-      if (!item.hasContent) {
-        // alert('维护中')
-        return;
-      }
-      if (item.hasChildPoiVideo && !turn) {
-        alert(this.moreVideoIsOpen[item.id + ''])
-        this.moreVideoIsOpen[item.id + ''] = true;//!this.moreVideoIsOpen[item.id+''];
-      } else {
-        this.$router.push('/lesson/' + item.id);
-      }
-    },
-    lessonAllChildPoiVideo(item) {
-      this.$router.push('/lessonAllChildPoiVideo/' + item.id);
-    },
-    gotoQuestion(item) {
-      this.$router.push('/lesson/' + item.id + '/questionList');
-    },
-    gotoKnowledge(item) {
-      this.$router.push('/lesson/' + item.id + '/knowledge');
-    },
-    getScore(lessonId) {
-      let data = this.score.filter(item => parseInt(item.lesson) == parseInt(lessonId));
-      if (!data.find(item => parseInt(item.difficult) === 1)) {
-        data.push({ "lesson": lessonId, "difficult": 1, "score": 0 })
-      }
-      if (!data.find(item => parseInt(item.difficult) === 3)) {
-        data.push({ "lesson": lessonId, "difficult": 3, "score": 0 })
-      }
-      if (!data.find(item => parseInt(item.difficult) === 5)) {
-        data.push({ "lesson": lessonId, "difficult": 5, "score": 0 })
-      }
-      data.sort((a, b) => {
-        return parseInt(a.difficult) - parseInt(b.difficult);
-      });
-      return data;
-    },
-    getPoiScore(id) {
-      let temp = this.poiScore.find(item => {
-        return item.poi === parseInt(id)
-      });
-      if (temp !== null) {
-        if (typeof temp === 'object') {
-          return temp;
-        } else {
-          return false;
-        }
-      } else {
-        return false
-      }
-    }
-  },
-  computed: {
-    ...mapGetters('main', ['userInfo'])
-  },
-  components: { Pic, Button }
+type Poi = {
+  id: number;
+  name: string;
+  hasVideo: boolean;
+  hasContent: boolean;
+};
+
+type Detail = {
+  id: number;
+  title: string;
+  hasVideo: boolean;
+  hasContent: boolean;
+  hasChildPoiVideo: boolean;
+  poi: Array<Poi>;
+  newContent: string;
+  lessonKnowledgeExist: boolean;
 }
+const list = ref<Detail[]>([]);
+const info = ref({});
+const score = ref([]);
+
+// 确认次数弹窗
+const showConinuePoiLesson = ref<Poi | null>(null);
+const showConinueTimes = ref({
+  isVip: false,
+  times: {
+    poiLesson: 0,
+  }
+});
+
+const refresh = () => {
+  request.get('/source/' + route.params.id + '/info').then(data => {
+    Object.assign(info, data);
+    // @ts-ignore
+    store.dispatch('main/setPath', [{ name: data.name }]);
+  });
+
+  request.get('/source/' + route.params.id + '/lessonsV3').then(data => {
+    // @ts-ignore
+    list.value = data;
+  });
+
+  request.get('/userInLesson?course=' + route.params.id).then(data => {
+    // @ts-ignore
+    if (!data.error) {
+      // @ts-ignore
+      score.value = data;
+    }
+  });
+};
+
+async function poiLesson(item: Poi) {
+  const data = await request.get('/user/checkFuncTimes');
+  console.log(data, data)
+  // @ts-ignore
+  showConinueTimes.value = data as any;
+  if (!item.hasVideo) {
+    alert('课程维护中');
+    return;
+  }
+  if (showConinueTimes.value.isVip) {
+    router.push('/poiLesson/' + item.id);
+  } else {
+    showConinuePoiLesson.value = item;
+  }
+};
+
+const lesson = (item: Detail) => {
+  if (!item.hasContent) {
+    return;
+  }
+  router.push('/lesson/' + item.id);
+};
+
+const gotoQuestion = (item: Detail) => {
+  router.push('/lesson/' + item.id + '/questionList');
+};
+
+const gotoKnowledge = (item: Detail) => {
+  router.push('/lesson/' + item.id + '/knowledge');
+};
+
+onActivated(() => {
+  refresh();
+});
+function closeDialog() {
+  showConinuePoiLesson.value = null
+}
+function CallbuyVip() {
+  buyVip().then(() => {
+    closeDialog();
+  })
+}
+async function continueUse() {
+  if (showConinuePoiLesson.value) {
+    const result = await request.post('/user/useFuncTimes', {
+      func: 'poiLesson'
+    });
+    if (result) {
+      router.push('/poiLesson/' + showConinuePoiLesson.value.id);
+      showConinuePoiLesson.value = null
+    } else {
+      toast({
+        'message': '今日免费权限用尽',
+        'duration': 3000
+      })
+    }
+  }
+}
+
 </script>
 
 <style scoped lang="less">
@@ -455,6 +450,26 @@ export default {
         padding-bottom: 8px;
         height: auto;
       }
+    }
+  }
+}
+
+.chooseUseType {
+  .chooseUseTypeInfo {
+    .time {
+      font-weight: bold;
+      margin: 0 8px;
+    }
+  }
+
+  .chooseUseTypeTools {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    >div {
+      margin: 8px;
+      flex-grow: 1;
     }
   }
 }
