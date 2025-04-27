@@ -5,7 +5,7 @@
                 <div class="english_ad">
                     <icon class="icon" src="english" width="120" height="120"/>
                     <div style="flex: 1">
-                        <div class="english_text title">松鼠高中英语</div>
+                        <div class="english_text title">松鼠英语</div>
                         <div class="english_text">英语提分神器</div>
                     </div>
                     <text class="english_download">立即下载</text>
@@ -191,7 +191,7 @@ export default {
       this.$router.push({ path: '/source/' + id })
     },
     sharePanel() {
-      share("松鼠高中-松鼠高中网校", "https://api.studying1v1.com/share", '松鼠未来网络科技有限责任公司', 'https://yingshijiaoyusystem.oss-cn-beijing.aliyuncs.com/icons.1024-1.png?x-oss-process=image/resize,m_fill,h_500,w_500')
+      share("松鼠学", "https://api.studying1v1.com/share", '松鼠未来网络科技有限责任公司', 'https://yingshijiaoyusystem.oss-cn-beijing.aliyuncs.com/icons.1024-1.png?x-oss-process=image/resize,m_fill,h_500,w_500')
       // this.showSharePic = true
       // if(iOS){
       //     this.showSharePic = true
@@ -205,7 +205,7 @@ export default {
     },
     share() {
       this.showSharePic = false;
-      share("松鼠高中-松鼠高中网校", "https://api.studying1v1.com/share", '松鼠未来网络科技有限责任公司', 'https://yingshijiaoyusystem.oss-cn-beijing.aliyuncs.com/icons.1024-1.png?x-oss-process=image/resize,m_fill,h_500,w_500')
+      share("松鼠学", "https://api.studying1v1.com/share", '松鼠未来网络科技有限责任公司', 'https://yingshijiaoyusystem.oss-cn-beijing.aliyuncs.com/icons.1024-1.png?x-oss-process=image/resize,m_fill,h_500,w_500')
     },
     goUserInformation() {
       // this.$router.push({path: '/userInformation'})

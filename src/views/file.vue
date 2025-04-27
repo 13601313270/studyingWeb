@@ -191,7 +191,7 @@ export default {
     },
     share(file) {
       const url = file.file.replace('http://', 'https://');
-      share(file.title, 'https://api.studying1v1.com/page/file?file=' + encodeURIComponent(url), '高中试题分享')
+      share(file.title, 'https://api.studying1v1.com/page/file?file=' + encodeURIComponent(url), '试题分享')
     }
   },
   computed: {

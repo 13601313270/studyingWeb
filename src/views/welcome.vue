@@ -2,7 +2,7 @@
   <div>
     <div class="welcome">
       <icon src="icon_green" class="icon"/>
-      <div class="title">松鼠高中</div>
+      <div class="title">松鼠学</div>
       <div class="slogan">学习面前，人人平等</div>
       <Button class="toAppButton" text="开启新版本" @click="toApp" primary></Button>
     </div>

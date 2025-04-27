@@ -355,7 +355,7 @@ export default {
     },
     share(id) {
       const url = 'https://api.studying1v1.com/page/question/' + id
-      share('题目', url, '高中试题分享')
+      share('题目', url, '试题分享')
     },
     checkSelectStyle(lookQaIndex, item, index) {
       let isAllRight = true;
