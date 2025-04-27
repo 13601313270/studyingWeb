@@ -271,7 +271,7 @@ export default {
         this.$router.back()
         return true;
       } else {
-        return false;
+        program.exit()
       }
     },
     add() {
