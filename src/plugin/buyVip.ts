@@ -25,8 +25,8 @@ export function buyVip(): Promise<void> {
     if (window.Bridge) {
       androidBridge('pay', 'alipay').then((res) => {
         console.log('支付结果', res)
+        handle.destory()
         if (res.result === true) {
-          handle.destory()
           toast({
             'message': '感谢打赏',
             'duration': 3000
