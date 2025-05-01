@@ -6,8 +6,8 @@
         <div v-if="title" class="title">
           <div class="left"></div>
           <div class="titleText">{{ title }}</div>
-          <div class="close" @click="close" v-if="!hideClose">
-            <Icon src="close" :height="40"></Icon>
+          <div class="close" @click="close">
+            <Icon src="close" :height="40" v-if="!hideClose"></Icon>
           </div>
         </div>
         <div class="content">
@@ -51,6 +51,9 @@ export default {
   },
   methods: {
     close() {
+      if (this.hideClose) {
+        return;
+      }
       this.$emit('beforeClose')
       this.showInner = false;
       setTimeout(() => {

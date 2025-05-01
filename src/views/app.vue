@@ -86,7 +86,7 @@
       </div>
     </div>
     <ImgPreview v-if="showImgUrl" :url="showImgUrl.replace('http://', 'https://')" @cancel="showImgUrl = ''" />
-    <Dialog title="服务协议和隐私政策" :show="showAgree && $route.name !== 'agreement'" hideClose>
+    <Dialog title="服务协议和隐私政策" :show="showAgree && $route.name !== 'agreement'" hideClose @close="showAgree = false">
       <div class="argument-inner" v-if="showAgree && $route.name !== 'agreement'">
         <div>
           <text class="argument_content">请您务必审慎阅读、充分理解“服务协议”和“隐私政策”各条款。您可以阅读</text>
