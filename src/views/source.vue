@@ -44,7 +44,7 @@
       <div class="source_list" v-else-if="!loading">
         <div v-for="item in list" :key="item.id" class="source_item" @click="choose(item.id)">
           <img class="source_item_img" style="width:100%" v-if="item.img"
-            :src="item.img.replace('http://', 'https://')" />
+            :src="item.img.replace('http://', 'https://') + '?x-oss-process=image/resize,m_fill,h_420,w_650'" />
           <text class="source_item_title">{{ item.name }}</text>
         </div>
       </div>
