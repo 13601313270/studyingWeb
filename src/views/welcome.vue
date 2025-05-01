@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="welcome">
-      <icon src="icon_green" class="icon"/>
+      <icon src="icon_green" class="icon" />
       <div class="title">松鼠学</div>
       <div class="slogan">学习面前，人人平等</div>
       <Button class="toAppButton" text="开启新版本" @click="toApp" primary></Button>
@@ -32,13 +32,14 @@ export default {
     }
   },
   created() {
-    if(localStorage.getItem('welcomeBegin') || !isMobileDevice()) {
+    if (localStorage.getItem('welcomeBegin') || !isMobileDevice()) {
       this.toApp()
     }
   },
   methods: {
     toApp() {
-      localStorage.setItem('welcomeBegin','true')
+      window.initFinish()
+      localStorage.setItem('welcomeBegin', 'true')
       this.$router.replace('/source')
     }
   },
@@ -53,28 +54,34 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100%;
+
   .icon {
     width: 250px;
   }
+
   .title {
     font-size: 48px;
   }
+
   .slogan {
     font-size: 36px;
     margin-top: 20px;
     color: rgb(73, 73, 73);
   }
+
   .toAppButton {
     margin-top: 300px;
     margin-bottom: 100px;
     width: 500px;
   }
 }
+
 .title {
   font-size: 50px;
   margin-top: 50px;
   margin-bottom: 20px;
 }
+
 .content {
   font-size: 34px;
   padding: 30px;

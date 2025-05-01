@@ -157,6 +157,7 @@ import program from '@/plugin/program';
 import isMobileDevice from '@/plugin/isMobileDevice'
 import BuyVIPDesc from './buyVIPDesc.vue';
 import { setBuyVipCallback } from '@/plugin/buyVip'
+import checkNet from '../plugin/checkNet';
 
 const agreementKey = 'agreementKey2022-8-7-2'
 export default {
@@ -238,6 +239,15 @@ export default {
       }
     } catch (e) {
       console.log(e)
+    }
+    window.initFinish = () => {
+      // app从后台恢复到前台
+      window.appActive = () => {
+        checkNet.check()
+      }
+      // app从前台进入后台
+      window.appBackground = () => {
+      }
     }
 
     // const minVersion = await this.axios.get('/globleConfig?keys=minVersion');
