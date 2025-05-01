@@ -28,6 +28,7 @@ import addQuestion from '../views/addQuestion.vue'
 import file from '../views/file.vue'
 import word from '../views/word.vue'
 import listen from '../views/listen.vue'
+import Develop from '@/views/develop.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -45,7 +46,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'sourceDetail',
     component: sourceDetail,
     meta: {
-        title: '详情页'
+      title: '详情页'
     }
   },
   {
@@ -110,7 +111,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/informationDetail',
-    name :'informationDetail',
+    name: 'informationDetail',
     component: InformationDetail,
   },
   {
@@ -167,6 +168,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/listen',
     name: 'listen',
     component: listen,
+  },
+  {
+    path: '/develop',
+    name: 'develop',
+    component: Develop,
   },
 ]
 

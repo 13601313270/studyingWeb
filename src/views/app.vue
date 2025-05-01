@@ -207,7 +207,7 @@ export default {
         ...rootPages,
         'sourceDetail', 'lessonDetail', 'word', 'listen', 'lessonDetailNew', 'poiLessonDetail', 'lessonAllChildPoiVideo', 'lessonQuestionList', 'lessonKnowledgeList', 'poiQuestion', 'lessonLog',
         'addQuestion', 'informationDetail', 'dailyQuestion', 'zhidaoDetail', 'lessonKnowledgeDetail',
-        'aboutUs', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo'
+        'aboutUs', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo', 'develop'
       ];
       if (sort.indexOf(newVal) > sort.indexOf(oldVal)) {
         if (rootPages.includes(newVal) && rootPages.includes(oldVal)) {
@@ -315,7 +315,7 @@ export default {
         return 'source';
       } else if (['file'].includes(this.$route.name)) {
         return 'file';
-      } else if (['mine', 'aboutUs', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo'].includes(this.$route.name)) {
+      } else if (['mine', 'aboutUs', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo', 'develop'].includes(this.$route.name)) {
         return 'mine';
       } else if (['friend', 'addQuestion', 'informationDetail', 'dailyQuestion', 'zhidaoDetail'].includes(this.$route.name)) {
         return 'friend';

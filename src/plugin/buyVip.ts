@@ -60,6 +60,7 @@ export function buyVip(): Promise<void> {
       })
     } else {
       setTimeout(() => {
+        handle.destory()
         bridgeSuccess()
       }, 1000)
     }
