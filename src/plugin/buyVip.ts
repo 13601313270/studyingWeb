@@ -12,9 +12,13 @@ export function setBuyVipCallback(callback: () => void) {
 export function buyVip(): Promise<void> {
   return new Promise((resolve, reject) => {
     function bridgeSuccess() {
-      buySuccessCallback();
-      request.put('/user/buyTip').then((res) => {
-        resolve();
+      request.put('/user/buyVip').then((res) => {
+        if (res) {
+          buySuccessCallback();
+          resolve();
+        } else {
+          reject();
+        }
       })
     }
     const handle = Loading();

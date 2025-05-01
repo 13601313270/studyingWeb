@@ -1,5 +1,7 @@
 <template>
-  <img :src="(showUrl || '').replace('http://', 'https://')" :style="style" />
+  <img v-if="src === 'close'" src="../icons/close.png" :style="style" />
+  <img v-else-if="src === 'icon_green'" src="../icons/icon_green.png" :style="style" />
+  <img v-else :src="(showUrl || '').replace('http://', 'https://')" :style="style" />
 </template>
 <script lang="ts" setup>
 import { getAllIcons } from '../plugin/allIcons'
