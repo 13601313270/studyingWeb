@@ -25,7 +25,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onActivated, onMounted, ref } from 'vue';
+import { onActivated, onMounted, onUnmounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import request from '../plugin/request'
 import Button from '@/components/Button.vue';
@@ -54,6 +54,8 @@ const myInfo = ref<{
   icon: ''
 })
 
+let eventSource: EventSource;
+
 onMounted(async () => {
   const uid = route.params.id;
   chatUser.value = await request.get('/friend/getUserInfo/' + uid)
@@ -73,14 +75,43 @@ onMounted(async () => {
         this.style.height = (this.scrollHeight) + 'px';
       })
     }
+    listen();
   }, 300)
   if (chatUser.value) {
     initList()
   }
 })
+onUnmounted(() => {
+  eventSource.close()
+})
 
+function listen() {
+  const uid = route.params.id;
+  const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+  const token = userInfo.account + '@@' + localStorage.getItem('token');
+  eventSource = new EventSource('https://api.studying1v1.com/friend/chat/heart/' + uid + '?token=' + token);
+  eventSource.onopen = function () {
+    console.log('连接已打开');
+  };
+  eventSource.onmessage = function (event) {
+    const jsonStr = event.data.replace(/^data:\s/, '');
+    const json = JSON.parse(jsonStr)
+    if (json && json.hasNew) {
+      console.log('收到刷新消息了。。。。。。。。。')
+      initList()
+    }
+  };
+  eventSource.addEventListener('error', (event) => {
+    if (event.eventPhase === EventSource.CLOSED) {
+      console.log('结束');
+    } else {
+      console.error('An error occurred:', event);
+    }
+  });
+}
 function initList() {
   const uid = route.params.id;
+  console.log('333333333')
   request.post('/friend/chat/receive/' + uid, {
     page: 0,
   }).then(list => {
