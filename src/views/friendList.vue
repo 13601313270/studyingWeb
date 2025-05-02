@@ -27,7 +27,7 @@
     <div class="beInviteTitle" v-if="myInfo && !myInfo.beInviteFinish && myBeInviteList.length">
       这些人邀请您过您安装App，请选择一位真正邀请人，双方各获得<span style="font-weight: bold;color: red">2个月</span>VIP。</div>
     <div class="frindList">
-      <div v-for="item in myBeInviteList" class="friendItem" style="margin: 0">
+      <div v-for="item in myBeInviteList" class="friendItem" style="margin-left: 0;margin-right: 0;">
         <div class="icon">
           <img :src="item.user1.icon + '?x-oss-process=image/resize,m_fill,h_200,w_200'" />
         </div>
