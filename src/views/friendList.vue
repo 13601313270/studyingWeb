@@ -23,7 +23,7 @@
       <!-- 发私信 -->
     </div>
   </div>
-  <Dialog :show="beInviteShow" title="邀请您安装App的用户" @close="beInviteShow=false">
+  <Dialog :show="beInviteShow" title="邀请您安装App的用户" @close="beInviteShow = false">
     <div class="beInviteTitle" v-if="myInfo && !myInfo.beInviteFinish && myBeInviteList.length">
       这些人邀请您过您安装App，请选择一位真正邀请人，双方各获得<span style="font-weight: bold;color: red">2个月</span>VIP。</div>
     <div class="frindList">
@@ -32,7 +32,7 @@
           <img :src="item.user1.icon + '?x-oss-process=image/resize,m_fill,h_200,w_200'" />
         </div>
         <div class="info">
-          <div class="name">{{ '用户' + item.user1.name || item.user1.account }}</div>
+          <div class="name">{{ item.user1.name || item.user1.account }}</div>
           <!-- <div>{{ item.inviteTime }}</div> -->
           <div class="content">{{ item.content }}</div>
           <div class="inviteTime">{{ item.inviteTime }}</div>
@@ -74,12 +74,14 @@
 </template>
 
 <script lang="ts" setup>
+import { onActivated, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import Dialog from '@/components/Dialog.vue';
 import Input from '@/components/Input.vue';
 import Button from '@/components/Button.vue';
 import request from '@/plugin/request'
-import { onActivated, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import toast from "@/plugin/toast";
+import validatePhoneNumber from '@/plugin/validatePhoneNumber';
 
 const router = useRouter()
 
@@ -146,16 +148,40 @@ async function initList() {
   })
 }
 function send() {
+  if (!validatePhoneNumber(beInvitePhone.value)) {
+    toast({
+      'message': '手机号不合法',
+      'duration': 3000
+    })
+    return;
+  }
   request.put('/friend/send', {
     phone: beInvitePhone.value,
   }).then(res => {
-
+    console.log('=========')
+    console.log(res)
+    // @ts-ignore
+    if (res.status === "success") {
+      toast({
+        'message': '已发送邀请',
+        'duration': 3000
+      })
+      beInvitePhone.value = '';
+      inviteDialogShow.value = false;
+    } else {
+      toast({
+        // @ts-ignore
+        'message': res.res,
+        'duration': 3000
+      })
+    }
   })
 }
 function beUseInvite(id: number) {
   request.put('/friend/beUseInvite/' + id).then(res => {
     console.log('beUseInviteRes', res)
     initList()
+    beInviteShow.value = false;
   })
 }
 function toChat(uid: friendItem) {
