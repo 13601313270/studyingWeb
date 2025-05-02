@@ -1,11 +1,18 @@
 <template>
   <div class="chatPage" v-if="chatUser">
-    <div class="user" v-if="transformFinish">
+    <!-- <div class="user" v-if="transformFinish">
       <img class="icon" :src="chatUser.icon + '?x-oss-process=image/resize,m_fill,h_100,w_100'" />
       <div class="name">{{ chatUser.name }}</div>
       <div v-if="chatUser.isVip">VIP</div>
-    </div>
+    </div> -->
     <div class="content">
+      <div v-if="chatListing">loading</div>
+      <div v-if="chatList.length === 0 && !chatListing">
+        <div class="receive">
+          <div class="icon"><img :src="chatUser.icon + '?x-oss-process=image/resize,m_fill,h_100,w_100'" /></div>
+          <div class="content">我们已互现关注，开始聊天吧</div>
+        </div>
+      </div>
       <div v-for="item in chatList">
         <div v-if="item.sender_id === +route.params.id" class="receive">
           <div class="icon"><img :src="chatUser.icon + '?x-oss-process=image/resize,m_fill,h_100,w_100'" /></div>
@@ -48,6 +55,7 @@ const transformFinish = ref<boolean>(false)// position:fixed遇到页面切换�
 const sentMessage = ref<string>('');
 const textareaRef = ref();
 const chatList = ref<Array<ChatItem>>([])
+const chatListing = ref<boolean>(false)
 const myInfo = ref<{
   icon: string,
 }>({
@@ -112,10 +120,12 @@ function listen() {
 function initList() {
   const uid = route.params.id;
   console.log('333333333')
+  chatListing.value = true;
   request.post('/friend/chat/receive/' + uid, {
     page: 0,
   }).then(list => {
     chatList.value = list as any;
+    chatListing.value = false;
   })
 }
 
@@ -143,8 +153,8 @@ function sent() {
 }
 
 .user {
-  position: fixed;
-  top: calc(env(safe-area-inset-top) + 8px);
+  position: absolute;
+  top: -80px;
   left: 88px;
   z-index: 1;
   display: flex;

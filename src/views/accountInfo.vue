@@ -15,7 +15,8 @@
     <div class="moreAction">
       <Button text="注销账号" error @click="showDelete = true"></Button>
       <div style="flex-grow: 1;"></div>
-      <Button @click="gotoDevelop" v-if="userInfo2 && userInfo2.account === '12345678'" text="开发(测试账号12345678特有功能)"></Button>
+      <Button @click="gotoDevelop" v-if="userInfo2 && ['12345678', '13601313270'].includes(userInfo2.account)"
+        :text="'开发(测试账号' + userInfo2.account + '特有功能)'"></Button>
     </div>
     <Dialog :show="showDelete" title="是否确定注销账户" @close="showDelete = false">
       <div style="margin-bottom: 20px;overflow: auto;">

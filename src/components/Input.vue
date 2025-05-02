@@ -1,12 +1,15 @@
 <template>
   <div>
-    <input class="inputBase" v-model="valueInner"/>
+    <input :placeholder="placeholder" class="inputBase" v-model="valueInner" />
   </div>
 </template>
 <script>
 export default {
   name: 'Input',
   props: {
+    placeholder: {
+      type: String
+    },
     modelValue: String,
   },
   data() {
@@ -22,16 +25,15 @@ export default {
     },
     valueInner(val) {
       console.log('输入变化', val)
-      this.$emit('update:modelValue',val)
+      this.$emit('update:modelValue', val)
     }
   }
 }
 </script>
 
 <style scoped>
-.InputContent {
+.InputContent {}
 
-}
 .inputBase {
   min-width: 100px;
   width: 100%;

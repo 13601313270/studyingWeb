@@ -1,13 +1,23 @@
 <template>
   <div class="develop">
     <Button text="取消VIP" @click="closeVip"></Button>
+    <Button text="取消已受邀状态" @click="closeBeInvite"></Button>
   </div>
 </template>
 <script setup lang="ts">
 import request from '../plugin/request'
 import Button from '../components/Button.vue'
 function closeVip() {
-  request.put('/develop/closeVip', {}).then((res) => {
+  request.put('/develop/changeStatus', {
+    action: 'closeVip'
+  }).then((res) => {
+    alert(res)
+  })
+}
+function closeBeInvite() {
+  request.put('/develop/changeStatus', {
+    action: 'closeBeInvite'
+  }).then((res) => {
     alert(res)
   })
 }
@@ -16,5 +26,9 @@ function closeVip() {
 .develop {
   padding: 16px;
   box-sizing: border-box;
+
+  >* {
+    margin-bottom: 32px;
+  }
 }
 </style>

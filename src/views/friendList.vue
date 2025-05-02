@@ -1,8 +1,12 @@
 <template>
   <div class="frindList">
-    <div @click="inviteDialogShow = true">邀请（双方获赠VIP）</div>
-    <div>===========================</div>
-    <div style="width: 100vw;">这些人邀请您过您使用App，请选择一位真正邀请人，双方获得2个月VIP</div>
+    <div class="title">
+      <div class="titleText">我的好友</div>
+      <div class="inviteButton" @click="inviteDialogShow = true">
+        <div class="text">邀请</div>
+        <div class="desc">双方获赠2个月VIP</div>
+      </div>
+    </div>
     <div v-for="item in myBeInviteList" class="friendItem">
       <div class="icon">
         <img :src="item.user1.icon + '?x-oss-process=image/resize,m_fill,h_200,w_200'" />
@@ -19,16 +23,36 @@
       <!-- 发私信 -->
     </div>
   </div>
+  <Dialog :show="beInviteShow" title="邀请您安装App的用户" @close="beInviteShow=false">
+    <div class="beInviteTitle" v-if="myInfo && !myInfo.beInviteFinish && myBeInviteList.length">
+      这些人邀请您过您安装App，请选择一位真正邀请人，双方各获得<span style="font-weight: bold;color: red">2个月</span>VIP。</div>
+    <div class="frindList">
+      <div v-for="item in myBeInviteList" class="friendItem" style="margin: 0">
+        <div class="icon">
+          <img :src="item.user1.icon + '?x-oss-process=image/resize,m_fill,h_200,w_200'" />
+        </div>
+        <div class="info">
+          <div class="name">{{ '用户' + item.user1.name || item.user1.account }}</div>
+          <!-- <div>{{ item.inviteTime }}</div> -->
+          <div class="content">{{ item.content }}</div>
+          <div class="inviteTime">{{ item.inviteTime }}</div>
+        </div>
+        <div class="action">
+          <Button warning @click="beUseInvite(item.id)" text="确认受邀"></Button>
+        </div>
+        <!-- 发私信 -->
+      </div>
+    </div>
+  </Dialog>
   <div class="split"></div>
   <div class="frindList">
-    <div>我的好友</div>
     <div>
       <div v-for="item in frindList" class="friendItem">
         <div class="icon">
           <img :src="item.icon + '?x-oss-process=image/resize,m_fill,h_200,w_200'" />
         </div>
         <div class="info">
-          <div class="name">{{ '用户' + item.name || item.account }}</div>
+          <div class="name">{{ item.name || item.account }}</div>
           <div class="city">城市：{{ item.city || '未知' }}</div>
           <div class="sex">性别：{{ item.sex === 1 ? '女' : '' }}{{ item.sex === 0 ? '男' : '' }}</div>
           <!-- <div>{{ item.inviteTime }}</div> -->
@@ -42,10 +66,9 @@
   </div>
   <Dialog :show="inviteDialogShow" title="邀请" @close="inviteDialogShow = false">
     <div class="inviteDialog">
-      <div>邀请新用户使用App，双方各获得2个月VIP</div>
-      <div>对方手机号</div>
-      <Input v-model="beInvitePhone" />
-      <Button class="sentButton" text="发送邀请" @click="send" />
+      <div class="desc">邀请新用户使用App，对方受邀后，双方各获得2个月VIP</div>
+      <Input placeholder="请输入手机号" v-model="beInvitePhone" />
+      <Button primary class="sentButton" text="发送邀请" @click="send" />
     </div>
   </Dialog>
 </template>
@@ -87,10 +110,21 @@ type friendItem = {
 }
 const frindList = ref<Array<friendItem>>([]);
 
-onActivated(() => {
+const myInfo = ref<{
+  id: number,
+  name: string,
+  icon: string,
+  isVip: boolean,
+  beInviteFinish: boolean,
+}>()
+
+const beInviteShow = ref<boolean>(false)
+
+onActivated(async () => {
+  myInfo.value = await request.get('/user/getInfo');
   initList()
 })
-function initList() {
+async function initList() {
   request.get('/friend/myList', {
   }).then((res) => {
     // @ts-ignore
@@ -104,6 +138,11 @@ function initList() {
   request.get('/friend/myBeInviteList', {
   }).then(res => {
     myBeInviteList.value = res as any;
+    if (myInfo.value && !myInfo.value.beInviteFinish && myBeInviteList.value.length) {
+      beInviteShow.value = true;
+    } else {
+      beInviteShow.value = false;
+    }
   })
 }
 function send() {
@@ -127,6 +166,45 @@ function toChat(uid: friendItem) {
 <style scoped lang="less">
 .frindList {
   flex: 1;
+
+  .title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 108px;
+    padding-left: 32px;
+    padding-right: 24px;
+
+    .titleText {
+      font-size: 34px;
+    }
+
+    .inviteButton {
+      height: 88px;
+      border-radius: 10px;
+      padding-left: 20px;
+      padding-right: 20px;
+      border-style: solid;
+      border-width: 2px;
+      border-color: #ccd6d2;
+      display: flex;
+      background-color: white;
+      flex-direction: column;
+      align-items: center;
+      box-sizing: border-box;
+      justify-content: center;
+
+      .text {
+        font-size: 32px;
+      }
+
+      .desc {
+        font-size: 22px;
+        color: #999;
+      }
+    }
+  }
 
   .friendItem {
     background-color: white;
@@ -179,8 +257,17 @@ function toChat(uid: friendItem) {
       }
     }
 
-    .action {}
+    .action {
+      flex-shrink: 0;
+    }
   }
+}
+
+.beInviteTitle {
+  width: 100%;
+  margin-bottom: 32px;
+  font-size: 32px;
+  color: #333;
 }
 
 .split {
@@ -189,6 +276,12 @@ function toChat(uid: friendItem) {
 }
 
 .inviteDialog {
+  .desc {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 32px;
+  }
+
   .sentButton {
     margin-top: 32px;
   }
