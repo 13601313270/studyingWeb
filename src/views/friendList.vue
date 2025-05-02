@@ -30,12 +30,12 @@
         <div class="info">
           <div class="name">{{ '用户' + item.name || item.account }}</div>
           <div class="city">城市：{{ item.city || '未知' }}</div>
-          <div class="sex">性别：{{ item.sex === 1 ? '女' : '' }}{{ item.sex === 2 ? '男' : '' }}</div>
+          <div class="sex">性别：{{ item.sex === 1 ? '女' : '' }}{{ item.sex === 0 ? '男' : '' }}</div>
           <!-- <div>{{ item.inviteTime }}</div> -->
           <!-- <div>{{ item.content }}</div> -->
         </div>
         <div class="action">
-          <Button @click="toChat" text="发私信"></Button>
+          <Button @click="toChat(item.id)" text="发私信"></Button>
         </div>
       </div>
     </div>
@@ -118,8 +118,8 @@ function beUseInvite(id: number) {
     initList()
   })
 }
-function toChat() {
-  router.push('/chat')
+function toChat(uid: number) {
+  router.push('/chat/' + uid)
 }
 </script>
 
