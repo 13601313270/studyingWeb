@@ -35,7 +35,7 @@
           <!-- <div>{{ item.content }}</div> -->
         </div>
         <div class="action">
-          <Button @click="toChat(item.id)" text="发私信"></Button>
+          <Button @click="toChat(item)" text="发私信"></Button>
         </div>
       </div>
     </div>
@@ -75,7 +75,7 @@ const myBeInviteList = ref<Array<{
   content: string,
 }>>([])
 
-const frindList = ref<Array<{
+type friendItem = {
   account: string,
   city: string,
   icon: string,
@@ -84,7 +84,8 @@ const frindList = ref<Array<{
   name: string
   sex: 0 | 1 | 2,
   vipEndDate: string
-}>>([]);
+}
+const frindList = ref<Array<friendItem>>([]);
 
 onActivated(() => {
   initList()
@@ -118,8 +119,8 @@ function beUseInvite(id: number) {
     initList()
   })
 }
-function toChat(uid: number) {
-  router.push('/chat/' + uid)
+function toChat(uid: friendItem) {
+  router.push('/chat/' + uid.id)
 }
 </script>
 

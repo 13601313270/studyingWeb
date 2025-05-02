@@ -47,7 +47,7 @@
       <Login />
     </div>
     <div class="bottom" :style="{}"
-      v-if="!['lessonDetail', 'lessonDetailNew', 'poiLessonDetail', 'lessonAllChildPoiVideo', 'lessonLog'].includes($route.name) && $route.name !== 'welcome'">
+      v-if="$route.meta.hideBottom !== true && (!['lessonDetail', 'lessonDetailNew', 'poiLessonDetail', 'lessonAllChildPoiVideo', 'lessonLog'].includes($route.name) && $route.name !== 'welcome')">
       <div class="bottom_link" :class="[tabType === 'source' ? 'bottom_link_active' : 'bottom_link_blur']"
         @click="to('/source')">
         <icon class="bottom_link_icon" width="44" height="44" :src="tabType === 'source' ? 'main_active' : 'main'" />

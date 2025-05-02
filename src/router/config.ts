@@ -29,7 +29,13 @@ import listen from '../views/listen.vue'
 import Develop from '@/views/develop.vue'
 import Chat from '@/views/chat.vue'
 
-const routes: Array<RouteRecordRaw> = [
+type RouterItem = RouteRecordRaw & {
+  meta?: {
+    title?: string,
+    hideBottom?: boolean,
+  }
+}
+const routes: Array<RouterItem> = [
   {
     path: '/',
     name: 'welcome',
@@ -177,6 +183,9 @@ const routes: Array<RouteRecordRaw> = [
     path: '/chat/:id',
     name: 'chat',
     component: Chat,
+    meta: {
+      hideBottom: true,
+    }
   }
 ]
 export default routes;
