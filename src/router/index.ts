@@ -29,6 +29,7 @@ import file from '../views/file.vue'
 import word from '../views/word.vue'
 import listen from '../views/listen.vue'
 import Develop from '@/views/develop.vue'
+import Chat from '@/views/chat.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -174,6 +175,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'develop',
     component: Develop,
   },
+  {
+    path: '/chat',
+    name: 'chat',
+    component: Chat,
+  }
 ]
 
 const router = createRouter({

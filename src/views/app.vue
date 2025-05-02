@@ -207,7 +207,7 @@ export default {
       let sort = [
         ...rootPages,
         'sourceDetail', 'lessonDetail', 'word', 'listen', 'lessonDetailNew', 'poiLessonDetail', 'lessonAllChildPoiVideo', 'lessonQuestionList', 'lessonKnowledgeList', 'poiQuestion', 'lessonLog',
-        'addQuestion', 'informationDetail', 'dailyQuestion', 'zhidaoDetail', 'lessonKnowledgeDetail',
+        'addQuestion', 'informationDetail', 'dailyQuestion', 'zhidaoDetail', 'lessonKnowledgeDetail', 'chat',
         'aboutUs', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo', 'develop'
       ];
       if (sort.indexOf(newVal) > sort.indexOf(oldVal)) {
@@ -327,7 +327,7 @@ export default {
         return 'file';
       } else if (['mine', 'aboutUs', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo', 'develop'].includes(this.$route.name)) {
         return 'mine';
-      } else if (['friend', 'addQuestion', 'informationDetail', 'dailyQuestion', 'zhidaoDetail'].includes(this.$route.name)) {
+      } else if (['friend', 'addQuestion', 'informationDetail', 'dailyQuestion', 'zhidaoDetail', 'chat'].includes(this.$route.name)) {
         return 'friend';
       } else if (['mall'].includes(this.$route.name)) {
         return 'mall'
