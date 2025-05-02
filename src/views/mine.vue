@@ -29,6 +29,7 @@
       <div class="payed" :style="{ opacity: showIsPayed ? '1' : '0', transform: showIsPayed ? '' : 'scale(2)' }">
         <img src="../icons/isPayed.png" />
         <span>金主爸爸</span>
+        <span class="vipEndDate" v-if="userInfo2.vipEndDate">时间至{{ userInfo2.vipEndDate.slice(0, 10) }}</span>
       </div>
     </div>
     <div v-else class="user">
@@ -60,7 +61,7 @@
         <icon class="right" src="right_black" />
       </div>
       <div class="actionItem" @click="pay" v-if="userInfo && userInfo.account">
-        <div>打赏作者</div>
+        <div>购买VIP ¥12/年</div>
         <icon class="right" src="right_black" />
       </div>
       <div class="actionItem" @click="$router.push('/cache')">
@@ -350,6 +351,11 @@ export default {
 
   >span {
     font-size: 26px;
+  }
+
+  .vipEndDate {
+    font-size: 22px;
+    color: #aaa;
   }
 }
 

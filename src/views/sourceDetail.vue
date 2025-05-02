@@ -31,7 +31,10 @@
       </div>
       <div class="chooseUseTypeTools">
         <Button @click="continueUse" text="继续免费试用"></Button>
-        <Button @click="CallbuyVip" primary class="buyVip" text="成为VIP不限量"></Button>
+        <div @click="CallbuyVip" class="buyVip">
+          <div>成为VIP不限量</div>
+          <div class="price">¥12/年</div>
+        </div>
       </div>
     </div>
   </Dialog>
@@ -470,6 +473,36 @@ async function continueUse() {
     >div {
       margin: 8px;
       flex-grow: 1;
+    }
+
+    .cancel {
+      height: 100px;
+    }
+
+    .buyVip {
+      background: #00795c;
+      border: none;
+      height: 100px;
+      border-radius: 10px;
+      padding-left: 20px;
+      padding-right: 20px;
+      border-style: solid;
+      border-width: 2px;
+      border-color: #ccd6d2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      font-size: 32px;
+      color: white;
+      text-align: center;
+      flex-grow: 1;
+
+      .price {
+        line-height: 26px;
+        font-size: 26px;
+      }
     }
   }
 }

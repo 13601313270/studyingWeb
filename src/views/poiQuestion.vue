@@ -172,7 +172,7 @@
         您是免费用户，试题AI解析只有VIP用户可用。
       </div>
       <div class="chooseUseTypeTools">
-        <Button @click="CallbuyVip" primary class="buyVip" text="成为VIP不限量"></Button>
+        <Button @click="CallbuyVip" primary class="buyVip" text="成为VIP不限量（12¥/年）"></Button>
       </div>
     </div>
   </Dialog>

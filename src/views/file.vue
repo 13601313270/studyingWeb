@@ -6,7 +6,7 @@
         <div class="subjectScroll">
           <div :key="subject.id" v-for="subject in subjects" @click="changeSubject(subject.id)" class="subjects_item">
             <text :key="subject.id" :class="[+selectSub === subject.id ? 'subjects_item_select' : '']">{{ subject.name
-              }}</text>
+            }}</text>
           </div>
         </div>
         <div key="end" class="subjects_item_bottomBorder" ref="subjectBorder"
@@ -42,15 +42,19 @@
       </div>
     </div>
   </div>
-  <Dialog :show="showConinueUrl!==''||showConinueOpenPath!==''" title="提示" @close="showConinueUrl='',showConinueOpenPath=''">
+  <Dialog :show="showConinueUrl !== '' || showConinueOpenPath !== ''" title="提示"
+    @close="showConinueUrl = '', showConinueOpenPath = ''">
     <div class="chooseUseType">
       <BuyVIPDesc />
       <div class="chooseUseTypeInfo" v-if="showConinueUrl || showConinueOpenPath">
         您是免费用户，今日可免费试用次数还剩<span class="time">{{ showConinueTimes.times.fileDownload }}</span>次，是否继续使用？
       </div>
       <div class="chooseUseTypeTools">
-        <Button @click="continueUse" text="继续免费试用"></Button>
-        <Button @click="CallbuyVip" primary class="buyVip" text="成为VIP不限量"></Button>
+        <Button class="cancel" @click="continueUse" text="继续免费试用"></Button>
+        <div @click="CallbuyVip" class="buyVip">
+          <div>成为VIP不限量</div>
+          <div class="price">¥12/年</div>
+        </div>
       </div>
     </div>
   </Dialog>
@@ -160,10 +164,10 @@ export default {
         func: 'fileDownload'
       });
       if (result) {
-        if(this.showConinueUrl) {
+        if (this.showConinueUrl) {
           this.downloadFile(this.showConinueUrl);
           this.showConinueUrl = '';
-        } else if(this.showConinueOpenPath){
+        } else if (this.showConinueOpenPath) {
           File.open(this.showConinueOpenPath);
           this.showConinueOpenPath = '';
         }
@@ -407,6 +411,7 @@ export default {
     }
   }
 }
+
 .chooseUseType {
   .chooseUseTypeInfo {
     .time {
@@ -423,6 +428,36 @@ export default {
     >div {
       margin: 8px;
       flex-grow: 1;
+    }
+
+    .cancel {
+      height: 100px;
+    }
+
+    .buyVip {
+      background: #00795c;
+      border: none;
+      height: 100px;
+      border-radius: 10px;
+      padding-left: 20px;
+      padding-right: 20px;
+      border-style: solid;
+      border-width: 2px;
+      border-color: #ccd6d2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      font-size: 32px;
+      color: white;
+      text-align: center;
+      flex-grow: 1;
+
+      .price {
+        line-height: 26px;
+        font-size: 26px;
+      }
     }
   }
 }

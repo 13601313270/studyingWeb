@@ -9,23 +9,43 @@
         </tr>
         <tr>
           <td>课程每日限量</td>
-          <td class="warning">5次</td>
+          <td class="warning">{{ limit.lesson || '不支持' }}次</td>
           <td class="good">不限</td>
         </tr>
         <tr>
           <td>试题AI解析</td>
-          <td class="warning">不支持</td>
+          <td class="warning">{{ limit.aiQa || '不支持' }}</td>
           <td class="good">支持</td>
         </tr>
         <tr>
           <td>资料下载</td>
-          <td class="warning">10次</td>
+          <td class="warning">{{ limit.fileDown || '不支持' }}次</td>
           <td class="good">不限</td>
         </tr>
       </tbody>
     </table>
   </div>
+  <div>VIP费用<span class="price">¥12</span>/年</div>
 </template>
+<script setup lang="ts">
+import { onMounted, ref } from 'vue';
+import request from '../plugin/request'
+const limit = ref<{
+  aiQa: number,
+  fileDown: number,
+  lesson: number
+}>({
+  aiQa: 0,
+  fileDown: 0,
+  lesson: 0
+})
+
+onMounted(() => {
+  request.get('user/vipLimitNum').then(res => {
+    limit.value = res as any;
+  })
+})
+</script>
 <style lang="less" scoped>
 .popBuyVipSuccess {
   margin-bottom: 20px;
@@ -62,4 +82,9 @@
     }
   }
 }
-    </style>
+
+.price {
+  font-weight: bold;
+  // margin: 0 8px;
+}
+</style>
