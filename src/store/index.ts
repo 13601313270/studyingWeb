@@ -50,6 +50,7 @@ const main = {
   },
 }
 
+
 type Store = {
   main: { [key in keyof IState]: IState[key] }
 }
