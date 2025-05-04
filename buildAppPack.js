@@ -16,14 +16,14 @@ const getOldManifest = new Promise(resolve => {
 function build() {
   console.log(pkg.version)
   exec('mkdir appPack')
-  const name = "pack" + (pkg.version.replaceAll('.', '_')) + '.tar.gz';
+  const name = "pack" + (pkg.version.replaceAll('.', '_')) + '.zip';
   exec(`cat > appPack/manifest.json <<EOF
 {
     "version": "${pkg.version}",
     "file": "${name}"
 }
 EOF`)
-  exec('tar -czvf appPack/' + name + ' dist')
+  exec('zip -r appPack/' + name + ' dist')
 }
 getOldManifest.then(res => {
   console.log('======')
