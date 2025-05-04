@@ -1,11 +1,11 @@
 {
   "name": "falcon_vue",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "start": "node start.js serve",
-    "build": "NODE_ENV=production vue-cli-service build",
+    "build": "NODE_ENV=production vue-cli-service build && node buildAppFile.js",
     "dll": "webpack --config ./config/webpack.dll.conf.js",
     "buildAppPack": "node buildAppPack.js"
   },
