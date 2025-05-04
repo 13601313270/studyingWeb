@@ -35,6 +35,7 @@ getOldManifest.then(res => {
 
   if (semver.gt(pkg.version, prodVersion)) {
     console.log('版本验证通过')
+    build();
   } else {
     console.log('版本验证不通过，版本号需要高于线上版本' + prodVersion)
     throw new Error('版本验证不通过，版本号需要高于线上版本' + prodVersion);
