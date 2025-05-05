@@ -15,6 +15,8 @@ const getOldManifest = new Promise(resolve => {
 })
 function build() {
   console.log(pkg.version)
+  exec('rm -rf dist/pdfView/')// 这个文件夹不变化，而且太大了，所以不每次打包进来
+  exec('find dist -name "*.map" -type f -delete')// 删除sourceMap文件
   exec('mkdir appPack')
   const name = "pack" + (pkg.version.replaceAll('.', '_')) + '.zip';
   exec(`cat > appPack/manifest.json <<EOF
