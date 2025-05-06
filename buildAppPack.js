@@ -32,7 +32,12 @@ getOldManifest.then(res => {
   console.log(res)
   console.log(pkg.version)
 
-  const prodVersion = JSON.parse(res).version;
+  let prodVersion;
+  try {
+    prodVersion = JSON.parse(res).version;
+  } catch (e) {
+    prodVersion = '0.0.0'
+  }
   console.log(prodVersion)
 
   if (semver.gt(pkg.version, prodVersion)) {
