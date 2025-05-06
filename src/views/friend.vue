@@ -1,6 +1,6 @@
 <template>
-    <friendList />
-    <!-- <bbs /> -->
+    <!-- <friendList /> -->
+    <bbs />
 </template>
 <script>
 import pic from '../components/icon';

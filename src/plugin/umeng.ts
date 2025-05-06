@@ -1,6 +1,6 @@
 import androidBridge from "./androidBridge";
 
-function init(): Promise<void> {
+function init(isFirst: boolean): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     if (navigator.userAgent.includes('studying1v1Android')) {
       androidBridge('Umeng', 'init', {
@@ -22,6 +22,7 @@ function init(): Promise<void> {
       // @ts-ignore
       window.webkit.messageHandlers.jsUseWKWebView.postMessage({
         type: 'UmengInit',
+        isFirst,
       }).then(() => {
         resolve();
       })

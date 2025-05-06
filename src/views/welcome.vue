@@ -11,8 +11,6 @@
 
 <script>
 import Button from '../components/Button.vue'
-import toast from '../plugin/toast'
-import request from '../plugin/request'
 import Icon from '@/components/icon.vue'
 import isMobileDevice from '@/plugin/isMobileDevice';
 
