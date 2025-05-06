@@ -27,9 +27,9 @@
         <div v-else-if="$route.name === 'lessonDetail'" @click="toListenLog">
           <icon src="log" width="56" height="56" />
         </div>
-        <!-- <div v-else-if="$route.name === 'friend'" @click="toAddQuestion">
+        <div v-else-if="$route.name === 'friend'" @click="toAddQuestion">
           <icon src="add" width="56" height="56" />
-        </div> -->
+        </div>
       </div>
     </div>
     <div v-if="isOffline" class="offline" :class="{ showLogin }">网络连接断开</div>
@@ -65,7 +65,7 @@
         <icon class="bottom_link_icon" width="44" height="44"
           :src="tabType === 'friend' ? 'friend_active' : 'friend'" />
         <text class="bottom_link_text"
-          :class="[tabType === 'friend' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">消息6</text>
+          :class="[tabType === 'friend' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">消息</text>
         <div class="tip" v-if="notUsedInformationCount > 0">
           <text class="tipText">{{ notUsedInformationCount }}</text>
         </div>
@@ -235,7 +235,7 @@ export default {
       if (data === null && isMobileDevice()) {
         this.showAgree = true;
       } else {
-        umeng.init()
+        umeng.init(false)
       }
     } catch (e) {
       console.log(e)
@@ -311,7 +311,7 @@ export default {
     agree() {
       this.showAgree = false;
       localStorage.setItem(agreementKey, (new Date()).getTime())
-      umeng.init()
+      umeng.init(true)
     }
   },
   computed: {
