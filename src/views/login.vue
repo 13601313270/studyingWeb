@@ -134,7 +134,7 @@ import Check from '@/components/Check.vue';
 import Dialog from '@/components/Dialog.vue';
 import Popup from '@/components/Popup.vue';
 import WeChat from '@/plugin/WeChat';
-import { PhoneNumberServer } from 'aliyun_numberauthsdk_web';
+import { getToken } from '@/plugin/phoneNumber';
 
 // Vuex store and router
 const store = useStore();
@@ -179,73 +179,30 @@ const agreementInfo = reactive({
 });
 
 async function getAuth() {
-  // PhoneNumberServer()
-  const { AccessToken, JwtToken } = await request.get("https://api.studying1v1.com/login/getAuthToken") as any;
+  const token = await getToken()
+  console.log('===2===', token)
+  console.log('token', token);
 
-  var phoneNumberServer = new PhoneNumberServer();
-  console.log('=========')
-  console.log({
-    accessToken: AccessToken,
-    jwtToken: JwtToken,
-  })
-  phoneNumberServer.checkLoginAvailable({
-    accessToken: AccessToken,
-    jwtToken: JwtToken,
-    success: function (res) {
-      console.log("checkLoginAvailable=====1", res)
-      setTimeout(() => {
-        // 身份鉴权成功,调用 getLoginToken 接口
-        phoneNumberServer.getLoginToken({
-          authPageOption: {
-            isDialog: true, // 是否是弹窗样式
-          },
-          // @ts-ignore
-          success: async function (res: any) {
-            console.log("checkLoginAvailable=====2", res)
-            if (res && res.spToken) {
-              const phoneInfo = await request.get("https://api.studying1v1.com/login/getPhoneWithToken?token=" + res.spToken) as any;
-              console.log('=====phoneInfo=====', phoneInfo);
-              if (phoneInfo.result === true) {
-                localStorage.setItem('token', phoneInfo.token);
-                store.dispatch('main/setToken', phoneInfo.token);
-                request
-                  .get(`/login/getInfo?email=${phoneInfo.phone}&token=${phoneInfo.token}`)
-                  .then((res2: any) => {
-                    if (res2.code === 200) {
-                      localStorage.setItem('userInfo', JSON.stringify(res2.info));
-                      store.dispatch('main/setUserInfo', res2.info);
-                      store.dispatch('main/setShowLogin', false);
-                      setTimeout(() => {
-                        router.back();
-                      }, 100);
-                    }
-                  });
-              } else {
-                alert(phoneInfo.msg);
-              }
-            }
-          },
-          // 失败回调
-          error: function (res: any) {
-            console.log("checkLoginAvailable=====2-1", res)
-          },
-
-          // 授权页状态监听函数
-          watch: function (status, data) {
-            console.log("checkLoginAvailable=====2-2", status, data)
-            if (status === 6) {
-
-            }
-          },
-        });
-      }, 300)
-    },
-
-    // 身份鉴权失败,提示用户关闭Wi-Fi或者尝试其他登录方案
-    error: function (res) {
-      console.log("checkLoginAvailable=====3", res)
-    },
-  });
+  const phoneInfo = await request.get("https://api.studying1v1.com/login/getPhoneWithToken?token=" + token) as any;
+  console.log('=====phoneInfo=====', phoneInfo);
+  if (phoneInfo.result === true) {
+    localStorage.setItem('token', phoneInfo.token);
+    store.dispatch('main/setToken', phoneInfo.token);
+    request
+      .get(`/login/getInfo?email=${phoneInfo.phone}&token=${phoneInfo.token}`)
+      .then((res2: any) => {
+        if (res2.code === 200) {
+          localStorage.setItem('userInfo', JSON.stringify(res2.info));
+          store.dispatch('main/setUserInfo', res2.info);
+          store.dispatch('main/setShowLogin', false);
+          setTimeout(() => {
+            router.back();
+          }, 100);
+        }
+      });
+  } else {
+    alert(phoneInfo.msg);
+  }
 }
 // Methods
 const login = () => {
