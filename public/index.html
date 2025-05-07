@@ -1,26 +1,61 @@
 <!DOCTYPE html>
 <html lang="">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,viewport-fit=cover">
-    <title><%= htmlWebpackPlugin.options.title %></title>
-    <script src="./vconsole.min.js"></script>
-    <script src="./windvane.js"></script>
-    <style>
-      body {
-        margin: 0;
-        overflow: hidden;
-        -webkit-user-select: none;
-				-moz-user-select: none;
-        -webkit-touch-callout: none;
-      }
-      #app {
-      }
-    </style>
-  </head>
-  <body>
-    <div id="app"></div>
-    <div id="teleport"></div>
-  </body>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,viewport-fit=cover">
+  <title>
+    <%= htmlWebpackPlugin.options.title %>
+  </title>
+  <script src="./vconsole.min.js"></script>
+  <script src="./windvane.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -webkit-touch-callout: none;
+    }
+
+    #app {}
+
+    /* 手机号快速验证页面魔改 */
+    #J_dialogType {
+      width: 84vw;
+      border-radius: 6vw;
+      padding: 5vw 5vw;
+    }
+
+    #J_dialogType .logo {
+      display: none;
+    }
+
+    #J_dialogType .dialog-title {
+      margin-top: 0;
+      margin-bottom: 8vw;
+      font-size: 6vw;
+    }
+
+    #J_dialogType .checke-0 {
+      height: 5vw;
+      width: 5vw;
+    }
+
+    #J_dialogType .agree-content {
+      font-size: 4vw;
+    }
+
+    #J_dialogType .agree-content a {
+      font-size: 4vw;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app"></div>
+  <div id="teleport"></div>
+</body>
+
 </html>

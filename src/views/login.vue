@@ -122,233 +122,306 @@
   </div>
 </template>
 
-<script>
-// import {WxcPopup, WxcCheckbox, WxcDialog} from 'weex-ui';
-import Button from '../components/Button.vue'
-import { mapActions } from 'vuex';
-import icon from '../components/icon';
-import Agreement from "@/views/agreement";
-import request from '@/plugin/request'
-import Check from '@/components/Check.vue'
-import Dialog from '@/components/Dialog.vue'
-import Popup from '@/components/Popup.vue'
+<script setup lang="ts">
+import { ref, reactive, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import Button from '../components/Button.vue';
+import icon from '../components/icon.vue';
+import Agreement from '@/views/agreement.vue';
+import request from '@/plugin/request';
+import Check from '@/components/Check.vue';
+import Dialog from '@/components/Dialog.vue';
+import Popup from '@/components/Popup.vue';
 import WeChat from '@/plugin/WeChat';
-// const modal = {};// weex.requireModule('modal');
+import { PhoneNumberServer } from 'aliyun_numberauthsdk_web';
 
-export default {
-  name: 'login',
-  created() {
-    WeChat.isInstalled().then((isInstalled) => {
-      this.isInstalledWeChat = isInstalled;
-    })
-  },
-  data() {
-    return {
-      ruleForm: {
-        username: '',
-        password: '',
-      },
-      bindRuleForm: {
-        username: '',
-        password: '',
-      },
-      wrong: 'wrong01',
-      nextCodeTime: 0,
-      rules: {
-        username: [
-          { required: true, message: '请输入账号', trigger: 'blur' },
-          { min: 3, max: 30, message: '长度在 3 到 30 个字符', trigger: 'blur' }
-        ],
-        password: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
-        ]
-      },
-      nameRules: [
-        v => !!v || '必填',
-        v => v.length <= 30 || 'Name must be less than 10 characters'
-      ],
-      isIpx: navigator.userAgent.includes('iPhone'),
-      phone: null,
-      tempCode: null,
-      tempCodeBind: null,
-      showTempCode: false,
-      showTempCodeBind: false,
-      random: 1,
-      isSelectRule: false,
-      showRuleContent: false,
-      showBindPhone: false,
-      codeBak: '',
-      isInstalledWeChat: false,
-      agreementInfo: {
-        content: '',
-        title: ''
-      }
-    }
-  },
-  methods: {
-    ...mapActions('main', ['setToken', 'setUserInfo', 'setShowLogin']),
-    login() {
-      if (this.isSelectRule === false) {
-        alert('请先阅读服务协议与隐私政策并同意')
-        return;
-      }
-      if (this.ruleForm.username === '') {
-        alert('请输入手机号')
-        return;
-      }
-      // weex.requireModule('MyModule').alertMe(JSON.stringify(this.ruleForm));
-      request.post('/login/phoneLogin', {
-        phone: this.ruleForm.username,
-        code: this.ruleForm.password
-      }).then(res => {
-        if (res.result === true) {
-          localStorage.setItem('token', res.token);
-          this.setToken(res.token);
-          request.get('/login/getInfo?email=' + this.ruleForm.username + '&token=' + res.token).then(res2 => {
-            if (res2.code === 200) {
-              localStorage.setItem('userInfo', JSON.stringify(res2.info));
-              this.setUserInfo(res2.info);
-              this.setShowLogin(false)
-              setTimeout(() => {
-                this.$router.back();
-              }, 100)
-              // this.$router.replace('/source');
-            }
-          });
-        } else {
-          alert(res.msg);
-        }
-      });
-    },
-    back() {
-      this.setShowLogin(false)
-      this.$router.back();
-    },
-    getTempCode() {
-      this.phone = this.ruleForm.username;
-      if (!this.phone) {
-        alert('请输入账号')
-        return;
-      }
-      if (this.phone && (this.phone.length < 3 || this.phone.length > 30)) {
-        alert('长度在 3 到 30 个字符')
-        return;
-      }
-      this.random = Math.random()
-      this.$nextTick(() => {
-        this.showTempCode = true;
-      })
-    },
-    getTempCodeBind() {
-      this.phone = this.bindRuleForm.username;
-      this.random = Math.random()
-      this.$nextTick(() => {
-        this.showTempCodeBind = true;
-      })
-    },
-    getPhoneCode(type) {
-      request.get('/register/sentPhoneCode/' + parseInt(this.phone) + '/' + (type === 'login' ? this.tempCode : this.tempCodeBind)).then(res => {
-        if (res.result === true) {
-          if (type === 'login') {
-            this.showTempCode = false;
-          } else {
-            this.showTempCodeBind = false;
-          }
-          this.nextCodeTime = 60;
-          let interval = setInterval(() => {
-            this.nextCodeTime--;
-            if (this.nextCodeTime === 0) {
-              clearInterval(interval);
-            }
-          }, 1000);
-        } else {
-          alert(res.msg)
-        }
-      }).catch(res => {
-        weex.requireModule('MyModule').alertMe('请检查手机号' + '/register/sentPhoneCode/' + parseInt(this.phone) + '/' + (type === 'login' ? this.tempCode : this.tempCodeBind));
-      });
-    },
-    wxcCheckBoxItemChecked(val) {
-      this.isSelectRule = !this.isSelectRule
-    },
-    weChatLogin() {
-      if (this.isSelectRule === false) {
-        alert('请先阅读服务协议与隐私政策并同意')
-        return;
-      }
-      // // 虚拟机没有微信，测试代码
-      // this.codeBak = 'asfadsfdasfads';
-      // this.showBindPhone = true;
-      // return;
+// Vuex store and router
+const store = useStore();
+const router = useRouter();
 
-      WeChat.login().then((res) => {
-        if (res.result === true) {
-          alert('微信登录成功')
-          localStorage.setItem('token', res.token);
-          this.setToken(res.token);
-          request.get('/login/getInfo?email=' + res.account + '&token=' + res.token).then(res2 => {
-            if (res2.code === 200) {
-              localStorage.setItem('userInfo', JSON.stringify(res2.info));
-              this.setUserInfo(res2.info);
-              this.setShowLogin(false)
-              setTimeout(() => {
-                this.$router.back();
-              }, 100)
+// Reactive state
+const ruleForm = reactive({
+  username: '',
+  password: '',
+});
+
+const bindRuleForm = reactive({
+  username: '',
+  password: '',
+});
+
+const wrong = ref('wrong01');
+const nextCodeTime = ref(0);
+const rules = reactive({
+  username: [
+    { required: true, message: '请输入账号', trigger: 'blur' },
+    { min: 3, max: 30, message: '长度在 3 到 30 个字符', trigger: 'blur' },
+  ],
+  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+});
+
+const isIpx = ref(navigator.userAgent.includes('iPhone'));
+const phone = ref<string | null>(null);
+const tempCode = ref<string | null>(null);
+const tempCodeBind = ref<string | null>(null);
+const showTempCode = ref(false);
+const showTempCodeBind = ref(false);
+const random = ref(1);
+const isSelectRule = ref(false);
+const showRuleContent = ref(false);
+const showBindPhone = ref(false);
+const codeBak = ref('');
+const isInstalledWeChat = ref(false);
+const agreementInfo = reactive({
+  content: '',
+  title: '',
+});
+
+async function getAuth() {
+  // PhoneNumberServer()
+  const { AccessToken, JwtToken } = await request.get("https://api.studying1v1.com/login/getAuthToken") as any;
+
+  var phoneNumberServer = new PhoneNumberServer();
+  console.log('=========')
+  console.log({
+    accessToken: AccessToken,
+    jwtToken: JwtToken,
+  })
+  phoneNumberServer.checkLoginAvailable({
+    accessToken: AccessToken,
+    jwtToken: JwtToken,
+    success: function (res) {
+      console.log("checkLoginAvailable=====1", res)
+      setTimeout(() => {
+        // 身份鉴权成功,调用 getLoginToken 接口
+        phoneNumberServer.getLoginToken({
+          authPageOption: {
+            isDialog: true, // 是否是弹窗样式
+          },
+          // @ts-ignore
+          success: async function (res: any) {
+            console.log("checkLoginAvailable=====2", res)
+            if (res && res.spToken) {
+              const phoneInfo = await request.get("https://api.studying1v1.com/login/getPhoneWithToken?token=" + res.spToken) as any;
+              console.log('=====phoneInfo=====', phoneInfo);
+              if (phoneInfo.result === true) {
+                localStorage.setItem('token', phoneInfo.token);
+                store.dispatch('main/setToken', phoneInfo.token);
+                request
+                  .get(`/login/getInfo?email=${phoneInfo.phone}&token=${phoneInfo.token}`)
+                  .then((res2: any) => {
+                    if (res2.code === 200) {
+                      localStorage.setItem('userInfo', JSON.stringify(res2.info));
+                      store.dispatch('main/setUserInfo', res2.info);
+                      store.dispatch('main/setShowLogin', false);
+                      setTimeout(() => {
+                        router.back();
+                      }, 100);
+                    }
+                  });
+              } else {
+                alert(phoneInfo.msg);
+              }
             }
-          });
-        } else if (res.type === 'code_error') {
-          alert('微信服务器授权失败')
-        } else if (res.type === 'not_account') {
-          this.codeBak = res.code;
-          this.showBindPhone = true;
-        }
-      })
-    },
-    registerWeChat() {
-      request.post('/weChat/register', {
-        code: this.codeBak,
-        phone: this.bindRuleForm.username,
-        phoneCode: this.bindRuleForm.password,
-      }).then(res => {
-        if (res.result) {
-          alert('登录成功')
-          localStorage.setItem('token', res.token);
-          this.setToken(res.token);
-          request.get('/login/getInfo?email=' + res.account + '&token=' + res.token).then(res2 => {
-            if (res2.code === 200) {
-              localStorage.setItem('userInfo', JSON.stringify(res2.info));
-              this.setUserInfo(res2.info);
-              this.setShowLogin(false)
-              setTimeout(() => {
-                this.$router.back();
-              }, 100)
+          },
+          // 失败回调
+          error: function (res: any) {
+            console.log("checkLoginAvailable=====2-1", res)
+          },
+
+          // 授权页状态监听函数
+          watch: function (status, data) {
+            console.log("checkLoginAvailable=====2-2", status, data)
+            if (status === 6) {
+
             }
-          });
-        } else {
-          alert('登录失败：' + res.msg)
-          // modal.toast({
-          //   'message': '登录失败：' + res.msg,
-          //   'duration': 2.0
-          // })
-        }
-      }).catch(() => {
-        alert('登录失败：')
-        // modal.toast({
-        //   'message': '登录失败',
-        //   'duration': 2.0
-        // })
-      })
+          },
+        });
+      }, 300)
     },
-    async showAgreement() {
-      const agreementInfo = await request.get('/agreement')
-      console.log(agreementInfo);
-      this.agreementInfo = agreementInfo;
-      this.showRuleContent = true
-    }
-  },
-  components: { Button, icon, Agreement, Check, Popup },//  WxcPopup, WxcCheckbox, WxcDialog
+
+    // 身份鉴权失败,提示用户关闭Wi-Fi或者尝试其他登录方案
+    error: function (res) {
+      console.log("checkLoginAvailable=====3", res)
+    },
+  });
 }
+// Methods
+const login = () => {
+  if (!isSelectRule.value) {
+    alert('请先阅读服务协议与隐私政策并同意');
+    return;
+  }
+  if (!ruleForm.username) {
+    alert('请输入手机号');
+    return;
+  }
+  request
+    .post('/login/phoneLogin', {
+      phone: ruleForm.username,
+      code: ruleForm.password,
+    })
+    .then((res: any) => {
+      if (res.result === true) {
+        localStorage.setItem('token', res.token);
+        store.dispatch('main/setToken', res.token);
+        request
+          .get(`/login/getInfo?email=${ruleForm.username}&token=${res.token}`)
+          .then((res2: any) => {
+            if (res2.code === 200) {
+              localStorage.setItem('userInfo', JSON.stringify(res2.info));
+              store.dispatch('main/setUserInfo', res2.info);
+              store.dispatch('main/setShowLogin', false);
+              setTimeout(() => {
+                router.back();
+              }, 100);
+            }
+          });
+      } else {
+        alert(res.msg);
+      }
+    });
+};
+
+const back = () => {
+  store.dispatch('main/setShowLogin', false);
+  router.back();
+};
+
+const getTempCode = () => {
+  phone.value = ruleForm.username;
+  if (!phone.value) {
+    alert('请输入账号');
+    return;
+  }
+  if (phone.value.length < 3 || phone.value.length > 30) {
+    alert('长度在 3 到 30 个字符');
+    return;
+  }
+  random.value = Math.random();
+  showTempCode.value = true;
+};
+
+const getTempCodeBind = () => {
+  phone.value = bindRuleForm.username;
+  random.value = Math.random();
+  showTempCodeBind.value = true;
+};
+
+const getPhoneCode = (type: string) => {
+  request
+    .get(
+      `/register/sentPhoneCode/${parseInt(phone.value || '')}/${type === 'login' ? tempCode.value : tempCodeBind.value
+      }`
+    )
+    .then((res: any) => {
+      if (res.result === true) {
+        if (type === 'login') {
+          showTempCode.value = false;
+        } else {
+          showTempCodeBind.value = false;
+        }
+        nextCodeTime.value = 60;
+        const interval = setInterval(() => {
+          nextCodeTime.value--;
+          if (nextCodeTime.value === 0) {
+            clearInterval(interval);
+          }
+        }, 1000);
+      } else {
+        alert(res.msg);
+      }
+    })
+    .catch(() => {
+      alert('请检查手机号');
+    });
+};
+
+const wxcCheckBoxItemChecked = () => {
+  isSelectRule.value = !isSelectRule.value;
+};
+
+const weChatLogin = () => {
+  if (!isSelectRule.value) {
+    alert('请先阅读服务协议与隐私政策并同意');
+    return;
+  }
+  WeChat.login().then((res) => {
+    if (res.result === true) {
+      alert('微信登录成功');
+      localStorage.setItem('token', res.token);
+      store.dispatch('main/setToken', res.token);
+      request
+        .get(`/login/getInfo?email=${res.account}&token=${res.token}`)
+        .then((res2) => {
+          if (res2.code === 200) {
+            localStorage.setItem('userInfo', JSON.stringify(res2.info));
+            store.dispatch('main/setUserInfo', res2.info);
+            store.dispatch('main/setShowLogin', false);
+            setTimeout(() => {
+              router.back();
+            }, 100);
+          }
+        });
+    } else if (res.type === 'code_error') {
+      alert('微信服务器授权失败');
+    } else if (res.type === 'not_account') {
+      codeBak.value = res.code;
+      showBindPhone.value = true;
+    }
+  });
+};
+
+const registerWeChat = () => {
+  request
+    .post('/weChat/register', {
+      code: codeBak.value,
+      phone: bindRuleForm.username,
+      phoneCode: bindRuleForm.password,
+    })
+    .then((res) => {
+      if (res.result) {
+        alert('登录成功');
+        localStorage.setItem('token', res.token);
+        store.dispatch('main/setToken', res.token);
+        request
+          .get(`/login/getInfo?email=${res.account}&token=${res.token}`)
+          .then((res2) => {
+            if (res2.code === 200) {
+              localStorage.setItem('userInfo', JSON.stringify(res2.info));
+              store.dispatch('main/setUserInfo', res2.info);
+              store.dispatch('main/setShowLogin', false);
+              setTimeout(() => {
+                router.back();
+              }, 100);
+            }
+          });
+      } else {
+        alert(`登录失败：${res.msg}`);
+      }
+    })
+    .catch(() => {
+      alert('登录失败');
+    });
+};
+
+const showAgreement = async () => {
+  const agreement = await request.get('/agreement');
+  agreementInfo.content = agreement.content;
+  agreementInfo.title = agreement.title;
+  showRuleContent.value = true;
+};
+
+// Lifecycle hook
+onMounted(() => {
+  WeChat.isInstalled().then((isInstalled) => {
+    isInstalledWeChat.value = isInstalled;
+  });
+  getAuth()
+});
 </script>
+
 <style scoped lang="less">
 .login_content {
   width: 750px;
@@ -466,10 +539,11 @@ export default {
       justify-content: end;
 
       .close {}
+    }
 
-      .tempInputText {
-        margin-top: 100px;
-      }
+    .tempInputText {
+      font-size: 32px;
+      margin-top: 32px;
     }
 
     .tempInput {
