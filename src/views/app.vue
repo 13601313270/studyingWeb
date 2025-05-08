@@ -10,7 +10,7 @@
       </div>
       <div class="header_links">
         <template v-if="isInRootPage">
-          <text class="header_links_web_name">松鼠教育</text>
+          <text class="header_links_web_name">松鼠学</text>
         </template>
         <template
           v-else-if="['dailyQuestion', 'QQ', 'aboutUs', 'cache', 'agreement', 'informationDetail', 'zhidaoDetail', 'friend'].includes($route.name)">
