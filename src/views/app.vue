@@ -10,7 +10,7 @@
       </div>
       <div class="header_links">
         <template v-if="isInRootPage">
-          <text class="header_links_web_name">松鼠教育</text>
+          <text class="header_links_web_name">松鼠学</text>
         </template>
         <template
           v-else-if="['dailyQuestion', 'QQ', 'aboutUs', 'cache', 'agreement', 'informationDetail', 'zhidaoDetail', 'friend'].includes($route.name)">
@@ -65,7 +65,7 @@
         <icon class="bottom_link_icon" width="44" height="44"
           :src="tabType === 'friend' ? 'friend_active' : 'friend'" />
         <text class="bottom_link_text"
-          :class="[tabType === 'friend' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">消息6</text>
+          :class="[tabType === 'friend' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">消息</text>
         <div class="tip" v-if="notUsedInformationCount > 0">
           <text class="tipText">{{ notUsedInformationCount }}</text>
         </div>
