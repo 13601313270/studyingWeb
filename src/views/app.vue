@@ -27,9 +27,9 @@
         <div v-else-if="$route.name === 'lessonDetail'" @click="toListenLog">
           <icon src="log" width="56" height="56" />
         </div>
-        <div v-else-if="$route.name === 'friend'" @click="toAddQuestion">
+        <!-- <div v-else-if="$route.name === 'friend'" @click="toAddQuestion">
           <icon src="add" width="56" height="56" />
-        </div>
+        </div> -->
       </div>
     </div>
     <div v-if="isOffline" class="offline" :class="{ showLogin }">网络连接断开</div>
