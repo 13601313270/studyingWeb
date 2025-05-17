@@ -230,9 +230,6 @@ const login = () => {
               localStorage.setItem('userInfo', JSON.stringify(res2.info));
               store.dispatch('main/setUserInfo', res2.info);
               store.dispatch('main/setShowLogin', false);
-              setTimeout(() => {
-                router.back();
-              }, 100);
             }
           });
       } else {
