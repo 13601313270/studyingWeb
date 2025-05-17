@@ -2,6 +2,7 @@
   <div class="develop">
     <Button text="取消VIP" @click="closeVip"></Button>
     <Button text="取消已受邀状态" @click="closeBeInvite"></Button>
+    <Button text="取消已受邀状态2" @click="closeBeInvite"></Button>
   </div>
 </template>
 <script setup lang="ts">
