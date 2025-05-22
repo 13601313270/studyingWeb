@@ -190,6 +190,7 @@ import Dialog from '@/components/Dialog.vue';
 import BuyVIPDesc from './buyVIPDesc.vue';
 import { showImg } from '../plugin/imagePreview'
 import { buyVip } from '@/plugin/buyVip';
+import log from '@/plugin/log';
 
 export default {
   name: 'poiQuestion',
@@ -382,6 +383,7 @@ export default {
       const data = await request.get('/user/checkFuncTimes');
       console.log('data', data);
       if (!data.isVip) {
+        log('vipUseQuestion');
         this.showBuyVip = true;
         return;
       }

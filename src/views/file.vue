@@ -68,6 +68,7 @@ import Dialog from '@/components/Dialog.vue';
 import BuyVIPDesc from './buyVIPDesc.vue';
 import toast from '@/plugin/toast';
 import { buyVip } from '@/plugin/buyVip';
+import log from '@/plugin/log';
 
 export default {
   data() {
@@ -156,6 +157,7 @@ export default {
       if (this.showConinueTimes.isVip) {
         this.downloadFile(file.file);
       } else {
+        log('vipUseFileDownload');
         this.showConinueUrl = file.file;
       }
     },
@@ -190,6 +192,7 @@ export default {
       if (this.showConinueTimes.isVip) {
         File.open(path);
       } else {
+        log('vipUseFileOpen');
         this.showConinueOpenPath = path;
       }
     },

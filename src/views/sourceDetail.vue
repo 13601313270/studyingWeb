@@ -51,6 +51,7 @@ import request from '@/plugin/request'
 import BuyVIPDesc from './buyVIPDesc.vue';
 import { buyVip } from '@/plugin/buyVip';
 import toast from '@/plugin/toast';
+import log from '@/plugin/log';
 
 const router = useRouter();
 const route = useRoute();
@@ -119,6 +120,7 @@ async function poiLesson(item: Poi) {
   if (showConinueTimes.value.isVip) {
     router.push('/poiLesson/' + item.id);
   } else {
+    log('vipUseSource');
     showConinuePoiLesson.value = item;
   }
 };
