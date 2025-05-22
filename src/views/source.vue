@@ -60,6 +60,7 @@ import localStorage from '../plugin/localStorage'
 import Switch from '../components/switch'
 import Button from '../components/Button.vue'
 import Icon from '../components/icon.vue'
+import log from '@/plugin/log'
 
 const userSetSourceListKey = 'saveSetSourceList';
 
@@ -147,9 +148,11 @@ export default {
       }
     },
     chooseWord() {
+      log('word')
       this.$router.push({ path: '/word' })
     },
     chooseListen() {
+      log('listen')
       this.$router.push({ path: '/listen' })
     },
     choose(id) {
