@@ -66,7 +66,7 @@
   </div>
   <Dialog :show="inviteDialogShow" title="邀请" @close="inviteDialogShow = false">
     <div class="inviteDialog">
-      <div class="desc">邀请新用户使用App，对方受邀后，双方各获得2个月VIP</div>
+      <div class="desc">邀请新用户使用App，对方受邀后，双方各获得2个月VIP，邀请后，记得通知对方安装App。</div>
       <Input placeholder="请输入手机号" v-model="beInvitePhone" />
       <Button primary class="sentButton" text="发送邀请" @click="send" />
     </div>

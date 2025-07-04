@@ -308,7 +308,7 @@ const weChatLogin = () => {
       store.dispatch('main/setToken', res.token);
       request
         .get(`/login/getInfo?email=${res.account}&token=${res.token}`)
-        .then((res2) => {
+        .then((res2: any) => {
           if (res2.code === 200) {
             localStorage.setItem('userInfo', JSON.stringify(res2.info));
             store.dispatch('main/setUserInfo', res2.info);

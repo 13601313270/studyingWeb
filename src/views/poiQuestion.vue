@@ -168,6 +168,7 @@
   <Dialog :show="showBuyVip" title="提示" @close="showBuyVip=false">
     <div class="chooseUseType">
       <BuyVIPDesc />
+      <div>VIP费用<span class="price">¥12</span>/年</div>
       <div class="chooseUseTypeInfo" v-if="showBuyVip">
         您是免费用户，试题AI解析只有VIP用户可用。
       </div>

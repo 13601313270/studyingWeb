@@ -25,7 +25,6 @@
       </tbody>
     </table>
   </div>
-  <div>VIP费用<span class="price">¥12</span>/年</div>
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';

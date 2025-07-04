@@ -7,7 +7,7 @@
           <div :key="subject.id" v-for="subject in selectSourceList" @click="changeSubject(subject.id)"
             class="subjects_item">
             <text :key="subject.id" :class="[selectSub === subject.id ? 'subjects_item_select' : '']">{{ subject.name
-              }}</text>
+            }}</text>
           </div>
         </div>
         <div key="end" class="subjects_item_bottomBorder" ref="subjectBorder"
@@ -55,6 +55,7 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex';
 import request from '../plugin/request'
 import localStorage from '../plugin/localStorage'
 import Switch from '../components/switch'
@@ -78,7 +79,7 @@ export default {
     }
   },
   async created() {
-    this.subjects = await request.get('/subjectV2');
+    this.subjects = await request.get('/subjectV3?degree=' + this.degree);
     const e = await localStorage.getItem(userSetSourceListKey);
     if (e === null) {
       this.userSetSourceList = this.subjects.map(v => v.id);//[this.subjects[0].id];
@@ -107,6 +108,7 @@ export default {
     // }, 100)
   },
   computed: {
+    ...mapGetters('main', ['degree']),
     selectSourceList() {
       const allSubject = this.subjects.filter(item => {
         return this.userSetSourceList.includes(item.id)

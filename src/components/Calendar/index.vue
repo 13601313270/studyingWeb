@@ -1,6 +1,5 @@
 <template>
   <div class="calendar">
-    <!-- {{chooseList}} -->
     <div class="year-month">
       <el-icon @click="upPage" :size="16" class="iconBgc">
         <ArrowLeft />

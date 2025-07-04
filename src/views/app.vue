@@ -2,9 +2,12 @@
   <div class="app_content">
     <div class="header" v-if="$route.name !== 'welcome'">
       <div class="header_web_name">
-        <div class="header_web_name_back" @click="clickBack">
-          <img v-if="isInRootPage" class="header_web_name_back_img" src="../icons/icons.png" />
-          <img v-else class="header_web_name_back_img" src="../icons/back.png" />
+        <div class="head_root" v-if="isInRootPage" @click="degreeListDialogShow = true">
+          <img class="icon" src="../icons/icons.png" />
+          <div v-if="selectDegreeInfo">{{ selectDegreeInfo.name }}</div>
+        </div>
+        <div v-else class="header_web_name_back" @click="clickBack">
+          <img class="header_web_name_back_img" src="../icons/back.png" />
           <!-- <icon class="header_web_name_back_img" width="48" height="48" :src="isInRootPage ? 'icons' : 'back'" /> -->
         </div>
       </div>
@@ -130,8 +133,18 @@
       <a href="https://beian.miit.gov.cn" target="_blank">吉ICP备2024023809号-1</a>
     </div>
   </div>
+  <Dialog :show="!showAgree && $route.name !== 'welcome' && degreeListDialogShow" title="选择学位"
+    @close="degreeListDialogShow = false">
+    <div class="degreeList">
+      <div v-for="item in degreeList" class="degreeItem" :class="{ select: degreeSelect === item.id }">
+        {{ item.name }}
+        <!-- {{ item.id }} -->
+      </div>
+    </div>
+  </Dialog>
   <Dialog :show="showBuySuccess" title="恭喜您获得VIP权限" @close="showBuySuccess = false">
     <BuyVIPDesc />
+    <div>VIP费用<span class="price">¥12</span>/年</div>
     <div class="buySuccess">
       <img src="../icons/isPayed.png" />
       <div>购买成功，恭喜您获得VIP权限！！</div>
@@ -160,13 +173,14 @@ import { setBuyVipCallback } from '@/plugin/buyVip'
 import checkNet from '../plugin/checkNet';
 
 const agreementKey = 'agreementKey2022-8-7-2'
+const degreeSelectCacheKey = 'degreeSelectCacheKey-2025-7-4'
 export default {
   data() {
     const match = navigator.userAgent.match(/channel\((.*?)\)/);
     return {
       notUsedInformationCount: 0,
       // rightButtons: [],
-      openPages: [],// 新的页面堆栈，逐渐替换掉router-view，因为无法解决保存原有状态的问题
+      // openPages: [],// 新的页面堆栈，逐渐替换掉router-view，因为无法解决保存原有状态的问题
       isOffline: false, // 是否断网
       transitionType: '',
       showImgUrl: '',
@@ -176,6 +190,10 @@ export default {
       lastVersion: null,// 当前运行最低版本
       isMobileDevice: isMobileDevice(),
       showBuySuccess: false,
+      // 学位
+      degreeSelect: 1,// 先默认选高中
+      degreeListDialogShow: false,
+      degreeList: [],
     }
   },
   created() {
@@ -249,6 +267,18 @@ export default {
       window.appBackground = () => {
       }
     }
+    // 学位选择
+    const degreeSelect = 1;
+    // const selectDegree = localStorage.getItem(degreeSelectCacheKey)
+    // if (selectDegree === null) {
+    //   // localStorage.setItem(agreementKey, (new Date()).getTime())
+    // }
+    this.degreeSelect = degreeSelect;
+    this.setDegree(degreeSelect)
+
+    request.get('/studying/degree/list').then((list) => {
+      this.degreeList = list;
+    })
 
     // const minVersion = await this.axios.get('/globleConfig?keys=minVersion');
     // if (weex && weex.config.env.platform === 'iOS') {
@@ -270,7 +300,7 @@ export default {
 
   },
   methods: {
-    ...mapActions('main', ['setShowLogin']),
+    ...mapActions('main', ['setShowLogin', 'setDegree']),
     clickBack() {
       if (this.showImgUrl) {
         // 如果图片再预览状态点击了返回，则先触发图片预览的关闭
@@ -288,7 +318,7 @@ export default {
       event.emit('add')
     },
     to(path) {
-      this.openPages = [];
+      // this.openPages = [];
       // 没有找到一个方法，清空history，所以多调用几次
       // this.$router.back();
       // if (path === '/friend' && this.tabType !== 'friend') {
@@ -336,6 +366,10 @@ export default {
     isInRootPage() {
       // @ts-ignore
       return ['source', 'friend', 'file', 'mall', 'mine'].includes(this.$route.name);
+    },
+    selectDegreeInfo() {
+      console.log('this.degreeList', this.degreeList)
+      return this.degreeList.find(v => v.id === this.degreeSelect);
     }
   },
   components: { icon, Button, Login, ImgPreview, Dialog, BuyVIPDesc }
@@ -381,21 +415,31 @@ export default {
       flex: 0;
       flex-direction: row;
       align-items: center;
-      width: 80px;
       height: 100%;
       position: absolute;
 
+      .head_root {
+        display: flex;
+        align-items: center;
+
+        .icon {
+          width: 48px;
+          height: 48px;
+          margin: 0 8px;
+        }
+      }
+
       &_back {
-        width: 100px;
-        height: 80px;
-        padding-left: 10px;
+        min-width: 88px;
+        height: 88px;
         opacity: 0.8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
         &_img {
           width: 48px;
           height: 48px;
-          margin-top: 16px;
-          margin-left: 10px;
         }
       }
     }
@@ -697,10 +741,10 @@ export default {
       height: 66px;
 
       .header_web_name {
-        width: 66px;
+        min-width: 66px;
 
         .header_web_name_back {
-          width: 66px;
+          min-width: 66px;
           height: 66px;
           display: flex;
           align-items: center;
@@ -802,6 +846,22 @@ export default {
     display: flex;
     justify-content: center;
     margin-top: 20px;
+  }
+}
+
+.degreeList {
+  .degreeItem {
+    border: solid 1px rgb(141, 141, 141);
+    color: rgb(73, 73, 73);
+    padding: 16px 32px;
+    font-size: 38px;
+    border-radius: 16px;
+
+    &.select {
+      border: none;
+      background-color: #00795c;
+      color: white;
+    }
   }
 }
 </style>
