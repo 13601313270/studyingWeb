@@ -5,24 +5,17 @@
       <div class="banshu" v-if="textIndex > -1">
         <div v-for="(item, key) in list.slice(0, textIndex + 1)" class="item" :class="{ active: (textIndex === key) }">
           <!-- {{ item.duration }} -->
-          <text class="h1" v-if="item.deep === 1">{{
-            (item.index + 1) + '、' + item.title }}</text>
-          <text class="h2" v-else-if="item.deep === 2">{{ (item.index + 1) +
-            '.'
-            + item.title }}</text>
-          <text class="h3" v-else-if="item.deep === 3">{{ (item.index + 1) +
-            '.'
-            + item.title }}</text>
-          <text class="h4" v-else-if="item.deep === 4">{{ (item.index + 1) +
-            '.'
-            + item.title }}</text>
-          <text class="h5" v-else>{{
-            (item.index + 1) + '.' + item.title }}</text>
+          <text class="h1" v-if="item.deep === 1">{{ item.title }}</text>
+          <text class="h2" v-else-if="item.deep === 2">{{ item.title }}</text>
+          <text class="h3" v-else-if="item.deep === 3" v-html="item.title"></text>
+          <text class="h4" v-else-if="item.deep === 4" v-html="item.title"></text>
+          <text class="h5" v-else v-html="item.title"></text>
           <text class="desc" v-if="item.desc">{{ item.desc }}</text>
         </div>
       </div>
       <div class="temp_say">
-        <img v-for="(item, imgIndex) in loadImg" :key="imgIndex" :src="item.replace(/^http:/,'https:')" style="width: 80%" />
+        <img v-for="(item, imgIndex) in loadImg" :key="imgIndex" :src="item.replace(/^http:/, 'https:')"
+          style="width: 80%" />
       </div>
       <div class="fillHeight"></div>
     </div>

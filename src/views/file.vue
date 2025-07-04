@@ -46,6 +46,7 @@
     @close="showConinueUrl = '', showConinueOpenPath = ''">
     <div class="chooseUseType">
       <BuyVIPDesc />
+      <div>VIP费用<span class="price">¥12</span>/年</div>
       <div class="chooseUseTypeInfo" v-if="showConinueUrl || showConinueOpenPath">
         您是免费用户，今日可免费试用次数还剩<span class="time">{{ showConinueTimes.times.fileDownload }}</span>次，是否继续使用？
       </div>
@@ -60,6 +61,7 @@
   </Dialog>
 </template>
 <script>
+import { mapGetters } from 'vuex';
 import request from '@/plugin/request'
 import Button from '@/components/Button.vue'
 import share from '../plugin/share'
@@ -96,7 +98,7 @@ export default {
   },
   async created() {
     this.loading = true;
-    this.subjects = await request.get('/subjectV2');
+    this.subjects = await request.get('/subjectV3?degree=1');
     const selectSub = await localStorage.getItem('sourceFileChoose')
     this.selectSub = selectSub || this.subjects[0].id;
     this.refresh();
@@ -202,6 +204,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('main', ['degree']),
     downLoadFile() {
       const map = {};
       this.downLoadList.forEach(v => {

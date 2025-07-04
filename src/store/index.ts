@@ -4,7 +4,8 @@ type IState = {
   path: any[],
   token: string,
   userInfo: any,
-  showLogin: boolean
+  showLogin: boolean,
+  degree: number,
 }
 const main = {
   namespaced: true,
@@ -12,13 +13,15 @@ const main = {
     path: [],
     token: '',
     showLogin: false,
-    userInfo: {}
+    userInfo: {},
+    degree: 1,
   },
   getters: {
     path: (state: IState) => state.path,
     token: (state: IState) => state.token,
     userInfo: (state: IState) => state.userInfo,
     showLogin: (state: IState) => state.showLogin,
+    degree: (state: IState) => state.degree,
   },
   mutations: {
     set_path(state: IState, path: any) {
@@ -32,7 +35,10 @@ const main = {
     },
     set_show_login(state: IState, type: boolean) {
       state.showLogin = type
-    }
+    },
+    set_degree(state: IState, type: number) {
+      state.degree = type
+    },
   },
   actions: {
     setPath({ commit }: any, path: any) {
@@ -46,6 +52,9 @@ const main = {
     },
     setShowLogin({ commit }: any, type: any) {
       return commit('set_show_login', type);
+    },
+    setDegree({ commit }: any, type: number) {
+      return commit('set_degree', type);
     },
   },
 }

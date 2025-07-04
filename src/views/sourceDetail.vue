@@ -29,11 +29,18 @@
       <div class="chooseUseTypeInfo" v-if="showConinuePoiLesson">
         您是免费用户，今日可免费试用次数还剩<span class="time">{{ showConinueTimes.times.poiLesson }}</span>次，是否继续使用？
       </div>
+      <Button @click="continueUse" text="继续免费试用"></Button>
+      <div class="split"></div>
+      <div class="vipTitle">成为VIP所有功能不限量</div>
       <div class="chooseUseTypeTools">
-        <Button @click="continueUse" text="继续免费试用"></Button>
         <div @click="CallbuyVip" class="buyVip">
-          <div>成为VIP不限量</div>
+          <div>购买</div>
           <div class="price">¥12/年</div>
+        </div>
+        <div>或</div>
+        <div @click="CallInvite" class="buyVip">
+          <div>邀请新人进入</div>
+          <div class="price">双方获赠2个月VIP</div>
         </div>
       </div>
     </div>
@@ -150,6 +157,10 @@ function CallbuyVip() {
   buyVip().then(() => {
     closeDialog();
   })
+}
+function CallInvite() {
+  router.push('/friend');
+  closeDialog();
 }
 async function continueUse() {
   if (showConinuePoiLesson.value) {
@@ -461,10 +472,27 @@ async function continueUse() {
 
 .chooseUseType {
   .chooseUseTypeInfo {
+    margin-bottom: 8px;
+
     .time {
       font-weight: bold;
+      color: red;
       margin: 0 8px;
     }
+  }
+
+  .split {
+    width: 100%;
+    height: 2px;
+    background-color: #b2b2b2;
+    margin: 32px 0;
+  }
+
+  .vipTitle {
+    font-size: 38px;
+    margin-bottom: 16px;
+    color: rgb(64, 64, 64);
+    text-align: center;
   }
 
   .chooseUseTypeTools {
@@ -472,13 +500,8 @@ async function continueUse() {
     align-items: center;
     justify-content: center;
 
-    >div {
-      margin: 8px;
-      flex-grow: 1;
-    }
-
-    .cancel {
-      height: 100px;
+    >div:not(:first-child) {
+      margin-left: 16px;
     }
 
     .buyVip {
@@ -499,6 +522,7 @@ async function continueUse() {
       font-size: 32px;
       color: white;
       text-align: center;
+      width: 50%;
       flex-grow: 1;
 
       .price {
