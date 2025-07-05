@@ -7,7 +7,7 @@
           <div :key="subject.id" v-for="subject in selectSourceList" @click="changeSubject(subject.id)"
             class="subjects_item">
             <text :key="subject.id" :class="[selectSub === subject.id ? 'subjects_item_select' : '']">{{ subject.name
-              }}</text>
+            }}</text>
           </div>
         </div>
         <div key="end" class="subjects_item_bottomBorder" ref="subjectBorder"
@@ -16,15 +16,24 @@
     </div>
     <scroller class="list" v-if="selectSub === 'english'">
       <div @click="chooseWord" class="englishItem">
-        超级单词卡
-        <Icon src="word" width="120" />
+        <div class="title">
+          超级单词卡
+          <div class="desc">艾宾浩斯遗忘曲线，制定科学背单词计划</div>
+        </div>
+        <Icon src="word" width="100" />
       </div>
       <div @click="chooseListen" class="englishItem">
-        听力通
-        <Icon src="listen" width="120" />
+        <div class="title">
+          听力通
+          <div class="desc">1000+听力段落，让你磨足耳朵</div>
+        </div>
+        <Icon src="listen" width="100" />
       </div>
-      <div @click="toYF" class="englishItem">
-        语法
+      <div @click="toEnGrammar" class="englishItem">
+        <div class="title">
+          语法册
+          <div class="desc">随身携带的语法书</div>
+        </div>
         <img class="icon" src="../icons/yf.svg" />
       </div>
     </scroller>
@@ -136,8 +145,8 @@ export default {
     choose(id) {
       this.$router.push({ path: '/source/' + id })
     },
-    toYF() {
-      this.$router.push({ path: '/enYF' })
+    toEnGrammar() {
+      this.$router.push({ path: '/enGrammar' })
     }
   },
   watch: {
@@ -278,7 +287,7 @@ export default {
   }
 
   .icon {
-    width: 120px;
+    width: 100px;
   }
 }
 
@@ -343,11 +352,20 @@ export default {
   font-size: 32px;
   border: solid 1px #00795c;
   color: #00795c;
-  font-size: 42px;
   border-radius: 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  .title {
+    font-size: 42px;
+    color: #00795c;
+
+    .desc {
+      font-size: 28px;
+      margin-top: 8px;
+    }
+  }
 }
 
 .loading {
