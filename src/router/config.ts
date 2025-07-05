@@ -28,6 +28,8 @@ import word from '../views/word.vue'
 import listen from '../views/listen.vue'
 import Develop from '@/views/develop.vue'
 import Chat from '@/views/chat.vue'
+import enGrammar from '@/views/enGrammar.vue'
+import enGrammarItem from '@/views/enGrammarItem.vue'
 
 type RouterItem = RouteRecordRaw & {
   meta?: {
@@ -186,6 +188,16 @@ const routes: Array<RouterItem> = [
     meta: {
       hideBottom: true,
     }
+  },
+  {
+    path: '/enGrammar',
+    name: 'enGrammar',
+    component: enGrammar,
+  },
+  {
+    path: '/enGrammarItem/:id',
+    name: 'enGrammarItem',
+    component: enGrammarItem,
   }
 ]
 export default routes;

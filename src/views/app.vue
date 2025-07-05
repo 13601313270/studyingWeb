@@ -136,9 +136,9 @@
   <Dialog :show="!showAgree && $route.name !== 'welcome' && degreeListDialogShow" title="选择学位"
     @close="degreeListDialogShow = false">
     <div class="degreeList">
-      <div v-for="item in degreeList" class="degreeItem" :class="{ select: degreeSelect === item.id }">
+      <div v-for="item in degreeList" class="degreeItem" :key="item.id" :class="{ select: degreeSelect === item.id }"
+        @click="changeDegree(item.id)">
         {{ item.name }}
-        <!-- {{ item.id }} -->
       </div>
     </div>
   </Dialog>
@@ -224,7 +224,7 @@ export default {
       const rootPages = ['source', 'file', 'friend', 'mall', 'mine']
       let sort = [
         ...rootPages,
-        'sourceDetail', 'lessonDetail', 'word', 'listen', 'lessonDetailNew', 'poiLessonDetail', 'lessonAllChildPoiVideo', 'lessonQuestionList', 'lessonKnowledgeList', 'poiQuestion', 'lessonLog',
+        'sourceDetail', 'lessonDetail', 'word', 'listen', 'lessonDetailNew', 'poiLessonDetail', 'lessonAllChildPoiVideo', 'lessonQuestionList', 'lessonKnowledgeList', 'poiQuestion', 'lessonLog', 'enGrammar', 'enGrammarItem',
         'addQuestion', 'informationDetail', 'dailyQuestion', 'zhidaoDetail', 'lessonKnowledgeDetail', 'chat',
         'aboutUs', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo', 'develop'
       ];
@@ -268,7 +268,8 @@ export default {
       }
     }
     // 学位选择
-    const degreeSelect = 1;
+    let degreeSelect = localStorage.getItem(degreeSelectCacheKey);
+    degreeSelect = degreeSelect ? parseInt(degreeSelect) : 1
     // const selectDegree = localStorage.getItem(degreeSelectCacheKey)
     // if (selectDegree === null) {
     //   // localStorage.setItem(agreementKey, (new Date()).getTime())
@@ -342,6 +343,13 @@ export default {
       this.showAgree = false;
       localStorage.setItem(agreementKey, (new Date()).getTime())
       umeng.init(true)
+    },
+    changeDegree(id) {
+      this.degreeSelect = id;
+      this.setDegree(id)
+      this.degreeListDialogShow = false;
+
+      localStorage.setItem(degreeSelectCacheKey, id)
     }
   },
   computed: {
@@ -351,7 +359,7 @@ export default {
       return this.$store.getters['main/path']
     },
     tabType() {
-      if (['source', 'sourceDetail', 'lessonDetail', 'lessonDetailNew', 'poiLessonDetail', 'lessonQuestionList', 'poiQuestion', 'lessonKnowledgeList', 'lessonKnowledgeDetail', 'lessonAllChildPoiVideo', 'listen', 'word'].includes(this.$route.name)) {
+      if (['source', 'sourceDetail', 'lessonDetail', 'lessonDetailNew', 'poiLessonDetail', 'lessonQuestionList', 'poiQuestion', 'lessonKnowledgeList', 'lessonKnowledgeDetail', 'lessonAllChildPoiVideo', 'listen', 'word', 'enGrammar', 'enGrammarItem'].includes(this.$route.name)) {
         return 'source';
       } else if (['file'].includes(this.$route.name)) {
         return 'file';
@@ -852,10 +860,11 @@ export default {
 .degreeList {
   .degreeItem {
     border: solid 1px rgb(141, 141, 141);
-    color: rgb(73, 73, 73);
+    color: rgb(101, 101, 101);
     padding: 16px 32px;
     font-size: 38px;
     border-radius: 16px;
+    margin-bottom: 16px;
 
     &.select {
       border: none;
