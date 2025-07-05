@@ -7,23 +7,11 @@
           <div :key="subject.id" v-for="subject in selectSourceList" @click="changeSubject(subject.id)"
             class="subjects_item">
             <text :key="subject.id" :class="[selectSub === subject.id ? 'subjects_item_select' : '']">{{ subject.name
-            }}</text>
+              }}</text>
           </div>
         </div>
         <div key="end" class="subjects_item_bottomBorder" ref="subjectBorder"
-          :style="{ left: selectSourceList.map(item => item.id).indexOf(selectSub) * 24 + 5 + 'vw' }"></div>
-      </div>
-      <div class="subjects_set">
-        <div @click="showSourceSelect = !showSourceSelect">
-          <icon src="more" width="100" height="100" />
-        </div>
-        <div class="subjects_set_list" v-if="showSourceSelect">
-          <div v-for="subject in subjects" :key="subject.id" class="subjects_set_list_item">
-            <text>{{ subject.name }}</text>
-            <Switch :value="userSetSourceList.includes(subject.id)"
-              @input="(value) => { chooseSetList(subject.id, value) }" />
-          </div>
-        </div>
+          :style="{ left: selectSourceList.map(item => item.id).indexOf(selectSub) * 22 + 4 + 'vw' }"></div>
       </div>
     </div>
     <scroller class="list" v-if="selectSub === 'english'">
@@ -34,6 +22,10 @@
       <div @click="chooseListen" class="englishItem">
         听力通
         <Icon src="listen" width="120" />
+      </div>
+      <div @click="toYF" class="englishItem">
+        语法
+        <img class="icon" src="../icons/yf.svg" />
       </div>
     </scroller>
     <scroller class="list" v-else>
@@ -63,8 +55,6 @@ import Button from '../components/Button.vue'
 import Icon from '../components/icon.vue'
 import log from '@/plugin/log'
 
-const userSetSourceListKey = 'saveSetSourceList';
-
 export default {
   name: 'source',
   data() {
@@ -80,16 +70,6 @@ export default {
   },
   async created() {
     this.subjects = await request.get('/subjectV3?degree=' + this.degree);
-    const e = await localStorage.getItem(userSetSourceListKey);
-    if (e === null) {
-      this.userSetSourceList = this.subjects.map(v => v.id);//[this.subjects[0].id];
-    } else {
-      if (typeof e === 'string') {
-        this.userSetSourceList = JSON.parse(e);
-      } else {
-        this.userSetSourceList = e;
-      }
-    }
     const selectSub = await localStorage.getItem('sourceChoose')
     if (selectSub === 'english') {
       this.selectSub = selectSub
@@ -97,7 +77,6 @@ export default {
       this.selectSub = +selectSub || this.subjects[0].id;
       this.refresh()
     }
-
     // setTimeout(() => {
     //     const start = this.$refs['start'];
     //     if (start) {
@@ -110,15 +89,12 @@ export default {
   computed: {
     ...mapGetters('main', ['degree']),
     selectSourceList() {
-      const allSubject = this.subjects.filter(item => {
-        return this.userSetSourceList.includes(item.id)
-      })
       return [
         {
           id: 'english',
           name: "英语"
         },
-        ...allSubject
+        ...this.subjects
       ];
     }
   },
@@ -160,20 +136,17 @@ export default {
     choose(id) {
       this.$router.push({ path: '/source/' + id })
     },
-    chooseSetList(id, value) {
-      if (value) {
-        if (!this.userSetSourceList.includes(id)) {
-          this.userSetSourceList.push(id)
-        }
-      } else {
-        if (this.userSetSourceList.includes(id)) {
-          this.userSetSourceList.splice(this.userSetSourceList.indexOf(id), 1);
-          if (!this.userSetSourceList.includes(this.selectSub)) {
-            this.changeSubject(this.userSetSourceList[0])
-          }
-        }
+    toYF() {
+      this.$router.push({ path: '/enYF' })
+    }
+  },
+  watch: {
+    degree: {
+      async handler(val) {
+        this.subjects = await request.get('/subjectV3?degree=' + this.degree);
+        this.selectSub = 'english';
+        localStorage.setItem('sourceChoose', 'english')
       }
-      localStorage.setItem(userSetSourceListKey, JSON.stringify(this.userSetSourceList));
     }
   },
   components: {
@@ -209,7 +182,7 @@ export default {
   border-bottom-style: solid;
 
   &_scroll {
-    width: 650px;
+    width: 750px;
     flex-direction: row;
     align-items: center;
     height: 100%;
@@ -268,7 +241,7 @@ export default {
 
   &_item {
     font-size: 42px;
-    min-width: 120px;
+    min-width: 105px;
     line-height: 70px;
     text-align: center;
     padding: 20px 30px;
@@ -302,6 +275,10 @@ export default {
   .loading {
     font-size: 44px;
     color: #999;
+  }
+
+  .icon {
+    width: 120px;
   }
 }
 

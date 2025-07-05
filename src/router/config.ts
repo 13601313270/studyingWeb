@@ -28,6 +28,7 @@ import word from '../views/word.vue'
 import listen from '../views/listen.vue'
 import Develop from '@/views/develop.vue'
 import Chat from '@/views/chat.vue'
+import enYF from '@/views/yf.vue'
 
 type RouterItem = RouteRecordRaw & {
   meta?: {
@@ -186,6 +187,11 @@ const routes: Array<RouterItem> = [
     meta: {
       hideBottom: true,
     }
+  },
+  {
+    path: '/enYF',
+    name: 'enYF',
+    component: enYF,
   }
 ]
 export default routes;
