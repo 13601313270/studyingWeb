@@ -191,7 +191,7 @@ export default {
     }
   },
   async created() {
-    this.setPath([{ name: '超级单词卡' }]);
+    this.setPath([{ name: '超级背单词' }]);
     let option = new sqlClass('option')
     if ((await option.select('select count(*) as count from option where name="wordTestFinish"'))[0].count === 0) {
       this.showTestTransform = true
@@ -365,7 +365,6 @@ export default {
       return new Promise(async (resolve) => {
         this.firstLoading = true
         //加载单词
-
         let wordApi = new sqlClass('word')
         const exist = await wordApi.select('select count(*) as count from word')
         if (exist[0].count > 0) {
@@ -387,7 +386,6 @@ export default {
                 translate: ''
               })
             }
-
             try {
               await wordApi.insert.apply(wordApi, insertList)
               if (end < allWord.length - 1) {// end < allWord.length - 1 会在某一个值有bug
@@ -401,7 +399,6 @@ export default {
             }
           })
         }
-
         this.$nextTick(() => {
           temp(0, 20)
         })
