@@ -36,13 +36,13 @@
         </div>
         <img class="icon" src="../icons/yf.svg" />
       </div>
-      <!-- <div @click="chooseWordSearch" class="englishItem">
+      <div @click="chooseWordSearch" class="englishItem">
         <div class="title">
           词典
           <div class="desc">便携词典</div>
         </div>
         <Icon src="word" width="100" />
-      </div> -->
+      </div>
     </scroller>
     <scroller class="list" v-else>
       <div class="source_list error" v-if="!loading && loadError">

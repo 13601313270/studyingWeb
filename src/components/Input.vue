@@ -1,6 +1,6 @@
 <template>
   <div>
-    <input :placeholder="placeholder" class="inputBase" v-model="valueInner" />
+    <input :placeholder="placeholder" class="inputBase" @input="input" v-model="valueInner" />
   </div>
 </template>
 <script>
@@ -18,8 +18,13 @@ export default {
       valueInner: this.modelValue
     }
   },
+  methods: {
+    input(val) {
+      this.$emit('input', val)
+    }
+  },
   watch: {
-    value(val) {
+    modelValue(val) {
       console.log(111, val)
       this.valueInner = val;
     },
