@@ -7,7 +7,7 @@
           <div :key="subject.id" v-for="subject in selectSourceList" @click="changeSubject(subject.id)"
             class="subjects_item">
             <text :key="subject.id" :class="[selectSub === subject.id ? 'subjects_item_select' : '']">{{ subject.name
-            }}</text>
+              }}</text>
           </div>
         </div>
         <div key="end" class="subjects_item_bottomBorder" ref="subjectBorder"
@@ -17,7 +17,7 @@
     <scroller class="list" v-if="selectSub === 'english'">
       <div @click="chooseWord" class="englishItem">
         <div class="title">
-          超级单词卡
+          超级背单词
           <div class="desc">艾宾浩斯遗忘曲线，制定科学背单词计划</div>
         </div>
         <Icon src="word" width="100" />
@@ -36,6 +36,13 @@
         </div>
         <img class="icon" src="../icons/yf.svg" />
       </div>
+      <!-- <div @click="chooseWordSearch" class="englishItem">
+        <div class="title">
+          词典
+          <div class="desc">便携词典</div>
+        </div>
+        <Icon src="word" width="100" />
+      </div> -->
     </scroller>
     <scroller class="list" v-else>
       <div class="source_list error" v-if="!loading && loadError">
@@ -137,6 +144,10 @@ export default {
     chooseWord() {
       log('word')
       this.$router.push({ path: '/word' })
+    },
+    chooseWordSearch() {
+      log('wordSearch')
+      this.$router.push({ path: '/wordSearch' })
     },
     chooseListen() {
       log('listen')

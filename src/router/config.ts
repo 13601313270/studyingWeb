@@ -25,6 +25,7 @@ import lessonLog from '../views/lessonLog.vue'
 import addQuestion from '../views/addQuestion.vue'
 import file from '../views/file.vue'
 import word from '../views/word.vue'
+import wordSearch from '../views/wordSearch.vue'
 import listen from '../views/listen.vue'
 import Develop from '@/views/develop.vue'
 import Chat from '@/views/chat.vue'
@@ -170,6 +171,11 @@ const routes: Array<RouterItem> = [
     path: '/word',
     name: 'word',
     component: word,
+  },
+  {
+    path: '/wordSearch',
+    name: 'wordSearch',
+    component: wordSearch,
   },
   {
     path: '/listen',
