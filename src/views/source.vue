@@ -43,6 +43,13 @@
         </div>
         <Icon src="word" width="100" />
       </div>
+      <div @click="chooseRead" class="englishItem">
+        <div class="title">
+          阅读
+          <!-- <div class="desc">阅读正文</div> -->
+        </div>
+        <Icon src="word" width="100" />
+      </div>
     </scroller>
     <scroller class="list" v-else>
       <div class="source_list error" v-if="!loading && loadError">
@@ -148,6 +155,10 @@ export default {
     chooseWordSearch() {
       log('wordSearch')
       this.$router.push({ path: '/wordSearch' })
+    },
+    chooseRead() {
+      log('wordSearch')
+      this.$router.push({ path: '/enRead' })
     },
     chooseListen() {
       log('listen')

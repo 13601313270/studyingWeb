@@ -31,6 +31,7 @@ import Develop from '@/views/develop.vue'
 import Chat from '@/views/chat.vue'
 import enGrammar from '@/views/enGrammar.vue'
 import enGrammarItem from '@/views/enGrammarItem.vue'
+import enRead from '@/views/enRead.vue'
 
 type RouterItem = RouteRecordRaw & {
   meta?: {
@@ -204,6 +205,11 @@ const routes: Array<RouterItem> = [
     path: '/enGrammarItem/:id',
     name: 'enGrammarItem',
     component: enGrammarItem,
+  },
+  {
+    path: '/enRead',
+    name: 'enRead',
+    component: enRead,
   }
 ]
 export default routes;
