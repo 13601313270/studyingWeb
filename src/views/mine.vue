@@ -48,6 +48,10 @@
         <div>分享好友</div>
         <icon class="right" src="right_black" />
       </div>
+      <div class="actionItem" @click="pay" v-if="userInfo && userInfo.account">
+        <div>购买VIP ¥12/年</div>
+        <icon class="right" src="right_black" />
+      </div>
       <div class="actionItem" @click="$router.push('/QQ')">
         <div>QQ交流群</div>
         <icon class="right" src="right_black" />
@@ -58,10 +62,6 @@
       </div>
       <div class="actionItem" v-if="isiOS" @click="score">
         <div>给App评分</div>
-        <icon class="right" src="right_black" />
-      </div>
-      <div class="actionItem" @click="pay" v-if="userInfo && userInfo.account">
-        <div>购买VIP ¥12/年</div>
         <icon class="right" src="right_black" />
       </div>
       <div class="actionItem" @click="$router.push('/cache')">
