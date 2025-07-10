@@ -39,7 +39,7 @@
     <div style="flex: 1;overflow-y: scroll;position: relative;">
       <router-view v-slot="{ Component }" class="page">
         <transition :name="transitionType">
-          <keep-alive include="source,sourceDetail,friend,lessonQuestionList">
+          <keep-alive include="source,sourceDetail,friend,lessonQuestionList,enRead">
             <component :is="Component" />
           </keep-alive>
         </transition>

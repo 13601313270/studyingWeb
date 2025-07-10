@@ -41,14 +41,14 @@
           词典
           <div class="desc">便携词典</div>
         </div>
-        <Icon src="word" width="100" />
+        <img class="icon" src="../icons/search.svg" />
       </div>
       <div @click="chooseRead" class="englishItem">
         <div class="title">
           阅读
-          <!-- <div class="desc">阅读正文</div> -->
+          <div class="desc">提分神器</div>
         </div>
-        <Icon src="word" width="100" />
+        <img class="icon" src="../icons/enRead.svg" />
       </div>
     </scroller>
     <scroller class="list" v-else>
