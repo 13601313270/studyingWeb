@@ -39,7 +39,7 @@
     <div style="flex: 1;overflow-y: scroll;position: relative;">
       <router-view v-slot="{ Component }" class="page">
         <transition :name="transitionType">
-          <keep-alive include="source,sourceDetail,friend,lessonQuestionList">
+          <keep-alive include="source,sourceDetail,friend,lessonQuestionList,enRead">
             <component :is="Component" />
           </keep-alive>
         </transition>
@@ -224,7 +224,7 @@ export default {
       const rootPages = ['source', 'file', 'friend', 'mall', 'mine']
       let sort = [
         ...rootPages,
-        'sourceDetail', 'lessonDetail', 'word', 'wordSearch', 'listen', 'lessonDetailNew', 'poiLessonDetail', 'lessonAllChildPoiVideo', 'lessonQuestionList', 'lessonKnowledgeList', 'poiQuestion', 'lessonLog', 'enGrammar', 'enGrammarItem',
+        'sourceDetail', 'lessonDetail', 'word', 'wordSearch', 'listen', 'lessonDetailNew', 'poiLessonDetail', 'lessonAllChildPoiVideo', 'lessonQuestionList', 'lessonKnowledgeList', 'poiQuestion', 'lessonLog', 'enGrammar', 'enGrammarItem', 'enRead', 'enReadDetail',
         'addQuestion', 'informationDetail', 'dailyQuestion', 'zhidaoDetail', 'lessonKnowledgeDetail', 'chat',
         'aboutUs', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo', 'develop'
       ];
@@ -359,7 +359,7 @@ export default {
       return this.$store.getters['main/path']
     },
     tabType() {
-      if (['source', 'sourceDetail', 'lessonDetail', 'lessonDetailNew', 'poiLessonDetail', 'lessonQuestionList', 'poiQuestion', 'lessonKnowledgeList', 'lessonKnowledgeDetail', 'lessonAllChildPoiVideo', 'listen', 'word', 'enGrammar', 'enGrammarItem', 'wordSearch'].includes(this.$route.name)) {
+      if (['source', 'sourceDetail', 'lessonDetail', 'lessonDetailNew', 'poiLessonDetail', 'lessonQuestionList', 'poiQuestion', 'lessonKnowledgeList', 'lessonKnowledgeDetail', 'lessonAllChildPoiVideo', 'listen', 'word', 'enGrammar', 'enGrammarItem', 'wordSearch', 'enRead', 'enReadDetail'].includes(this.$route.name)) {
         return 'source';
       } else if (['file'].includes(this.$route.name)) {
         return 'file';
