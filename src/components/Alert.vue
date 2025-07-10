@@ -77,6 +77,7 @@ function ok() {
         flex-grow: 1;
         text-align: center;
         line-height: 88px;
+        font-size: 28px;
 
         &:not(:first-child) {
           border-left: solid 1px #e0e0e0;
