@@ -71,7 +71,6 @@
       <text class="argument_split">｜</text>
       <text class="argument_link">隐私政策</text>
     </div>
-    <div style="height: 200px;"></div>
     <Popup :title="agreementInfo.title" :show="showRuleContent" :zIndex="1000" @close="showRuleContent = false">
       <div class="agreementInfoPopUp">
         <div>{{ agreementInfo.content }}</div>
@@ -379,11 +378,9 @@ onMounted(() => {
 <style scoped lang="less">
 .login_content {
   width: 750px;
+  max-height: 100vh;
+  overflow-y: auto;
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  justify-items: center;
 
   &_close {
     position: absolute;
@@ -432,10 +429,11 @@ onMounted(() => {
 
 .checkContent {
   width: 100%;
-  margin-left: 25px;
-  margin-right: 25px;
+  padding-left: 25px;
+  padding-right: 25px;
   display: flex;
   align-items: center;
+  box-sizing: border-box;
 
   .Check {
     margin-right: 16px;

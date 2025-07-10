@@ -429,6 +429,7 @@ export default {
       .head_root {
         display: flex;
         align-items: center;
+        font-size: 28px;
 
         .icon {
           width: 48px;
