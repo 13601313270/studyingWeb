@@ -4,7 +4,7 @@
       <div class="header_web_name">
         <div class="head_root" v-if="isInRootPage" @click="degreeListDialogShow = true">
           <img class="icon" src="../icons/icons.png" />
-          <div v-if="selectDegreeInfo">{{ selectDegreeInfo.name }}</div>
+          <div class="degreeName" v-if="selectDegreeInfo">{{ selectDegreeInfo.name }}</div>
         </div>
         <div v-else class="header_web_name_back" @click="clickBack">
           <img class="header_web_name_back_img" src="../icons/back.png" />
@@ -435,6 +435,10 @@ export default {
           width: 48px;
           height: 48px;
           margin: 0 8px;
+        }
+
+        .degreeName {
+          font-size: 32px;
         }
       }
 
