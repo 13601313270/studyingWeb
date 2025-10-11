@@ -316,7 +316,7 @@ export default {
 .source_list {
   padding-top: 20px;
   padding-bottom: 100px;
-  padding-left: 50px;
+  padding-left: 30px;
   width: 650px;
 
   &.error {

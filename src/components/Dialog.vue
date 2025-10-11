@@ -81,7 +81,7 @@ export default {
 }
 
 .background {
-  background-color: rgba(0, 0, 0, 0.36);
+  background-color: rgba(0, 0, 0, 0.46);
   position: absolute;
   transition: opacity 0.3s;
   opacity: 0;

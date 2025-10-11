@@ -26,23 +26,12 @@
   <Dialog :show="showConinuePoiLesson" title="提示" @close="closeDialog">
     <div class="chooseUseType">
       <BuyVIPDesc />
+      <VipPriceDesc @buy="buyVipFinish" @to-invite="toInvite" />
+      <div class="split"></div>
       <div class="chooseUseTypeInfo" v-if="showConinuePoiLesson">
         您是免费用户，今日可免费试用次数还剩<span class="time">{{ showConinueTimes.times.poiLesson }}</span>次，是否继续使用？
       </div>
-      <Button @click="continueUse" text="继续免费试用"></Button>
-      <div class="split"></div>
-      <div class="vipTitle">成为VIP所有功能不限量</div>
-      <div class="chooseUseTypeTools">
-        <div @click="CallbuyVip" class="buyVip">
-          <div>购买</div>
-          <div class="price">¥12/年</div>
-        </div>
-        <div>或</div>
-        <div @click="CallInvite" class="buyVip">
-          <div>邀请新人进入</div>
-          <div class="price">双方获赠2个月VIP</div>
-        </div>
-      </div>
+      <Button class="continueUseButton" @click="continueUse" text="继续免费试用"></Button>
     </div>
   </Dialog>
 </template>
@@ -56,9 +45,9 @@ import { useRoute, useRouter } from 'vue-router';
 import Button from "@/components/Button.vue";
 import request from '@/plugin/request'
 import BuyVIPDesc from './buyVIPDesc.vue';
-import { buyVip } from '@/plugin/buyVip';
 import toast from '@/plugin/toast';
 import log from '@/plugin/log';
+import VipPriceDesc from '@/components/vipPriceDesc.vue';
 
 const router = useRouter();
 const route = useRoute();
@@ -153,13 +142,10 @@ onActivated(() => {
 function closeDialog() {
   showConinuePoiLesson.value = null
 }
-function CallbuyVip() {
-  buyVip().then(() => {
-    closeDialog();
-  })
+function buyVipFinish() {
+  closeDialog();
 }
-function CallInvite() {
-  router.push('/friend');
+function toInvite() {
   closeDialog();
 }
 async function continueUse() {
@@ -477,6 +463,7 @@ async function continueUse() {
     .time {
       font-weight: bold;
       color: red;
+      font-size: 38px;
       margin: 0 8px;
     }
   }
@@ -488,47 +475,9 @@ async function continueUse() {
     margin: 32px 0;
   }
 
-  .vipTitle {
-    font-size: 38px;
-    margin-bottom: 16px;
-    color: rgb(64, 64, 64);
-    text-align: center;
-  }
-
-  .chooseUseTypeTools {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    >div:not(:first-child) {
-      margin-left: 16px;
-    }
-
-    .buyVip {
-      background: #00795c;
-      border: none;
-      height: 100px;
-      border-radius: 10px;
-      padding-left: 20px;
-      padding-right: 20px;
-      border-style: solid;
-      border-width: 2px;
-      border-color: #ccd6d2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      box-sizing: border-box;
-      font-size: 32px;
-      color: white;
-      text-align: center;
-      width: 50%;
-      flex-grow: 1;
-
-      .price {
-        line-height: 26px;
-        font-size: 26px;
-      }
+  .continueUseButton {
+    :deep(.button_text) {
+      font-weight: bold;
     }
   }
 }

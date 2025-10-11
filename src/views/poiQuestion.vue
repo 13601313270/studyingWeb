@@ -94,7 +94,7 @@
           <div class="answer">
             <text class="item_list_check_item_title">正确答案:</text>
             <text class="item_list_check_item_answer" v-if="lookQuestion.list && lookQuestion.list.length">
-              {{ lookQuestion.list.map(v => v.answer).join('') }}
+              {{lookQuestion.list.map(v => v.answer).join('')}}
             </text>
             <text class="item_list_check_item_answer" v-else>{{ lookQuestion.answer }}</text>
           </div>
@@ -165,16 +165,14 @@
       </scroller>
     </div>
   </div>
-  <Dialog :show="showBuyVip" title="提示" @close="showBuyVip=false">
+  <Dialog :show="showBuyVip" title="提示" @close="showBuyVip = false">
     <div class="chooseUseType">
       <BuyVIPDesc />
-      <div>VIP费用<span class="price">¥12</span>/年</div>
       <div class="chooseUseTypeInfo" v-if="showBuyVip">
         您是免费用户，试题AI解析只有VIP用户可用。
       </div>
-      <div class="chooseUseTypeTools">
-        <Button @click="CallbuyVip" primary class="buyVip" text="成为VIP不限量（12¥/年）"></Button>
-      </div>
+      <div class="split"></div>
+      <VipPriceDesc @buy="CallbuyVip" @toInvite="CallbuyVip" />
     </div>
   </Dialog>
 </template>
@@ -190,8 +188,8 @@ import share from '../plugin/share'
 import Dialog from '@/components/Dialog.vue';
 import BuyVIPDesc from './buyVIPDesc.vue';
 import { showImg } from '../plugin/imagePreview'
-import { buyVip } from '@/plugin/buyVip';
 import log from '@/plugin/log';
+import VipPriceDesc from '@/components/vipPriceDesc.vue';
 
 export default {
   name: 'poiQuestion',
@@ -391,10 +389,10 @@ export default {
       let self = this;
       let usage = {};
       const questionInfo = this.question[this.lookQaIndex];
-      const userInfo = JSON.parse(localStorage.getItem('userInfo')||'{}');
+      const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
       const token = userInfo.account + '@@' + localStorage.getItem('token');
 
-      const eventSource = new EventSource('https://api.studying1v1.com/question/aiExplanation/' + questionInfo['id']+'?token='+token);
+      const eventSource = new EventSource('https://api.studying1v1.com/question/aiExplanation/' + questionInfo['id'] + '?token=' + token);
       this.questionAIAnswer[this.lookQaIndex] = '';
       eventSource.onopen = function () {
         self.questionAIAnswer[self.lookQaIndex] = '';
@@ -432,9 +430,7 @@ export default {
       });
     },
     CallbuyVip() {
-      buyVip().then(() => {
-        this.showBuyVip = false;
-      })
+      this.showBuyVip = false;
     },
   },
   components: {
@@ -443,6 +439,7 @@ export default {
     pic,
     Dialog,
     BuyVIPDesc,
+    VipPriceDesc,
   }
 }
 </script>
@@ -919,12 +916,22 @@ export default {
     font-size: 32px;
   }
 }
+
 .chooseUseType {
   .chooseUseTypeInfo {
+    font-size: 28px;
+
     .time {
       font-weight: bold;
       margin: 0 8px;
     }
+  }
+
+  .split {
+    width: 100%;
+    height: 2px;
+    background-color: #b2b2b2;
+    margin: 32px 0;
   }
 
   .chooseUseTypeTools {

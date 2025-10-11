@@ -240,6 +240,7 @@ const dbModule = {
     } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
       // @ts-ignore
       window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+        group: 'sql',
         type: 'sql',
         sql: sql,
         isQuery: !!isSelect,
@@ -335,6 +336,7 @@ export default class {
       } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
         // @ts-ignore
         window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+          group: 'sql',
           type: 'sql',
           sql: 'create table if not exists ' + table + '(' + listStr.join(',') + ')',
           isQuery: false,

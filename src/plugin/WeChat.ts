@@ -17,6 +17,7 @@ function isInstalled(): Promise<boolean> {
     } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
       // @ts-ignore
       window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+        group: 'wechat',
         type: 'WeChatIsInstalled',
       }).then((res: any) => {
         resolve(res);
@@ -42,6 +43,7 @@ function login() {
     } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
       // @ts-ignore
       window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+        group: 'wechat',
         type: 'WeChatLogin',
       }).then((code: any) => {
         request.post("/weChat/login", {

@@ -6,7 +6,7 @@
         <div class="subjectScroll">
           <div :key="subject.id" v-for="subject in subjects" @click="changeSubject(subject.id)" class="subjects_item">
             <text :key="subject.id" :class="[+selectSub === subject.id ? 'subjects_item_select' : '']">{{ subject.name
-            }}</text>
+              }}</text>
           </div>
         </div>
         <div key="end" class="subjects_item_bottomBorder" ref="subjectBorder"
@@ -46,16 +46,13 @@
     @close="showConinueUrl = '', showConinueOpenPath = ''">
     <div class="chooseUseType">
       <BuyVIPDesc />
-      <div>VIP费用<span class="price">¥12</span>/年</div>
+      <VipPriceDesc @buy="CallbuyVip" @toInvite="CallbuyVip" />
+      <div class="split"></div>
       <div class="chooseUseTypeInfo" v-if="showConinueUrl || showConinueOpenPath">
         您是免费用户，今日可免费试用次数还剩<span class="time">{{ showConinueTimes.times.fileDownload }}</span>次，是否继续使用？
       </div>
       <div class="chooseUseTypeTools">
         <Button class="cancel" @click="continueUse" text="继续免费试用"></Button>
-        <div @click="CallbuyVip" class="buyVip">
-          <div>成为VIP不限量</div>
-          <div class="price">¥12/年</div>
-        </div>
       </div>
     </div>
   </Dialog>
@@ -69,8 +66,8 @@ import File from '@/plugin/file'
 import Dialog from '@/components/Dialog.vue';
 import BuyVIPDesc from './buyVIPDesc.vue';
 import toast from '@/plugin/toast';
-import { buyVip } from '@/plugin/buyVip';
 import log from '@/plugin/log';
+import VipPriceDesc from '@/components/vipPriceDesc.vue';
 
 export default {
   data() {
@@ -183,10 +180,8 @@ export default {
       }
     },
     CallbuyVip() {
-      buyVip().then(() => {
-        this.showConinueUrl = '';
-        this.showConinueOpenPath = '';
-      })
+      this.showConinueUrl = '';
+      this.showConinueOpenPath = '';
     },
     async open(path) {
       const data = await request.get('/user/checkFuncTimes');
@@ -217,7 +212,8 @@ export default {
   components: {
     Button,
     Dialog,
-    BuyVIPDesc
+    BuyVIPDesc,
+    VipPriceDesc
   }
 }
 </script>
@@ -422,8 +418,17 @@ export default {
   .chooseUseTypeInfo {
     .time {
       font-weight: bold;
+      font-size: 38px;
+      color: red;
       margin: 0 8px;
     }
+  }
+
+  .split {
+    width: 100%;
+    height: 2px;
+    background-color: #b2b2b2;
+    margin: 32px 0;
   }
 
   .chooseUseTypeTools {
@@ -438,32 +443,6 @@ export default {
 
     .cancel {
       height: 100px;
-    }
-
-    .buyVip {
-      background: #00795c;
-      border: none;
-      height: 100px;
-      border-radius: 10px;
-      padding-left: 20px;
-      padding-right: 20px;
-      border-style: solid;
-      border-width: 2px;
-      border-color: #ccd6d2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      box-sizing: border-box;
-      font-size: 32px;
-      color: white;
-      text-align: center;
-      flex-grow: 1;
-
-      .price {
-        line-height: 26px;
-        font-size: 26px;
-      }
     }
   }
 }

@@ -70,11 +70,13 @@ onMounted(() => {
       padding: 10px;
 
       &.warning {
-        color: red;
+        color: rgb(99, 99, 99);
+        font-size: 32px;
+        font-weight: bold;
       }
 
       &.good {
-        color: green;
+        color: #f09903;
         font-size: 32px;
         font-weight: bold;
       }

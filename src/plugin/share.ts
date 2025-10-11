@@ -28,6 +28,7 @@ function share(title: string, url: string, desc: string, img: string) {
     } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
       // @ts-ignore
       window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+        group: 'share',
         type: 'share',
         title,
         url,

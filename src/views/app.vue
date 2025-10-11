@@ -144,12 +144,11 @@
   </Dialog>
   <Dialog :show="showBuySuccess" title="恭喜您获得VIP权限" @close="showBuySuccess = false">
     <BuyVIPDesc />
-    <div>VIP费用<span class="price">¥12</span>/年</div>
     <div class="buySuccess">
       <img src="../icons/isPayed.png" />
       <div>购买成功，恭喜您获得VIP权限！！</div>
       <div class="tools">
-        <Button text="我知道了" @click="showBuySuccess = false"></Button>
+        <Button text="继续使用" @click="showBuySuccess = false"></Button>
       </div>
     </div>
   </Dialog>

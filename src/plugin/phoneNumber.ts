@@ -21,6 +21,7 @@ export function getToken(): Promise<string> {
     } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
       // @ts-ignore
       window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+        group: 'phone',
         type: 'getPhoneToken',
       }).then((res: string) => {
         resolve(res);
