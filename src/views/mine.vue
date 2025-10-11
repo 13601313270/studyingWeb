@@ -14,7 +14,7 @@
       <!--                <text class="coin_text">金币</text>-->
       <!--                <text class="coin_text">{{userInfo2.coin}}</text>-->
       <!--            </div>-->
-      <div class="payed" :style="{ opacity: showIsPayed ? '1' : '0', transform: showIsPayed ? '' : 'scale(2)' }">
+      <div class="payed" :style="{ opacity: showIsPayed ? '1' : '0', transform: showIsPayed ? '' : 'scale(1.3)' }">
         <img src="../icons/isPayed.png" />
         <span>VIP</span>
         <span class="vipEndDate" v-if="userInfo2.vipEndDate">时间至{{ userInfo2.vipEndDate.slice(0, 10) }}</span>

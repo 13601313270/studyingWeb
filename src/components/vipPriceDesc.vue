@@ -6,10 +6,10 @@
         <div>月度会员</div>
         <div class="price">¥<span class="priceNum">15</span></div>
       </div>
-      <div @click="callSubscribe()" class="buyVip">
+      <!-- <div @click="callSubscribe()" class="buyVip">
         <div>连续包月</div>
         <div class="price">¥<span class="priceNum">12</span></div>
-      </div>
+      </div> -->
       <div @click="callBuyVip('studyingYearVIP')" class="buyVip">
         <div>年度会员</div>
         <div class="price">¥<span class="priceNum">88</span></div>
@@ -37,7 +37,7 @@ function callBuyVip(product: 'studyingMonthVIP' | 'studyingYearVIP') {
   })
 }
 function callSubscribe() {
-  subscribe('studyingVIPMonth').then(() => {
+  subscribe('delete2').then(() => {
     request.get('/user/getInfo')
       .then(res => {
         store.dispatch('main/setUserInfo', res)

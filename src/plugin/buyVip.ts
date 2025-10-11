@@ -13,7 +13,9 @@ export function setBuyVipCallback(callback: () => void) {
 export function buyVip(product: 'studyingMonthVIP' | 'studyingYearVIP'): Promise<void> {
   return new Promise((resolve, reject) => {
     function bridgeSuccess() {
-      request.put('/user/buyVip').then((res) => {
+      request.put('/user/buyVipV2', {
+        product
+      }).then((res) => {
         if (res) {
           buySuccessCallback();
           resolve();
@@ -105,11 +107,20 @@ export function subscribe(product: 'studyingVIPMonth'): Promise<void> {
       "code": 5,
       "reason": "购买出错:xxxxxxxx"
     }
+    6、您购买的商品不存在
+    {
+      "result": false,
+      "code": 6,
+      "reason": "您购买的商品不存在"
+    }
   */
   return new Promise((resolve, reject) => {
-    function subscribeSuccess(transaction: string) {
+    function subscribeSuccess(transactionId: string, originalID: string, productID: string, expirationDate: string) {
       request.put('/user/subscribe', {
-        transaction,
+        transactionId,
+        originalID,
+        productID,
+        expirationDate,
       }).then((res) => {
         if (res) {
           buySuccessCallback();
@@ -135,12 +146,12 @@ export function subscribe(product: 'studyingVIPMonth'): Promise<void> {
           'duration': 3000
         })
         setTimeout(() => {
-          subscribeSuccess(res.transaction)
+          subscribeSuccess(res.transactionId, res.originalID, res.productID, res.expirationDate)
         }, 1000)
       } else {
         handle.destory()
         toast({
-          'message': '未支付成功',
+          'message': res.reason,
           'duration': 3000
         })
         reject()

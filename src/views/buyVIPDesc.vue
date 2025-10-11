@@ -9,17 +9,17 @@
         </tr>
         <tr>
           <td>课程每日限量</td>
-          <td class="warning">{{ limit.lesson || '不支持' }}次</td>
+          <td class="warning" v-if="limit">{{ limit.lesson ? (limit.lesson + '次') : '不支持' }}</td>
           <td class="good">不限</td>
         </tr>
         <tr>
           <td>试题AI解析</td>
-          <td class="warning">{{ limit.aiQa || '不支持' }}</td>
+          <td class="warning" v-if="limit">{{ limit.aiQa ? (limit.aiQa + '次') : '不支持' }}</td>
           <td class="good">支持</td>
         </tr>
         <tr>
           <td>资料下载</td>
-          <td class="warning">{{ limit.fileDown || '不支持' }}次</td>
+          <td class="warning" v-if="limit">{{ limit.fileDown ? (limit.fileDown + '次') : '不支持' }}</td>
           <td class="good">不限</td>
         </tr>
       </tbody>
@@ -33,11 +33,7 @@ const limit = ref<{
   aiQa: number,
   fileDown: number,
   lesson: number
-}>({
-  aiQa: 0,
-  fileDown: 0,
-  lesson: 0
-})
+} | null>(null)
 
 onMounted(() => {
   request.get('user/vipLimitNum').then(res => {
