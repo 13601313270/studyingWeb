@@ -28,7 +28,9 @@ const store = useStore<any>()
 const emits = defineEmits(['buy', 'toInvite'])
 
 function callBuyVip(product: 'studyingMonthVIP' | 'studyingYearVIP') {
+  console.log('=====a=====')
   buyVip(product).then(() => {
+    console.log('=====z=====')
     request.get('/user/getInfo')
       .then(res => {
         store.dispatch('main/setUserInfo', res)

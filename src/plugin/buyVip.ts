@@ -11,7 +11,9 @@ export function setBuyVipCallback(callback: () => void) {
   buySuccessCallback = callback;
 }
 export function buyVip(product: 'studyingMonthVIP' | 'studyingYearVIP'): Promise<void> {
+  console.log('=====b=====')
   return new Promise((resolve, reject) => {
+    console.log('=====c=====')
     function bridgeSuccess() {
       request.put('/user/buyVipV2', {
         product
@@ -25,6 +27,7 @@ export function buyVip(product: 'studyingMonthVIP' | 'studyingYearVIP'): Promise
       })
     }
     const handle = Loading();
+    console.log('=====0=====')
     // setTimeout(() => {
     //   handle.destory()// 如果用户没有走完购买程序，取消了，那么得能销毁。估计3秒，可以唤醒系统支付
     // }, 3000)
@@ -46,11 +49,20 @@ export function buyVip(product: 'studyingMonthVIP' | 'studyingYearVIP'): Promise
           })
           reject()
         }
+      }).catch((err) => {
+        handle.destory()
+        toast({
+          'message': err.message || '支付失败',
+          'duration': 3000
+        })
+        reject()
       })
     } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
+      console.log('=====1=====')
       bridge('pay', 'applePay', {
         product
       }).then((res) => {
+        console.log('=====2=====')
         console.log('支付结果', res)
         handle.destory()
         if (res.result === true) {
@@ -66,6 +78,14 @@ export function buyVip(product: 'studyingMonthVIP' | 'studyingYearVIP'): Promise
           })
           reject()
         }
+      }).catch((err) => {
+        console.log('=====error:1=====')
+        handle.destory()
+        toast({
+          'message': err.message || '支付失败',
+          'duration': 3000
+        })
+        reject()
       })
     } else {
       setTimeout(() => {
