@@ -15,9 +15,14 @@
         <div class="price">¥<span class="priceNum">88</span></div>
       </div>
     </div>
+    <div class="vipEndDate" v-if="userInfo && userInfo.isVip && userInfo.vipEndDate">
+      <div v-if="isVipExpired">您的VIP在{{ userInfo.vipEndDate }}日已过期，请重新购买</div>
+      <div v-else>您目前已经是VIP，时间持续到{{ userInfo.vipEndDate }}，购买后将顺延结束时间</div>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
+import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { buyVip, subscribe } from '@/plugin/buyVip';
@@ -26,6 +31,22 @@ import request from '@/plugin/request';
 const router = useRouter();
 const store = useStore<any>()
 const emits = defineEmits(['buy', 'toInvite'])
+const userInfo = ref<{
+  isVip: boolean;
+  vipEndDate: string;
+}>()
+const isVipExpired = ref(false);
+onMounted(() => {
+  request.get('/user/getInfo').then((res: any) => {
+    userInfo.value = {
+      isVip: res.isVip,
+      vipEndDate: res.vipEndDate.slice(0, 10),
+    };
+    if (userInfo.value) {
+      isVipExpired.value = userInfo.value.isVip && userInfo.value.vipEndDate < new Date().toISOString()
+    }
+  });
+})
 
 function callBuyVip(product: 'studyingMonthVIP' | 'studyingYearVIP') {
   console.log('=====a=====')
@@ -38,15 +59,15 @@ function callBuyVip(product: 'studyingMonthVIP' | 'studyingYearVIP') {
       })
   })
 }
-function callSubscribe() {
-  subscribe('delete2').then(() => {
-    request.get('/user/getInfo')
-      .then(res => {
-        store.dispatch('main/setUserInfo', res)
-        emits('buy')
-      })
-  })
-}
+// function callSubscribe() {
+//   subscribe('delete2').then(() => {
+//     request.get('/user/getInfo')
+//       .then(res => {
+//         store.dispatch('main/setUserInfo', res)
+//         emits('buy')
+//       })
+//   })
+// }
 </script>
 <style lang="less" scoped>
 .vipTitle {
@@ -100,5 +121,10 @@ function callSubscribe() {
       }
     }
   }
+}
+
+.vipEndDate {
+  margin-top: 20px;
+  color: #999;
 }
 </style>

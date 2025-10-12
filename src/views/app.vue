@@ -170,6 +170,7 @@ import isMobileDevice from '@/plugin/isMobileDevice'
 import BuyVIPDesc from './buyVIPDesc.vue';
 import { setBuyVipCallback } from '@/plugin/buyVip'
 import checkNet from '../plugin/checkNet';
+import bridge from '@/plugin/bridge';
 
 const agreementKey = 'agreementKey2022-8-7-2'
 const degreeSelectCacheKey = 'degreeSelectCacheKey-2025-7-4'
@@ -253,6 +254,7 @@ export default {
         this.showAgree = true;
       } else {
         umeng.init(false)
+        bridge('ad', 'openAd')
       }
     } catch (e) {
       console.log(e)
@@ -342,6 +344,7 @@ export default {
       this.showAgree = false;
       localStorage.setItem(agreementKey, (new Date()).getTime())
       umeng.init(true)
+      bridge('ad', 'openAd')
     },
     changeDegree(id) {
       this.degreeSelect = id;
