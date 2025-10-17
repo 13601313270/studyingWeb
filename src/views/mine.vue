@@ -36,6 +36,10 @@
         <div>分享好友</div>
         <icon class="right" src="right_black" />
       </div>
+      <div class="actionItem" @click="toAddress">
+        <div>我的收件地址</div>
+        <icon class="right" src="right_black" />
+      </div>
       <div class="actionItem" @click="showBuyVip = true"
         v-if="store.state.main.userInfo && store.state.main.userInfo.account">
         <div>购买VIP</div>
@@ -162,6 +166,9 @@ function score() {
 
 function sharePanel() {
   share("松鼠学", "https://api.studying1v1.com/share", '松鼠未来网络科技有限责任公司', 'https://yingshijiaoyusystem.oss-cn-beijing.aliyuncs.com/icons.1024-1.png?x-oss-process=image/resize,m_fill,h_500,w_500')
+}
+function toAddress() {
+  router.push('/address')
 }
 function goUserInformation() {
   router.push('/userInformation')

@@ -226,7 +226,7 @@ export default {
         ...rootPages,
         'sourceDetail', 'lessonDetail', 'word', 'wordSearch', 'listen', 'lessonDetailNew', 'poiLessonDetail', 'lessonAllChildPoiVideo', 'lessonQuestionList', 'lessonKnowledgeList', 'poiQuestion', 'lessonLog', 'enGrammar', 'enGrammarItem', 'enRead', 'enReadDetail',
         'addQuestion', 'informationDetail', 'dailyQuestion', 'zhidaoDetail', 'lessonKnowledgeDetail', 'chat',
-        'aboutUs', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo', 'develop'
+        'address', 'aboutUs', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo', 'develop'
       ];
       if (sort.indexOf(newVal) > sort.indexOf(oldVal)) {
         if (rootPages.includes(newVal) && rootPages.includes(oldVal)) {
@@ -365,7 +365,7 @@ export default {
         return 'source';
       } else if (['file'].includes(this.$route.name)) {
         return 'file';
-      } else if (['mine', 'aboutUs', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo', 'develop'].includes(this.$route.name)) {
+      } else if (['mine', 'aboutUs', 'address', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo', 'develop'].includes(this.$route.name)) {
         return 'mine';
       } else if (['friend', 'addQuestion', 'informationDetail', 'dailyQuestion', 'zhidaoDetail', 'chat'].includes(this.$route.name)) {
         return 'friend';
