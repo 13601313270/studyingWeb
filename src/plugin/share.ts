@@ -1,6 +1,6 @@
 import androidBridge from "./androidBridge";
 
-function share(title: string, url: string, desc: string, img: string) {
+function share(title: string, url: string, desc: string, img?: string) {
   return new Promise<void>((resolve, reject) => {
     if (navigator.userAgent.includes('studying1v1Android')) {
       androidBridge('Share', 'share', {

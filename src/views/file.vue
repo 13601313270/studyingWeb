@@ -144,7 +144,7 @@ const changeSource = async (course: any) => {
   loading.value = true;
 
   try {
-    const data = await request.get('/file/listWithTotal', {
+    const data: any = await request.get('/file/listWithTotal', {
       params: {
         course: course.id,
         status: 0,
@@ -227,7 +227,7 @@ const CallbuyVip = () => {
 
 const open = async (path: string) => {
   try {
-    const data = await request.get('/user/checkFuncTimes');
+    const data: any = await request.get('/user/checkFuncTimes');
     showConinueTimes.value = data;
     if (showConinueTimes.value.isVip) {
       File.open(path);
@@ -242,7 +242,7 @@ const open = async (path: string) => {
 
 const share = (file: any) => {
   const url = file.file.replace('http://', 'https://');
-  sharePlugin(file.title, 'https://api.studying1v1.com/page/file?file=' + encodeURIComponent(url), '试题分享')
+  sharePlugin(file.title, 'https://api.studying1v1.com/page/file?file=' + encodeURIComponent(url), '资料分享')
 }
 
 // 生命周期钩子
