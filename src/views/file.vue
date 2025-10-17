@@ -1,16 +1,14 @@
 <template>
-  <div style="display:flex;flex-direction: column;height: 100%;">
+  <div class="filePage">
     <div class="subjects">
-      <div class="subjects_scroll" ref="subjectScroll">
+      <div class="scroll" ref="subjectScroll">
         <text ref="start" key="start"></text>
         <div class="subjectScroll">
-          <div :key="subject.id" v-for="subject in subjects" @click="changeSubject(subject.id)" class="subjects_item">
-            <text :key="subject.id" :class="[+selectSub === subject.id ? 'subjects_item_select' : '']">{{ subject.name
-              }}</text>
+          <div :key="subject.id" v-for="subject in subjects" @click="changeSubject(subject.id)" class="subjects_item"
+            :class="{ active: selectSub === subject.id }">
+            <div :key="subject.id">{{ subject.name }}</div>
           </div>
         </div>
-        <div key="end" class="subjects_item_bottomBorder" ref="subjectBorder"
-          :style="{ left: subjects.map(item => item.id).indexOf(+selectSub) * 22.7 + 4.5 + 'vw' }"></div>
       </div>
     </div>
     <div class="fileContent">
@@ -21,22 +19,28 @@
           <text>{{ source.name }}</text>
         </div>
       </div>
-      <div class="fileList">
-        <div v-if="loading" class="loading">加载中...</div>
-        <div v-else-if="!loading && fileList.length === 0" class="loading">该分类下暂无资料</div>
-        <div v-for="file in fileList" class="fileItem" :key="file.id">
-          <div class="name">{{ file.title }}</div>
-          <div class="buttons" v-if="Object.keys(downLoadFile).includes(file.file.split('/').slice(-1)[0])">
-            <Button @click="share(file)" icon="share" text="分享" />
-            <Button text="打开" @click="open(downLoadFile[file.file.split('/').slice(-1)[0]])"
-              v-if="Object.keys(downLoadFile).includes(file.file.split('/').slice(-1)[0])"></Button>
-            <Button :text="downLoading[file.file] ? '下载中' : '重新下载'" :disabled="downLoading[file.file]"
-              @click="download(file)"></Button>
-          </div>
-          <div v-else class="buttons">
-            <Button @click="share(file)" icon="share" text="分享" />
-            <Button :text="downLoading[file.file] ? '下载中' : '下载'" @click="download(file)"
-              :disabled="downLoading[file.file]"></Button>
+      <div class="fileListContent">
+        <div class="head" v-if="fileCount > 0">
+          <div>共{{ fileCount }}个资料文件</div>
+          <Button>全部打印</Button>
+        </div>
+        <div class="fileList">
+          <div v-if="loading" class="loading">加载中...</div>
+          <div v-else-if="!loading && fileList.length === 0" class="loading">该分类下暂无资料</div>
+          <div v-for="file in fileList" class="fileItem" :key="file.id">
+            <div class="name">{{ file.title }}</div>
+            <div class="buttons" v-if="Object.keys(downLoadFile).includes(file.file.split('/').slice(-1)[0])">
+              <Button @click="share(file)" icon="share" text="分享" />
+              <Button text="打开" @click="open(downLoadFile[file.file.split('/').slice(-1)[0]])"
+                v-if="Object.keys(downLoadFile).includes(file.file.split('/').slice(-1)[0])"></Button>
+              <Button :text="downLoading[file.file] ? '下载中' : '重新下载'" :disabled="downLoading[file.file]"
+                @click="download(file)"></Button>
+            </div>
+            <div v-else class="buttons">
+              <Button @click="share(file)" icon="share" text="分享" />
+              <Button :text="downLoading[file.file] ? '下载中' : '下载'" @click="download(file)"
+                :disabled="downLoading[file.file]"></Button>
+            </div>
           </div>
         </div>
       </div>
@@ -77,6 +81,7 @@ export default {
       sourceList: [],
       selectCourse: -1,
       fileList: [],
+      fileCount: -1,
       downLoadList: [],
       loading: false,
       downLoading: {
@@ -97,13 +102,14 @@ export default {
     this.loading = true;
     this.subjects = await request.get('/subjectV3?degree=1');
     const selectSub = await localStorage.getItem('sourceFileChoose')
-    this.selectSub = selectSub || this.subjects[0].id;
+    this.selectSub = +selectSub || this.subjects[0].id;
     this.refresh();
   },
   methods: {
     changeSubject(id) {
       this.selectSub = id;
       this.fileList = [];
+      this.fileCount = 0;
       this.loading = true;
       localStorage.setItem('sourceFileChoose', id)
       this.refresh();
@@ -115,16 +121,18 @@ export default {
     },
     async changeSource(course) {
       this.fileList = [];
+      this.fileCount = 0;
       this.selectCourse = course.id;
       this.initDownLoadList()
       this.loading = true;
-      request.get('/file/list', {
+      request.get('/file/listWithTotal', {
         params: {
           course: course.id,
           status: 0,
         }
       }).then(data => {
-        this.fileList = data;
+        this.fileList = data.list;
+        this.fileCount = data.total;
         this.loading = false;
       }).catch(() => {
         this.loading = false;
@@ -218,8 +226,14 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.filePage {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .subjects {
-  width: 750px;
+  width: 100%;
   height: 100px;
   display: flex;
   flex-shrink: 0;
@@ -228,8 +242,8 @@ export default {
   border-bottom-width: 1px;
   border-bottom-style: solid;
 
-  &_scroll {
-    width: 750px;
+  .scroll {
+    width: 100%;
     flex-direction: row;
     align-items: center;
     height: 100px;
@@ -252,7 +266,7 @@ export default {
     }
   }
 
-  &_item {
+  .subjects_item {
     font-size: 42px;
     min-width: 110px;
     line-height: 70px;
@@ -260,18 +274,17 @@ export default {
     padding: 20px 30px;
     color: rgba(0, 0, 0, 0.42);
 
-    &_select {
+    &.active {
       color: #00795c;
-    }
 
-    &_bottomBorder {
-      width: 100px;
-      background-color: #00795c;
-      height: 8px;
-      bottom: 2px;
-      border-radius: 4px;
-      position: absolute;
-      left: 0;
+      &::after {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 8px;
+        background-color: #04785c;
+        border-radius: 4px;
+      }
     }
   }
 }
@@ -306,52 +319,67 @@ export default {
     }
   }
 
-  .fileList {
-    flex-grow: 1;
-    background: #f0f0f0;
-    overflow: auto;
+  .fileListContent {
+    display: flex;
+    flex-direction: column;
 
-    .loading {
-      text-align: center;
-      color: #5b5b5b;
+    .head {
       font-size: 36px;
-      margin-top: 32px;
-      line-height: 72px;
+      padding: 12px 16px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
-    .empty {
-      text-align: center;
-      color: #5b5b5b;
-      font-size: 36px;
-      margin-top: 32px;
-      line-height: 72px;
-    }
+    .fileList {
+      flex-grow: 1;
+      background: #f0f0f0;
+      overflow: auto;
 
-    .fileItem {
-      margin: 24px 12px;
-      background: white;
-      border-radius: 8px;
-      padding: 12px;
-
-      .name {
-        font-size: 32px;
-        line-height: 52px;
-        border-bottom: solid 1px #d6d6d6;
-        padding-bottom: 8px;
+      .loading {
+        text-align: center;
+        color: #5b5b5b;
+        font-size: 36px;
+        margin-top: 32px;
+        line-height: 72px;
       }
 
-      .buttons {
+      .empty {
+        text-align: center;
+        color: #5b5b5b;
+        font-size: 36px;
         margin-top: 32px;
-        display: flex;
-        justify-content: flex-end;
+        line-height: 72px;
+      }
 
-        >* {
-          margin-left: 8px;
-          padding-left: 14px;
-          padding-right: 14px;
+      .fileItem {
+        margin: 24px 12px;
+        background: white;
+        border-radius: 8px;
+        padding: 12px;
+        box-sizing: border-box;
 
-          :deep(.button_img) {
-            margin-right: 4px;
+        .name {
+          font-size: 32px;
+          line-height: 52px;
+          border-bottom: solid 1px #d6d6d6;
+          padding-bottom: 8px;
+        }
+
+        .buttons {
+          margin-top: 32px;
+          display: flex;
+          justify-content: flex-end;
+
+          >* {
+            margin-left: 8px;
+            padding-left: 14px;
+            padding-right: 14px;
+
+            :deep(.button_img) {
+              margin-right: 4px;
+            }
           }
         }
       }
@@ -359,55 +387,41 @@ export default {
   }
 }
 
-@media (min-width: 1025px) {
-  .subjects {
-    height: 66px;
+@media (min-width: 900px) {
+  .fileContent {
+    .fileList {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: wrap;
 
-    .subjects_scroll {
-      height: 100%;
+      .fileItem {
+        width: 48%;
+        margin: 1%;
 
-      .subjectScroll {
-        display: flex;
-
-        .subjects_item {
-          width: 120px;
-          min-width: auto;
-          padding: 8px;
-          font-size: 24px;
-          line-height: 50px;
+        .name {
+          min-height: 2rem;
         }
-      }
-
-      .subjects_item_bottomBorder {
-        display: none;
       }
     }
   }
+}
+
+@media (min-width: 1200px) {
 
   .fileContent {
-    .sourceList {
-      width: 300px;
-
-      .sourceItem {
-        padding: 16px;
-        font-size: 32px;
-      }
-    }
-
     .fileList {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
+      flex-wrap: wrap;
 
       .fileItem {
-        max-width: 600px;
+        width: 31%;
+        margin: 1%;
 
         .name {
-          font-size: 32px;
-        }
-
-        .buttons {
-          margin-top: 16px;
+          min-height: 2rem;
         }
       }
     }

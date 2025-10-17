@@ -1,7 +1,7 @@
 <template>
   <div class="button" :class="{ button_disabled: disabled, primary, warning, error }">
-    <Icon :src="icon" width="36" height="36" class="button_img" />
-    <text class="button_text">{{ text }}</text>
+    <Icon :src="icon" :width="36" :height="36" class="button_img" />
+    <text class="button_text">{{ text }}<slot></slot></text>
   </div>
 </template>
 

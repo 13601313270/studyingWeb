@@ -8,6 +8,8 @@ import request from './plugin/request'
 import refresh from './components/refresh.vue'
 import loading from './components/loading.vue'
 import { init } from './plugin/allIcons'
+ // 引入自定义的amfe-flexible实现rem适配，带有最大字体大小限制
+import './plugin/flexibleWithMax'
 
 const app = createApp(App)
 

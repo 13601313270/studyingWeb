@@ -413,7 +413,7 @@ export default {
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    width: 750px;
+    width: 100%;
     flex-shrink: 0;
     flex-grow: 0;
     height: 88px;

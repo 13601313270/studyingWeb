@@ -4,14 +4,11 @@
       <div class="subjects_scroll" ref="subjectScroll">
         <text ref="start" key="start"></text>
         <div class="subjectScroll">
-          <div :key="subject.id" v-for="subject in selectSourceList" @click="changeSubject(subject.id)"
-            class="subjects_item">
-            <text :key="subject.id" :class="[selectSub === subject.id ? 'subjects_item_select' : '']">{{ subject.name
-              }}</text>
+          <div :key="subject.id" v-for="subject in sourceList" @click="changeSubject(subject.id)" class="subjects_item"
+            :class="{ active: selectSub === subject.id }">
+            <div :key="subject.id">{{ subject.name }}</div>
           </div>
         </div>
-        <div key="end" class="subjects_item_bottomBorder" ref="subjectBorder"
-          :style="{ left: selectSourceList.map(item => item.id).indexOf(selectSub) * 22 + 4 + 'vw' }"></div>
       </div>
     </div>
     <scroller class="list" v-if="selectSub === 'english'">
@@ -111,7 +108,7 @@ export default {
   },
   computed: {
     ...mapGetters('main', ['degree']),
-    selectSourceList() {
+    sourceList() {
       return [
         {
           id: 'english',
@@ -192,19 +189,8 @@ export default {
   flex-direction: column;
 }
 
-.active {
-  color: #00795c;
-  border-bottom-style: solid;
-  border-bottom-width: 4px;
-  border-bottom-color: #00795c;
-}
-
-.noActive {
-  color: rgba(0, 0, 0, 0.42);
-}
-
 .subjects {
-  width: 750px;
+  width: 100%;
   height: 100px;
   display: flex;
   flex-direction: row;
@@ -212,8 +198,8 @@ export default {
   border-bottom-width: 1px;
   border-bottom-style: solid;
 
-  &_scroll {
-    width: 750px;
+  .subjects_scroll {
+    width: 100%;
     flex-direction: row;
     align-items: center;
     height: 100%;
@@ -270,7 +256,7 @@ export default {
     }
   }
 
-  &_item {
+  .subjects_item {
     font-size: 42px;
     min-width: 105px;
     line-height: 70px;
@@ -278,18 +264,17 @@ export default {
     padding: 20px 30px;
     color: rgba(0, 0, 0, 0.42);
 
-    &_select {
+    &.active {
       color: #00795c;
-    }
 
-    &_bottomBorder {
-      width: 100px;
-      background-color: #00795c;
-      height: 8px;
-      bottom: 2px;
-      border-radius: 4px;
-      position: absolute;
-      left: 0;
+      &::after {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 8px;
+        background-color: #04785c;
+        border-radius: 4px;
+      }
     }
   }
 }
@@ -410,12 +395,6 @@ export default {
         font-size: 24px;
         line-height: 66px;
         min-width: 120px;
-
-        .subjects_item_select {}
-      }
-
-      .subjects_item_bottomBorder {
-        display: none;
       }
 
       .subjects_set {
