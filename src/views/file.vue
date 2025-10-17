@@ -61,11 +61,13 @@
     </div>
   </Dialog>
 </template>
-<script>
-import { mapGetters } from 'vuex';
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { useStore } from 'vuex'
 import request from '@/plugin/request'
 import Button from '@/components/Button.vue'
-import share from '../plugin/share'
+import sharePlugin from '../plugin/share'
 import File from '@/plugin/file'
 import Dialog from '@/components/Dialog.vue';
 import BuyVIPDesc from './buyVIPDesc.vue';
@@ -73,158 +75,194 @@ import toast from '@/plugin/toast';
 import log from '@/plugin/log';
 import VipPriceDesc from '@/components/vipPriceDesc.vue';
 
-export default {
-  data() {
-    return {
-      subjects: [],
-      selectSub: -1,
-      sourceList: [],
-      selectCourse: -1,
-      fileList: [],
-      fileCount: -1,
-      downLoadList: [],
-      loading: false,
-      downLoading: {
+// 定义响应式数据
+const subjects = ref<any[]>([])
+const selectSub = ref<number>(-1)
+const sourceList = ref<any[]>([])
+const selectCourse = ref<number>(-1)
+const fileList = ref<any[]>([])
+const fileCount = ref<number>(-1)
+const downLoadList = ref<any[]>([])
+const loading = ref<boolean>(false)
+const downLoading = ref<{ [key: string]: boolean }>({})
+const showConinueUrl = ref<string>('') // 下载
+const showConinueOpenPath = ref<string>('') // 打开
 
-      },
-      // 确认次数弹窗
-      showConinueUrl: '',// 下载
-      showConinueOpenPath: '',// 打开
-      showConinueTimes: {
-        isVip: false,
-        times: {
-          fileDownload: 0,
-        }
-      },
+const showConinueTimes = ref<{
+  isVip: boolean,
+  times: {
+    fileDownload: number,
+  }
+}>({
+  isVip: false,
+  times: {
+    fileDownload: 0,
+  }
+})
+
+// 获取store中的degree
+const store = useStore()
+const degree = computed(() => store.getters['main/degree'])
+
+// 计算属性
+const downLoadFile = computed(() => {
+  const map: { [key: string]: string } = {};
+  downLoadList.value.forEach(v => {
+    const paths = v.path.split('/');
+    map[paths[paths.length - 1]] = v.path;
+  })
+  return map;
+})
+
+// 方法定义
+const changeSubject = (id: number) => {
+  selectSub.value = id;
+  fileList.value = [];
+  fileCount.value = 0;
+  loading.value = true;
+  localStorage.setItem('sourceFileChoose', id.toString())
+  refresh();
+}
+
+const refresh = async () => {
+  sourceList.value = [];
+  try {
+    sourceList.value = await request.get('/subjectSourceV2/' + selectSub.value);
+    if (sourceList.value.length > 0) {
+      changeSource(sourceList.value[0])
     }
-  },
-  async created() {
-    this.loading = true;
-    this.subjects = await request.get('/subjectV3?degree=1');
-    const selectSub = await localStorage.getItem('sourceFileChoose')
-    this.selectSub = +selectSub || this.subjects[0].id;
-    this.refresh();
-  },
-  methods: {
-    changeSubject(id) {
-      this.selectSub = id;
-      this.fileList = [];
-      this.fileCount = 0;
-      this.loading = true;
-      localStorage.setItem('sourceFileChoose', id)
-      this.refresh();
-    },
-    async refresh() {
-      this.sourceList = [];
-      this.sourceList = await request.get('/subjectSourceV2/' + this.selectSub);
-      this.changeSource(this.sourceList[0])
-    },
-    async changeSource(course) {
-      this.fileList = [];
-      this.fileCount = 0;
-      this.selectCourse = course.id;
-      this.initDownLoadList()
-      this.loading = true;
-      request.get('/file/listWithTotal', {
-        params: {
-          course: course.id,
-          status: 0,
-        }
-      }).then(data => {
-        this.fileList = data.list;
-        this.fileCount = data.total;
-        this.loading = false;
-      }).catch(() => {
-        this.loading = false;
-      })
-    },
-    initDownLoadList() {
-      File.getDownLoadFileList().then(res => {
-        this.downLoadList = res;
-      })
-    },
-    downloadFile(file) {
-      this.downLoading[file] = true;
-      File.download(file)
-        .then(() => {
-          this.downLoading[file] = false;
-          this.initDownLoadList();
-        })
-        .catch((err) => {
-          alert(JSON.stringify(err))
-        })
-    },
-    async download(file) {
-      if (this.downLoading[file.file]) {
-        return;
-      }
-      // 校验
-      const data = await request.get('/user/checkFuncTimes');
-      this.showConinueTimes = data;
-      if (this.showConinueTimes.isVip) {
-        this.downloadFile(file.file);
-      } else {
-        log('vipUseFileDownload');
-        this.showConinueUrl = file.file;
-      }
-    },
-    async continueUse() {
-      const result = await request.post('/user/useFuncTimes', {
-        func: 'fileDownload'
-      });
-      if (result) {
-        if (this.showConinueUrl) {
-          this.downloadFile(this.showConinueUrl);
-          this.showConinueUrl = '';
-        } else if (this.showConinueOpenPath) {
-          File.open(this.showConinueOpenPath);
-          this.showConinueOpenPath = '';
-        }
-      } else {
-        toast({
-          'message': '今日免费权限用尽',
-          'duration': 3000
-        })
-      }
-    },
-    CallbuyVip() {
-      this.showConinueUrl = '';
-      this.showConinueOpenPath = '';
-    },
-    async open(path) {
-      const data = await request.get('/user/checkFuncTimes');
-      this.showConinueTimes = data;
-      if (this.showConinueTimes.isVip) {
-        File.open(path);
-      } else {
-        log('vipUseFileOpen');
-        this.showConinueOpenPath = path;
-      }
-    },
-    share(file) {
-      const url = file.file.replace('http://', 'https://');
-      share(file.title, 'https://api.studying1v1.com/page/file?file=' + encodeURIComponent(url), '试题分享')
-    }
-  },
-  computed: {
-    ...mapGetters('main', ['degree']),
-    downLoadFile() {
-      const map = {};
-      this.downLoadList.forEach(v => {
-        const paths = v.path.split('/');
-        map[paths[paths.length - 1]] = v.path;
-      })
-      return map;
-    }
-  },
-  components: {
-    Button,
-    Dialog,
-    BuyVIPDesc,
-    VipPriceDesc
+  } catch (error) {
+    console.error(error)
   }
 }
+
+const changeSource = async (course: any) => {
+  fileList.value = [];
+  fileCount.value = 0;
+  selectCourse.value = course.id;
+  initDownLoadList()
+  loading.value = true;
+
+  try {
+    const data = await request.get('/file/listWithTotal', {
+      params: {
+        course: course.id,
+        status: 0,
+      }
+    });
+    fileList.value = data.list;
+    fileCount.value = data.total;
+    loading.value = false;
+  } catch (error) {
+    loading.value = false;
+    console.error(error);
+  }
+}
+
+const initDownLoadList = () => {
+  File.getDownLoadFileList().then(res => {
+    downLoadList.value = res as any[];
+  })
+}
+
+const downloadFile = (file: string) => {
+  downLoading.value[file] = true;
+  File.download(file)
+    .then(() => {
+      downLoading.value[file] = false;
+      initDownLoadList();
+    })
+    .catch((err) => {
+      alert(JSON.stringify(err))
+    })
+}
+
+const download = async (file: any) => {
+  if (downLoading.value[file.file]) {
+    return;
+  }
+  // 校验
+  try {
+    const data = await request.get('/user/checkFuncTimes');
+    showConinueTimes.value = data as any;
+    if (showConinueTimes.value.isVip) {
+      downloadFile(file.file);
+    } else {
+      log('vipUseFileDownload');
+      showConinueUrl.value = file.file;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+const continueUse = async () => {
+  try {
+    const result = await request.post('/user/useFuncTimes', {
+      func: 'fileDownload'
+    });
+    if (result) {
+      if (showConinueUrl.value) {
+        downloadFile(showConinueUrl.value);
+        showConinueUrl.value = '';
+      } else if (showConinueOpenPath.value) {
+        File.open(showConinueOpenPath.value);
+        showConinueOpenPath.value = '';
+      }
+    } else {
+      toast({
+        'message': '今日免费权限用尽',
+        'duration': 3000
+      })
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+const CallbuyVip = () => {
+  showConinueUrl.value = '';
+  showConinueOpenPath.value = '';
+}
+
+const open = async (path: string) => {
+  try {
+    const data = await request.get('/user/checkFuncTimes');
+    showConinueTimes.value = data;
+    if (showConinueTimes.value.isVip) {
+      File.open(path);
+    } else {
+      log('vipUseFileOpen');
+      showConinueOpenPath.value = path;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+const share = (file: any) => {
+  const url = file.file.replace('http://', 'https://');
+  sharePlugin(file.title, 'https://api.studying1v1.com/page/file?file=' + encodeURIComponent(url), '试题分享')
+}
+
+// 生命周期钩子
+onMounted(async () => {
+  loading.value = true;
+  try {
+    subjects.value = await request.get('/subjectV3?degree=1');
+    const selectSubStorage = await localStorage.getItem('sourceFileChoose')
+    selectSub.value = selectSubStorage ? +selectSubStorage : subjects.value[0]?.id || -1;
+    refresh();
+  } catch (error) {
+    console.error(error);
+    loading.value = false;
+  }
+})
+
+// 组件注册
+// 在<script setup>中，导入的组件会自动注册，无需显式注册
 </script>
+
 <style lang="less" scoped>
 .filePage {
   display: flex;
@@ -321,6 +359,7 @@ export default {
 
   .fileListContent {
     display: flex;
+    flex-grow: 1;
     flex-direction: column;
 
     .head {
@@ -338,11 +377,12 @@ export default {
       overflow: auto;
 
       .loading {
+        width: 100%;
         text-align: center;
-        color: #5b5b5b;
-        font-size: 36px;
+        color: #b7b7b7;
+        font-size: 42px;
         margin-top: 32px;
-        line-height: 72px;
+        line-height: 300px;
       }
 
       .empty {
