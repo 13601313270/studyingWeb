@@ -17,7 +17,7 @@
           </div>
           <div class="address-actions">
             <switch :value="address.isDefault" @input="setDefaultAddress(index)" class="default-switch" />
-            <Button text="删除" error @click.stop="deleteAddress(index)" class="delete-btn" />
+            <Button text="删除" error @click.stop="deleteAddress(address.id)" class="delete-btn" />
           </div>
         </div>
       </div>
@@ -30,7 +30,7 @@
 
       <!-- 添加地址按钮 -->
       <div class="add-address-btn">
-        <Button text="新增收货地址" primary @click="showAddressForm = true" />
+        <Button text="新增收货地址" primary @click="resetForm(), showAddressForm = true" />
       </div>
     </div>
 
@@ -54,19 +54,19 @@
           <div class="region-selector">
             <select v-model="currentAddress.province" @change="onProvinceChange">
               <option value="">请选择省份</option>
-              <option v-for="province in provinces" :key="province.id" :value="province.name">
+              <option v-for="province in provinces" :key="province.id" :value="province.id">
                 {{ province.name }}
               </option>
             </select>
             <select v-model="currentAddress.city" @change="onCityChange" :disabled="!currentAddress.province">
               <option value="">请选择城市</option>
-              <option v-for="city in cities" :key="city.id" :value="city.name">
+              <option v-for="city in cities" :key="city.id" :value="city.id">
                 {{ city.name }}
               </option>
             </select>
             <select v-model="currentAddress.district" :disabled="!currentAddress.city">
               <option value="">请选择区县</option>
-              <option v-for="district in districts" :key="district.id" :value="district.name">
+              <option v-for="district in districts" :key="district.id" :value="district.id">
                 {{ district.name }}
               </option>
             </select>
@@ -101,6 +101,7 @@ import Input from '@/components/Input.vue'
 import Popup from '@/components/Popup.vue'
 import Switch from '@/components/switch.vue'
 import request from '@/plugin/request'
+import Toast from '@/plugin/toast'
 
 // 地区数据结构
 interface AreaItem {
@@ -116,15 +117,15 @@ interface AreaItem {
 interface Address {
   name: string
   phone: string
-  province: string
-  city: string
-  district: string
+  province: number
+  city: number
+  district: number
   detail: string
   isDefault: boolean
 }
 
 // 响应式数据
-const addressList = ref<Address[]>([])
+const addressList = ref<(Address & { id: number })[]>([])
 const showAddressForm = ref(false)
 const editingIndex = ref(-1)
 
@@ -132,9 +133,9 @@ const editingIndex = ref(-1)
 const currentAddress = reactive<Address>({
   name: '',
   phone: '',
-  province: '',
-  city: '',
-  district: '',
+  province: -1,
+  city: -1,
+  district: -1,
   detail: '',
   isDefault: false
 })
@@ -148,18 +149,21 @@ const districts = ref<AreaItem[]>([])
 const selectedProvinceId = ref<number>(0)
 const selectedCityId = ref<number>(0)
 
+onMounted(() => {
+  initMyAddress();
+})
 // 省份改变时更新城市列表
 const onProvinceChange = () => {
   // 找到选中的省份
-  const selectedProvince = provinces.value.find(province => province.name === currentAddress.province)
+  const selectedProvince = provinces.value.find(province => province.id === currentAddress.province)
   if (selectedProvince && selectedProvince.child) {
     cities.value = selectedProvince.child
     selectedProvinceId.value = selectedProvince.id
   } else {
     cities.value = []
   }
-  currentAddress.city = ''
-  currentAddress.district = ''
+  currentAddress.city = -1
+  currentAddress.district = -1
   districts.value = []
   selectedCityId.value = 0
 }
@@ -167,19 +171,19 @@ const onProvinceChange = () => {
 // 城市改变时更新区县列表
 const onCityChange = () => {
   // 找到选中的城市
-  const selectedCity = cities.value.find(city => city.name === currentAddress.city)
+  const selectedCity = cities.value.find(city => city.id === currentAddress.city)
   if (selectedCity && selectedCity.child) {
     districts.value = selectedCity.child
     selectedCityId.value = selectedCity.id
   } else {
     districts.value = []
   }
-  currentAddress.district = ''
+  currentAddress.district = -1
 }
 
-// 显示地址表单（新增）
-const showAddForm = () => {
-  editingIndex.value = -1
+// 重置表单
+const resetForm = () => {
+  editingIndex.value = -1;
   Object.assign(currentAddress, {
     name: '',
     phone: '',
@@ -191,11 +195,11 @@ const showAddForm = () => {
   })
   cities.value = []
   districts.value = []
-  showAddressForm.value = true
 }
 
 // 显示地址表单（编辑）
 const editAddress = (address: Address, index: number) => {
+  return;
   editingIndex.value = index
   Object.assign(currentAddress, { ...address })
 
@@ -211,8 +215,16 @@ const closeForm = () => {
   showAddressForm.value = false
 }
 
+async function initMyAddress() {
+  const result = await request.get('/studying/address/myAddress')
+  console.log(result);
+  if (result && Array.isArray(result)) {
+    addressList.value = result as any;
+  }
+}
+
 // 保存地址
-const saveAddress = () => {
+const saveAddress = async () => {
   // 简单验证
   if (!currentAddress.name) {
     alert('请输入收货人姓名')
@@ -226,7 +238,7 @@ const saveAddress = () => {
     alert('请输入正确的手机号码')
     return
   }
-  if (!currentAddress.province || !currentAddress.city || !currentAddress.district) {
+  if (currentAddress.province === -1 || currentAddress.city === -1 || currentAddress.district === -1) {
     alert('请选择完整的省市区信息')
     return
   }
@@ -241,24 +253,30 @@ const saveAddress = () => {
       addr.isDefault = false
     })
   }
-
-  // 保存地址
-  if (editingIndex.value === -1) {
-    // 新增
-    addressList.value.push({ ...currentAddress })
-  } else {
-    // 编辑
-    addressList.value[editingIndex.value] = { ...currentAddress }
+  const result = await request.post('/studying/address/save', currentAddress)
+  if (result) {
+    setTimeout(() => {
+      initMyAddress();
+    }, 500)
+    Toast({
+      message: '保存成功',
+      duration: 2000
+    })
+    closeForm()
   }
-
-  // 关闭表单
-  closeForm()
 }
 
 // 删除地址
-const deleteAddress = (index: number) => {
+const deleteAddress = async (id: number) => {
   if (confirm('确定要删除这个收货地址吗？')) {
-    addressList.value.splice(index, 1)
+    const result = await request.delete('/studying/address/delete/' + id)
+    if (result) {
+      Toast({
+        message: '删除地址成功',
+        duration: 2000
+      })
+      initMyAddress()
+    }
   }
 }
 
@@ -295,7 +313,7 @@ const getAreaList = async () => {
 onMounted(() => {
   // 获取地区数据
   getAreaList()
-  
+
   // 模拟从本地存储或服务器获取地址数据
   const savedAddresses = localStorage.getItem('userAddresses')
   if (savedAddresses) {
@@ -303,17 +321,17 @@ onMounted(() => {
   }
 
   // 添加一个示例地址
-  if (addressList.value.length === 0) {
-    addressList.value.push({
-      name: '张三',
-      phone: '13800138000',
-      province: '北京市',
-      city: '北京市',
-      district: '朝阳区',
-      detail: '某某街道某某小区1号楼101室',
-      isDefault: true
-    })
-  }
+  // if (addressList.value.length === 0) {
+  //   addressList.value.push({
+  //     name: '张三',
+  //     phone: '13800138000',
+  //     province: '北京市',
+  //     city: '北京市',
+  //     district: '朝阳区',
+  //     detail: '某某街道某某小区1号楼101室',
+  //     isDefault: true
+  //   })
+  // }
 })
 
 // 监听地址列表变化，保存到本地存储
