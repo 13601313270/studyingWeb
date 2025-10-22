@@ -22,24 +22,22 @@
       <div class="fileListContent">
         <div class="head" v-if="fileCount > 0">
           <div>共{{ fileCount }}个资料文件</div>
-          <Button>全部打印</Button>
+          <Button @click="printAll">全部打印</Button>
         </div>
         <div class="fileList">
           <div v-if="loading" class="loading">加载中...</div>
           <div v-else-if="!loading && fileList.length === 0" class="loading">该分类下暂无资料</div>
           <div v-for="file in fileList" class="fileItem" :key="file.id">
             <div class="name">{{ file.title }}</div>
-            <div class="buttons" v-if="Object.keys(downLoadFile).includes(file.file.split('/').slice(-1)[0])">
-              <Button @click="share(file)" icon="share" text="分享" />
-              <Button text="打开" @click="open(downLoadFile[file.file.split('/').slice(-1)[0]])"
-                v-if="Object.keys(downLoadFile).includes(file.file.split('/').slice(-1)[0])"></Button>
-              <Button :text="downLoading[file.file] ? '下载中' : '重新下载'" :disabled="downLoading[file.file]"
-                @click="download(file)"></Button>
-            </div>
-            <div v-else class="buttons">
-              <Button @click="share(file)" icon="share" text="分享" />
-              <Button :text="downLoading[file.file] ? '下载中' : '下载'" @click="download(file)"
-                :disabled="downLoading[file.file]"></Button>
+            <div class="buttons">
+              <Button @click="printFile([file])">云打印</Button>
+              <Button @click="share(file)" icon="share">分享</Button>
+              <Button v-if="isFileDownloaded(file.file)" text="打开"
+                @click="open(downLoadFile[file.file.split('/').slice(-1)[0]])">
+              </Button>
+              <Button :text="downLoading[file.file] ? '下载中' : (isFileDownloaded(file.file) ? '重新下载' : '下载')"
+                :disabled="downLoading[file.file]" @click="download(file)">
+              </Button>
             </div>
           </div>
         </div>
@@ -60,6 +58,31 @@
       </div>
     </div>
   </Dialog>
+  <Dialog :show="showPrintAllDialog" title="提示" @close="showPrintAllDialog = false">
+    <div class="printDialog">
+      <div class="title">
+        是否确认打印{{ fileList.length === waitPrintFileList.length ? '全部' : '' }}{{ waitPrintFileList.length }}个资料文件？
+      </div>
+      <div class="list">
+        <div v-for="file in waitPrintFileList" :key="file.id" class="listItem">{{ file.title }}</div>
+      </div>
+      <div class="addressTitle">请选择打印地址：{{ chooseAddress }}</div>
+      <div class="addressList">
+        <div v-for="address in addressList" :key="address.id" class="addressItem"
+          :class="{ active: chooseAddress === address.id }" @click="chooseAddress = address.id">
+          <Check class="check" :value="chooseAddress === address.id" />
+          <div>
+            <div class="name">{{ address.name }} {{ address.phone }}</div>
+            <div>{{ address.provinceInfo.name }} {{ address.cityInfo.name }} {{ address.districtInfo.name }} {{
+              address.detail }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="tools">
+        <Button class="cancel" @click="printSent" text="确认打印"></Button>
+      </div>
+    </div>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
@@ -74,6 +97,7 @@ import BuyVIPDesc from './buyVIPDesc.vue';
 import toast from '@/plugin/toast';
 import log from '@/plugin/log';
 import VipPriceDesc from '@/components/vipPriceDesc.vue';
+import Check from '@/components/Check.vue';
 
 // 定义响应式数据
 const subjects = ref<any[]>([])
@@ -113,6 +137,12 @@ const downLoadFile = computed(() => {
   })
   return map;
 })
+
+// 判断文件是否已下载的计算属性
+const isFileDownloaded = (fileUrl: string) => {
+  const fileName = fileUrl.split('/').slice(-1)[0];
+  return Object.keys(downLoadFile.value).includes(fileName);
+}
 
 // 方法定义
 const changeSubject = (id: number) => {
@@ -259,8 +289,55 @@ onMounted(async () => {
   }
 })
 
-// 组件注册
-// 在<script setup>中，导入的组件会自动注册，无需显式注册
+const showPrintAllDialog = ref<boolean>(false)
+const waitPrintFileList = ref<any[]>([])
+interface Address {
+  id: number
+  name: string
+  phone: string
+  province: number
+  provinceInfo: {
+    name: string,
+  }
+  city: number
+  cityInfo: {
+    name: string,
+  }
+  district: number
+  districtInfo: {
+    name: string,
+  }
+  detail: string
+  isDefault: boolean
+}
+const addressList = ref<Address[]>([])
+const chooseAddress = ref<number>()
+const printAll = () => {
+  printFile(fileList.value);
+}
+const printFile = (files: string[]) => {
+  request.get('/studying/address/myAddress').then(res => {
+    addressList.value = res as any;
+  })
+  waitPrintFileList.value = files;
+  showPrintAllDialog.value = true;
+}
+const printSent = () => {
+  request.post('/studying/print/file', {
+    files: waitPrintFileList.value,
+    address: chooseAddress.value,
+  }).then(res => {
+    toast({
+      'message': '打印成功',
+      'duration': 3000
+    })
+  }).catch(err => {
+    toast({
+      'message': '打印失败',
+      'duration': 3000
+    })
+  })
+}
 </script>
 
 <style lang="less" scoped>
@@ -498,6 +575,88 @@ onMounted(async () => {
     .cancel {
       height: 100px;
     }
+  }
+}
+
+.printDialog {
+  .title {
+    font-size: 36px;
+    line-height: 72px;
+  }
+
+  .list {
+    font-size: 32px;
+    line-height: 52px;
+    padding: 8px;
+    max-height: 400px;
+    overflow: auto;
+    border: solid 3px #d5d5d5;
+    border-radius: 8px;
+
+    .listItem {
+      padding: 8px;
+      text-align: left;
+      border: solid 1px #d5d5d5;
+      background-color: #f0f0f0;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+
+    :last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .addressTitle {
+    font-size: 36px;
+    line-height: 72px;
+    margin-top: 16px;
+  }
+
+  .addressList {
+    font-size: 32px;
+    line-height: 52px;
+    padding: 8px;
+    max-height: 400px;
+    overflow: auto;
+    border: solid 3px #d5d5d5;
+    border-radius: 8px;
+
+    .addressItem {
+      display: flex;
+      flex-direction: row;
+      padding: 12px;
+      text-align: left;
+      border: solid 2px #d5d5d5;
+      background-color: #f0f0f0;
+      border-radius: 4px;
+      margin-bottom: 8px;
+
+      .check {
+        margin-right: 16px;
+        flex-shrink: 0;
+      }
+
+      &.active {
+        border: solid 2px #00795c;
+        box-shadow: 0 0 4px #00795c;
+        font-weight: bold;
+        color: #00795c;
+      }
+
+      .name {
+        font-size: 32px;
+        line-height: 46px;
+      }
+    }
+
+    :last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .tools {
+    margin-top: 32px;
   }
 }
 </style>
