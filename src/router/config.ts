@@ -34,6 +34,7 @@ import enGrammarItem from '@/views/enGrammarItem.vue'
 import enRead from '@/views/enRead.vue'
 import enReadDetail from '@/views/enReadDetail.vue'
 import address from '@/views/address.vue'
+import myOrder from '@/views/myOrder.vue'
 
 type RouterItem = RouteRecordRaw & {
   meta?: {
@@ -223,5 +224,10 @@ const routes: Array<RouterItem> = [
     name: 'address',
     component: address,
   },
+  {
+    path: '/order',
+    name: 'order',
+    component: myOrder,
+  }
 ]
 export default routes;

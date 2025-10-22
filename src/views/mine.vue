@@ -40,6 +40,10 @@
         <div>我的收件地址</div>
         <icon class="right" src="right_black" />
       </div>
+      <div class="actionItem" @click="toOrder">
+        <div>我的订单</div>
+        <icon class="right" src="right_black" />
+      </div>
       <div class="actionItem" @click="showBuyVip = true"
         v-if="store.state.main.userInfo && store.state.main.userInfo.account">
         <div>购买VIP</div>
@@ -169,6 +173,9 @@ function sharePanel() {
 }
 function toAddress() {
   router.push('/address')
+}
+function toOrder() {
+  router.push('/order')
 }
 function goUserInformation() {
   router.push('/userInformation')
