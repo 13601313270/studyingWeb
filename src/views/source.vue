@@ -437,7 +437,10 @@ export default {
         margin: 12px 22px;
 
         .source_item_title {
-          font-size: 28px;
+          font-size: 16PX;
+          top: 8PX;
+          left: 8PX;
+          right: 8PX;
         }
       }
     }

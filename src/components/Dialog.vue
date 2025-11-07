@@ -155,18 +155,20 @@ export default {
 
 @media (min-width: 1025px) {
   .popInner {
+    max-width: 920PX;
+
     .title {
       padding-right: 6px;
 
-      .close {
-        width: 66px;
-        height: 66px;
+      // .close {
+      //   width: 66px;
+      //   height: 66px;
 
-        >img {
-          width: 44px;
-          height: 44px;
-        }
-      }
+      //   >img {
+      //     width: 44px;
+      //     height: 44px;
+      //   }
+      // }
     }
   }
 }
