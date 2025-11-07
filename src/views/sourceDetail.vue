@@ -13,6 +13,7 @@
               </div>
             </div>
           </div>
+          <div style="flex-grow: 1;"></div>
           <div class="action_links">
             <Button v-if="!item.poi.find(v => v.hasVideo)" text="课   程" icon="video" :disabled="!item.hasContent"
               @click="lesson(item)" />
@@ -215,6 +216,7 @@ async function continueUse() {
   position: relative;
   flex-direction: column;
   width: 650px;
+  min-height: 300px;
   border-style: solid;
   border-color: #e0e0e0;
   border-width: 1px;

@@ -49,13 +49,4 @@ export default {
   align-items: center;
   justify-content: center;
 }
-
-.login {
-  position: fixed;
-  width: 750px;
-  background-color: white;
-  top: 0;
-  bottom: 0;
-  z-index: 999;
-}
 </style>

@@ -2,9 +2,10 @@
   <div class="app_content">
     <div class="header" v-if="$route.name !== 'welcome'">
       <div class="header_web_name">
-        <div class="head_root" v-if="isInRootPage" @click="degreeListDialogShow = true">
+        <div class="head_root" v-if="isInRootPage">
           <img class="icon" src="../icons/icons.png" />
-          <div class="degreeName" v-if="selectDegreeInfo">{{ selectDegreeInfo.name }}</div>
+          <div class="degreeName" v-if="selectDegreeInfo" @click="degreeListDialogShow = true">{{ selectDegreeInfo.name
+            }}</div>
         </div>
         <div v-else class="header_web_name_back" @click="clickBack">
           <img class="header_web_name_back_img" src="../icons/back.png" />
@@ -53,20 +54,19 @@
       v-if="$route.meta.hideBottom !== true && (!['lessonDetail', 'lessonDetailNew', 'poiLessonDetail', 'lessonAllChildPoiVideo', 'lessonLog'].includes($route.name) && $route.name !== 'welcome')">
       <div class="bottom_link" :class="[tabType === 'source' ? 'bottom_link_active' : 'bottom_link_blur']"
         @click="to('/source')">
-        <icon class="bottom_link_icon" width="44" height="44" :src="tabType === 'source' ? 'main_active' : 'main'" />
+        <icon class="bottom_link_icon" :src="tabType === 'source' ? 'main_active' : 'main'" />
         <text class="bottom_link_text"
           :class="[tabType === 'source' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">课程</text>
       </div>
       <div class="bottom_link" :class="[tabType === 'file' ? 'bottom_link_active' : 'bottom_link_blur']"
         @click="to('/file')">
-        <icon class="bottom_link_icon" width="44" height="44" :src="tabType === 'file' ? 'file_active' : 'file'" />
+        <icon class="bottom_link_icon" :src="tabType === 'file' ? 'file_active' : 'file'" />
         <text class="bottom_link_text"
           :class="[tabType === 'file' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">资料库</text>
       </div>
       <div class="bottom_link" :class="[tabType === 'friend' ? 'bottom_link_active' : 'bottom_link_blur']"
         @click="to('/friend')" v-if="channel !== 'huawei'">
-        <icon class="bottom_link_icon" width="44" height="44"
-          :src="tabType === 'friend' ? 'friend_active' : 'friend'" />
+        <icon class="bottom_link_icon" :src="tabType === 'friend' ? 'friend_active' : 'friend'" />
         <text class="bottom_link_text"
           :class="[tabType === 'friend' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">消息</text>
         <div class="tip" v-if="notUsedInformationCount > 0">
@@ -83,7 +83,7 @@
       <!--            </div>-->
       <div class="bottom_link" :class="[tabType === 'mine' ? 'bottom_link_active' : 'bottom_link_blur']"
         @click="to('/mine')">
-        <icon class="bottom_link_icon" width="44" height="44" :src="tabType === 'mine' ? 'user_active' : 'user'" />
+        <icon class="bottom_link_icon" :src="tabType === 'mine' ? 'user_active' : 'user'" />
         <text class="bottom_link_text"
           :class="[tabType === 'mine' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">我的</text>
       </div>
@@ -515,7 +515,7 @@ export default {
 }
 
 .bottom {
-  width: 750px;
+  width: 100vw;
   background-color: #fcfcfc;
   border-top-style: solid;
   border-top-width: 1px;
@@ -556,6 +556,16 @@ export default {
 }
 
 .login {
+  position: fixed;
+  width: 100vw;
+  background-color: white;
+  top: 0;
+  bottom: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   &.isOffline {
     top: 88px;
   }
@@ -774,6 +784,8 @@ export default {
 
         .head_root {
           .degreeName {
+            margin-left: 80PX;
+            font-size: 14PX;
           }
         }
       }
@@ -783,16 +795,20 @@ export default {
         width: 275px;
 
         .header_links_web_name {
-          font-size: 28px;
-          line-height: 66px;
+          width: auto;
+          position: absolute;
+          margin-left: 44PX;
+          font-size: 0.37333rem;
+          line-height: 0.88rem;
         }
       }
     }
 
     .bottom {
       height: 66px;
-      left: 280px;
-      width: 600px;
+      left: 300px;
+      width: 640px;
+      // right: 0;
       position: absolute;
       border: none;
       top: 0;
@@ -801,8 +817,8 @@ export default {
         height: 66px;
 
         .bottom_link_icon {
-          width: 32px !important;
-          height: 32px !important;
+          width: 44px !important;
+          height: 44px !important;
         }
 
         .bottom_link_text {
