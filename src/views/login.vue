@@ -628,6 +628,11 @@ onMounted(() => {
       .el-form-item {
         .loginInput {
           height: 53PX;
+          border-width: 2PX;
+
+          :deep(input) {
+            height: 49PX;
+          }
         }
 
         .tmpCodeButton {

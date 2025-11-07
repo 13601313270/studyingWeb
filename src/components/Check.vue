@@ -1,24 +1,24 @@
 <template>
-  <div class="Check" :class="{button_disabled:disabled,primary}" @click="check">
-    <icon v-if="value" src="check" width="32" height="32"/>
-    <text class="button_text">{{text}}</text>
+  <div class="Check" :class="{ button_disabled: disabled, primary }" @click="check">
+    <img v-if="value" src="../icons/check.png" />
+    <text class="button_text">{{ text }}</text>
   </div>
 </template>
 
 <script>
-  export default {
-    name: "Check",
-    props: {
-      value: Boolean,
-      text: String,
-      disabled: Boolean,
-    },
-    methods: {
-      check() {
-        this.$emit('check', !this.value)
-      }
+export default {
+  name: "Check",
+  props: {
+    value: Boolean,
+    text: String,
+    disabled: Boolean,
+  },
+  methods: {
+    check() {
+      this.$emit('check', !this.value)
     }
   }
+}
 </script>
 
 <style scoped lang="less">
@@ -31,5 +31,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  >img {
+    width: 32px;
+    height: 32px;
+  }
 }
 </style>

@@ -5,7 +5,7 @@
         <div class="head_root" v-if="isInRootPage">
           <img class="icon" src="../icons/icons.png" />
           <div class="degreeName" v-if="selectDegreeInfo" @click="degreeListDialogShow = true">{{ selectDegreeInfo.name
-            }}</div>
+          }}</div>
         </div>
         <div v-else class="header_web_name_back" @click="clickBack">
           <img class="header_web_name_back_img" src="../icons/back.png" />
@@ -125,7 +125,7 @@
         </div>
       </div>
     </div>
-    <div class="ba">
+    <div class="ba" v-if="$route.name === 'source'">
       <a class="ga" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=22020302000326" target="_blank">
         <img src="https://yingshijiaoyusystem.oss-cn-beijing.aliyuncs.com/ga.png" />
         吉公网安备22020302000326号
