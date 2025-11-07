@@ -1,5 +1,3 @@
-declare module 'vue-router'
-
 export { }; // 确保这是一个模块
 
 declare global {
