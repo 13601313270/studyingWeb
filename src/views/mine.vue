@@ -1,20 +1,8 @@
 <template>
   <div class="mine">
-    <!-- <div @click="downEnglish" v-if="isiOS">
-            <slot name="label">
-                <div class="english_ad">
-                    <icon class="icon" src="english" width="120" height="120"/>
-                    <div style="flex: 1">
-                        <div class="english_text title">松鼠英语</div>
-                        <div class="english_text">英语提分神器</div>
-                    </div>
-                    <text class="english_download">立即下载</text>
-                </div>
-            </slot>
-        </div> -->
-    <div class="user" v-if="userInfo && userInfo.account">
-      <div v-if="userInfo2.icon" class="user_icon" @click="previewImg">
-        <pic @click="showImgDetail(userInfo2.icon.replace('http://', 'https://'))"
+    <div class="user" v-if="store.state.main.userInfo && store.state.main.userInfo.account">
+      <div v-if="userInfo2.icon" class="user_icon">
+        <pic @click="previewImg(userInfo2.icon.replace('http://', 'https://'))"
           :src="userInfo2.icon.replace('http://', 'https://') + '?x-oss-process=image/resize,m_fill,h_100,w_100'"
           :width="100" />
       </div>
@@ -26,9 +14,9 @@
       <!--                <text class="coin_text">金币</text>-->
       <!--                <text class="coin_text">{{userInfo2.coin}}</text>-->
       <!--            </div>-->
-      <div class="payed" :style="{ opacity: showIsPayed ? '1' : '0', transform: showIsPayed ? '' : 'scale(2)' }">
+      <div class="payed" :style="{ opacity: showIsPayed ? '1' : '0', transform: showIsPayed ? '' : 'scale(1.3)' }">
         <img src="../icons/isPayed.png" />
-        <span>金主爸爸</span>
+        <span>VIP</span>
         <span class="vipEndDate" v-if="userInfo2.vipEndDate">时间至{{ userInfo2.vipEndDate.slice(0, 10) }}</span>
       </div>
     </div>
@@ -39,13 +27,26 @@
       </div>
     </div>
     <div class="actions">
-      <div class="actionItem" v-if="userInfo && userInfo.account" :has-top-border="true" :has-arrow="true"
-        @click="$router.push('/userInformation')">
+      <div class="actionItem" v-if="store.state.main.userInfo && store.state.main.userInfo.account"
+        :has-top-border="true" :has-arrow="true" @click="goUserInformation">
         <div>用户信息</div>
         <icon class="right" src="right_black" />
       </div>
       <div class="actionItem" @click="sharePanel">
         <div>分享好友</div>
+        <icon class="right" src="right_black" />
+      </div>
+      <div class="actionItem" @click="toAddress">
+        <div>我的收件地址</div>
+        <icon class="right" src="right_black" />
+      </div>
+      <div class="actionItem" @click="toOrder">
+        <div>我的订单</div>
+        <icon class="right" src="right_black" />
+      </div>
+      <div class="actionItem" @click="showBuyVip = true"
+        v-if="store.state.main.userInfo && store.state.main.userInfo.account">
+        <div>购买VIP</div>
         <icon class="right" src="right_black" />
       </div>
       <div class="actionItem" @click="$router.push('/QQ')">
@@ -58,10 +59,6 @@
       </div>
       <div class="actionItem" v-if="isiOS" @click="score">
         <div>给App评分</div>
-        <icon class="right" src="right_black" />
-      </div>
-      <div class="actionItem" @click="pay" v-if="userInfo && userInfo.account">
-        <div>购买VIP ¥12/年</div>
         <icon class="right" src="right_black" />
       </div>
       <div class="actionItem" @click="$router.push('/cache')">
@@ -77,7 +74,7 @@
         <icon class="right" src="right_black" />
       </div> -->
     </div>
-    <div class="actions" v-if="userInfo && userInfo.account">
+    <div class="actions" v-if="store.state.main.userInfo && store.state.main.userInfo.account">
       <div class="actionItem" @click="showLogout = true">
         <slot name="label">
           <text class="logoutText" style="text-align: center">退出登陆</text>
@@ -93,14 +90,14 @@
     <div class="sharePic" v-if="showSharePic">
       <div class="sharePicInner">
         <div class="sharePicInner_close" @click="showSharePic = false">
-          <pic src="close" width="20" height="20" />
+          <img src="close" width="20" height="20" />
         </div>
         <text class="title">分享本软件</text>
-        <pic class="img" width="400" height="400"
+        <img class="img" width="400" height="400"
           src="https://img.alicdn.com/imgextra/i1/O1CN01O8n7Kb1YFmmRY9DPp_!!6000000003030-2-tps-260-260.png" />
         <text class="downText">扫码下载</text>
         <div>
-          <Button text="分享到其他软件" class="shareButton" @click="share"></Button>
+          <Button text="分享到其他软件" class="shareButton" @click="sharePanel"></Button>
         </div>
       </div>
     </div>
@@ -111,13 +108,20 @@
         <Button text="确定" style="width: 40%" @click="loginOut"></Button>
       </div>
     </Dialog>
+    <Dialog :show="showBuyVip" title="提示" @close="showBuyVip = false">
+      <div class="chooseUseType">
+        <BuyVIPDesc />
+        <VipPriceDesc @buy="showBuyVip = false" @to-invite="showBuyVip = false" />
+      </div>
+    </Dialog>
   </div>
 </template>
 
-<script>
-import { mapActions, mapGetters } from 'vuex';
-// import Nat from 'natjs';
-import pic from '../components/icon';
+<script lang="ts" setup>
+import { onMounted, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { mapActions, mapGetters, useStore } from 'vuex';
+import pic from '../components/icon.vue';
 import Button from '../components/Button.vue'
 import Dialog from '../components/Dialog.vue'
 import request from '@/plugin/request'
@@ -125,128 +129,87 @@ import share from '@/plugin/share'
 import { notification } from "../plugin/notification"
 import { showImg } from '../plugin/imagePreview'
 import toScore from '@/plugin/toScore';
-import { buyVip } from '@/plugin/buyVip';
-import toast from '@/plugin/toast'
+import BuyVIPDesc from './buyVIPDesc.vue';
+import VipPriceDesc from '@/components/vipPriceDesc.vue';
 
+const store = useStore<any>()
+const router = useRouter()
 // var modal = weex.requireModule('modal');
 // const localStorage = weex.requireModule('storage');
 // const clipboard = weex.requireModule('clipboard');
 
-export default {
-  name: 'mine',
-  created() {
-    if (this.userInfo && this.userInfo.account) {
-      request.get('/user/getInfo').then(res => {
-        this.userInfo2 = res;
-        setTimeout(() => {
-          this.showIsPayed = this.userInfo2 && this.userInfo2.isVip;
-        }, 200)
-      });
-    }
-  },
-  data() {
-    return {
-      userInfo2: {},
-      isiOS: navigator.userAgent.includes('iPhone'),
-      list: [],
-      showSharePic: false,
-      showLogout: false,
-      showIsPayed: false,
-    }
-  },
-  computed: {
-    ...mapGetters('main', ['userInfo'])
-  },
-  methods: {
-    ...mapActions('main', ['setPath', 'setToken', 'setUserInfo']),
-    login() {
-      request.get('/user/getInfo').then(res => {
-        this.userInfo2 = res;
-        setTimeout(() => {
-          this.showIsPayed = this.userInfo2 && this.userInfo2.isVip;
-        }, 200)
-      });
-    },
-    score() {
-      toScore()
-    },
-    pay() {
-      buyVip().then(() => {
-        request.get('/user/getInfo')
-          .then(res => {
-            self.showIsPayed = false;
-            this.setUserInfo(res);
-          })
-      })
-    },
-    refresh() {
-      request.get('/source/list').then(res => {
-        // modal.toast({
-        //     'message': JSON.stringify(res),
-        //     'duration': 2.0
-        // })
-        this.list = res;
-      });
-    },
-    choose(id) {
-      this.$router.push({ path: '/source/' + id })
-    },
-    sharePanel() {
-      share("松鼠学", "https://api.studying1v1.com/share", '松鼠未来网络科技有限责任公司', 'https://yingshijiaoyusystem.oss-cn-beijing.aliyuncs.com/icons.1024-1.png?x-oss-process=image/resize,m_fill,h_500,w_500')
-      // this.showSharePic = true
-      // if(iOS){
-      //     this.showSharePic = true
-      // } else {
-      //     modal.toast({
-      //         'message': typeof weex.requireModule('UMeng').share,
-      //         'duration': 2.0
-      //     })
-      //     weex.requireModule('UMeng').share();
-      // }
-    },
-    share() {
-      this.showSharePic = false;
-      share("松鼠学", "https://api.studying1v1.com/share", '松鼠未来网络科技有限责任公司', 'https://yingshijiaoyusystem.oss-cn-beijing.aliyuncs.com/icons.1024-1.png?x-oss-process=image/resize,m_fill,h_500,w_500')
-    },
-    goUserInformation() {
-      // this.$router.push({path: '/userInformation'})
-    },
-    loginOut() {
-      localStorage.removeItem('token')
-      localStorage.removeItem('userInfo')
-      this.setToken('');
-      this.setUserInfo({});
-      this.$router.replace({ path: '/mine' });
-      this.showLogout = false
-    },
-    previewImg() {
-      // Nat.image.preview(this.userInfo2.icon);
-    },
-    downEnglish() {
-      weex.requireModule('toAppStore').active();
-    },
-    showImgDetail(img) {
-      showImg(img)
-    },
-    testNotification() {
-      notification('mine页面', '通知喽', 23, 20, 20);
-    }
-  },
-  components: { pic, Button, Dialog },
-  watch: {
-    userInfo() {
-      if (this.userInfo && this.userInfo.account) {
-        request.get('/user/getInfo').then(res => {
-          this.userInfo2 = res;
-          // 动画是等页面滑动结束后，再展开因为滑动过程这个position: fixed的图标，会造成计算位置错误
-          setTimeout(() => {
-            this.showIsPayed = this.userInfo2 && this.userInfo2.isVip;
-          }, 200)
-        });
-      }
-    }
+const userInfo2 = ref<any>({})
+const isiOS = navigator.userAgent.includes('iPhone');
+const list = ref<any[]>([])
+const showSharePic = ref<boolean>(false)
+const showLogout = ref<boolean>(false)
+const showIsPayed = ref<boolean>(false)
+const showBuyVip = ref<boolean>(false)
+
+onMounted(() => {
+  if (store.state.main.userInfo && store.state.main.userInfo.account) {
+    request.get('/user/getInfo').then(res => {
+      userInfo2.value = res;
+      setTimeout(() => {
+        showIsPayed.value = userInfo2.value && userInfo2.value.isVip;
+      }, 200)
+    });
   }
+})
+function login() {
+  request.get('/user/getInfo').then(res => {
+    userInfo2.value = res;
+    setTimeout(() => {
+      showIsPayed.value = userInfo2.value && userInfo2.value.isVip;
+    }, 200)
+  });
 }
+function score() {
+  toScore()
+}
+
+function sharePanel() {
+  share("松鼠学", "https://api.studying1v1.com/share", '松鼠未来网络科技有限责任公司', 'https://yingshijiaoyusystem.oss-cn-beijing.aliyuncs.com/icons.1024-1.png?x-oss-process=image/resize,m_fill,h_500,w_500')
+}
+function toAddress() {
+  router.push('/address')
+}
+function toOrder() {
+  router.push('/order')
+}
+function goUserInformation() {
+  router.push('/userInformation')
+}
+function loginOut() {
+  localStorage.removeItem('token')
+  localStorage.removeItem('userInfo')
+  store.dispatch('main/setToken', '')
+  store.dispatch('main/setUserInfo', {})
+  router.replace({ path: '/mine' });
+  showLogout.value = false
+}
+function previewImg(img: string) {
+  showImg(img)
+}
+function testNotification() {
+  notification('mine页面', '通知喽', 23, 20, 20);
+}
+
+watch(() => store.state.main.userInfo, () => {
+  console.log('=====1=====')
+  if (store.state.main.userInfo && store.state.main.userInfo.account) {
+    console.log('=====2=====')
+    request.get('/user/getInfo').then(res => {
+      console.log('=====3=====')
+      userInfo2.value = res;
+      // 动画是等页面滑动结束后，再展开因为滑动过程这个position: fixed的图标，会造成计算位置错误
+      setTimeout(() => {
+        console.log('=====4=====')
+        showIsPayed.value = userInfo2.value && userInfo2.value.isVip;
+      }, 200)
+    });
+  }
+})
 </script>
 <style scoped lang="less">
 .mine {
@@ -259,7 +222,7 @@ export default {
 
 .user {
   width: 750px;
-  height: 170px;
+  min-height: 170px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -268,6 +231,7 @@ export default {
   border-top-width: 1px;
   border-top-color: grey;
   margin-bottom: 20px;
+  flex-shrink: 0;
   box-sizing: border-box;
 
   &_icon {
@@ -283,6 +247,32 @@ export default {
   .loginButton {
     width: 300px;
     height: 80px;
+  }
+
+  .payed {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    pointer-events: none;
+    align-items: center;
+    transition: transform 1s;
+
+    >img {
+      width: 120px;
+      height: 120px;
+      border-radius: 60px;
+      overflow: hidden;
+    }
+
+    >span {
+      font-weight: bold;
+      font-size: 26px;
+    }
+
+    .vipEndDate {
+      font-size: 22px;
+      color: #aaa;
+    }
   }
 }
 
@@ -330,35 +320,6 @@ export default {
   }
 }
 
-.payed {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  pointer-events: none;
-  align-items: center;
-  position: fixed;
-  z-index: 2000;
-  top: calc(var(--safe-area-inset-top) + 108px);
-  right: 32px;
-  transition: transform 1s;
-
-  >img {
-    width: 120px;
-    height: 120px;
-    border-radius: 60px;
-    overflow: hidden;
-  }
-
-  >span {
-    font-size: 26px;
-  }
-
-  .vipEndDate {
-    font-size: 22px;
-    color: #aaa;
-  }
-}
-
 .actions {
   background: white;
   margin: 10px;
@@ -394,8 +355,8 @@ export default {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  margin-top: 120px;
-  margin-bottom: 60px;
+  padding-top: 120px;
+  padding-bottom: 60px;
 
   &_split {
     font-size: 28px;

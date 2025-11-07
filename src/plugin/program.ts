@@ -21,6 +21,7 @@ function exit(): Promise<void> {
     } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
       // @ts-ignore
       window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+        group: 'program',
         type: 'exit',
       }).then((res: any) => {
         resolve();

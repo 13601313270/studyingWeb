@@ -68,7 +68,7 @@ function toDetail(id: number) {
   scrollTop.value = refDom.value.scrollTop;
 }
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .enRead {
   height: 100%;
   overflow: hidden;

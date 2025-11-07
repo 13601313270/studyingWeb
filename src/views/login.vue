@@ -1,11 +1,11 @@
 <template>
   <div class="login_content">
-    <div class="login_content_close" @click="back">
-      <icon src="close" width="50" height="50" />
+    <div class="close" @click="back">
+      <img src="../icons/close.png" />
     </div>
     <div class="login_content_inner">
       <div class="icon">
-        <icon src="icon_green" width="200" height="200" />
+        <img src="../icons/icon_green.png" />
       </div>
       <!--<text style="color: #ff736b">{{wrong}}</text>-->
       <div class="form" :model="ruleForm" :rules="rules">
@@ -380,12 +380,16 @@ onMounted(() => {
   width: 750px;
   max-height: 100vh;
   overflow-y: auto;
-  flex: 1;
 
-  &_close {
+  .close {
     position: absolute;
     left: 30px;
     top: calc(env(safe-area-inset-top) + 20px);
+
+    >img {
+      width: 50px;
+      height: 50px;
+    }
   }
 }
 
@@ -394,6 +398,10 @@ onMounted(() => {
 
   .icon {
     text-align: center;
+
+    >img {
+      width: 200px;
+    }
   }
 
   .otherLogin {
@@ -612,5 +620,30 @@ onMounted(() => {
   overflow: auto;
   font-size: 32px;
   padding: 16px;
+}
+
+@media (min-width: 400px) {
+  .login_content {
+    .form {
+      .el-form-item {
+        .loginInput {
+          height: 53PX;
+          border-width: 2PX;
+
+          :deep(input) {
+            height: 49PX;
+          }
+        }
+
+        .tmpCodeButton {
+          height: 53PX;
+        }
+
+        .action_button {
+          height: 64PX;
+        }
+      }
+    }
+  }
 }
 </style>

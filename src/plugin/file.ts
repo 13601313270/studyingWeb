@@ -23,6 +23,7 @@ function download(file: string): Promise<void> {
     } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
       // @ts-ignore
       window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+        group: 'file',
         type: 'FileDownload',
         url: file.replace('http://', 'https://'),
       }).then((res: any) => {
@@ -56,6 +57,7 @@ function open(file: string): Promise<void> {
     } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
       // @ts-ignore
       window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+        group: 'file',
         type: 'openDownloadFile',
         fileName: file,
       }).then((res: any) => {
@@ -91,6 +93,7 @@ function getDownLoadFileList() {
     } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
       // @ts-ignore
       window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+        group: 'file',
         type: 'downloadFileList',
       }).then((res: any) => {
         console.log('downloadFileList', res)

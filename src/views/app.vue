@@ -2,9 +2,12 @@
   <div class="app_content">
     <div class="header" v-if="$route.name !== 'welcome'">
       <div class="header_web_name">
-        <div class="head_root" v-if="isInRootPage" @click="degreeListDialogShow = true">
+        <div class="head_root" v-if="isInRootPage">
           <img class="icon" src="../icons/icons.png" />
-          <div v-if="selectDegreeInfo">{{ selectDegreeInfo.name }}</div>
+          <div class="degreeName" v-if="selectDegreeInfo" @click="degreeListDialogShow = true">
+            <span>{{ selectDegreeInfo.name }}</span>
+            <img src="../icons/sanjiao-white.svg" />
+          </div>
         </div>
         <div v-else class="header_web_name_back" @click="clickBack">
           <img class="header_web_name_back_img" src="../icons/back.png" />
@@ -53,20 +56,19 @@
       v-if="$route.meta.hideBottom !== true && (!['lessonDetail', 'lessonDetailNew', 'poiLessonDetail', 'lessonAllChildPoiVideo', 'lessonLog'].includes($route.name) && $route.name !== 'welcome')">
       <div class="bottom_link" :class="[tabType === 'source' ? 'bottom_link_active' : 'bottom_link_blur']"
         @click="to('/source')">
-        <icon class="bottom_link_icon" width="44" height="44" :src="tabType === 'source' ? 'main_active' : 'main'" />
+        <icon class="bottom_link_icon" :src="tabType === 'source' ? 'main_active' : 'main'" />
         <text class="bottom_link_text"
           :class="[tabType === 'source' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">课程</text>
       </div>
       <div class="bottom_link" :class="[tabType === 'file' ? 'bottom_link_active' : 'bottom_link_blur']"
         @click="to('/file')">
-        <icon class="bottom_link_icon" width="44" height="44" :src="tabType === 'file' ? 'file_active' : 'file'" />
+        <icon class="bottom_link_icon" :src="tabType === 'file' ? 'file_active' : 'file'" />
         <text class="bottom_link_text"
           :class="[tabType === 'file' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">资料库</text>
       </div>
       <div class="bottom_link" :class="[tabType === 'friend' ? 'bottom_link_active' : 'bottom_link_blur']"
         @click="to('/friend')" v-if="channel !== 'huawei'">
-        <icon class="bottom_link_icon" width="44" height="44"
-          :src="tabType === 'friend' ? 'friend_active' : 'friend'" />
+        <icon class="bottom_link_icon" :src="tabType === 'friend' ? 'friend_active' : 'friend'" />
         <text class="bottom_link_text"
           :class="[tabType === 'friend' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">消息</text>
         <div class="tip" v-if="notUsedInformationCount > 0">
@@ -83,7 +85,7 @@
       <!--            </div>-->
       <div class="bottom_link" :class="[tabType === 'mine' ? 'bottom_link_active' : 'bottom_link_blur']"
         @click="to('/mine')">
-        <icon class="bottom_link_icon" width="44" height="44" :src="tabType === 'mine' ? 'user_active' : 'user'" />
+        <icon class="bottom_link_icon" :src="tabType === 'mine' ? 'user_active' : 'user'" />
         <text class="bottom_link_text"
           :class="[tabType === 'mine' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">我的</text>
       </div>
@@ -125,7 +127,7 @@
         </div>
       </div>
     </div>
-    <div class="ba">
+    <div class="ba" v-if="$route.name === 'source'">
       <a class="ga" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=22020302000326" target="_blank">
         <img src="https://yingshijiaoyusystem.oss-cn-beijing.aliyuncs.com/ga.png" />
         吉公网安备22020302000326号
@@ -144,12 +146,11 @@
   </Dialog>
   <Dialog :show="showBuySuccess" title="恭喜您获得VIP权限" @close="showBuySuccess = false">
     <BuyVIPDesc />
-    <div>VIP费用<span class="price">¥12</span>/年</div>
     <div class="buySuccess">
       <img src="../icons/isPayed.png" />
       <div>购买成功，恭喜您获得VIP权限！！</div>
       <div class="tools">
-        <Button text="我知道了" @click="showBuySuccess = false"></Button>
+        <Button text="继续使用" @click="showBuySuccess = false"></Button>
       </div>
     </div>
   </Dialog>
@@ -171,6 +172,7 @@ import isMobileDevice from '@/plugin/isMobileDevice'
 import BuyVIPDesc from './buyVIPDesc.vue';
 import { setBuyVipCallback } from '@/plugin/buyVip'
 import checkNet from '../plugin/checkNet';
+import bridge from '@/plugin/bridge';
 
 const agreementKey = 'agreementKey2022-8-7-2'
 const degreeSelectCacheKey = 'degreeSelectCacheKey-2025-7-4'
@@ -226,7 +228,7 @@ export default {
         ...rootPages,
         'sourceDetail', 'lessonDetail', 'word', 'wordSearch', 'listen', 'lessonDetailNew', 'poiLessonDetail', 'lessonAllChildPoiVideo', 'lessonQuestionList', 'lessonKnowledgeList', 'poiQuestion', 'lessonLog', 'enGrammar', 'enGrammarItem', 'enRead', 'enReadDetail',
         'addQuestion', 'informationDetail', 'dailyQuestion', 'zhidaoDetail', 'lessonKnowledgeDetail', 'chat',
-        'aboutUs', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo', 'develop'
+        'address', 'order', 'aboutUs', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo', 'develop'
       ];
       if (sort.indexOf(newVal) > sort.indexOf(oldVal)) {
         if (rootPages.includes(newVal) && rootPages.includes(oldVal)) {
@@ -254,6 +256,7 @@ export default {
         this.showAgree = true;
       } else {
         umeng.init(false)
+        bridge('ad', 'openAd')
       }
     } catch (e) {
       console.log(e)
@@ -343,6 +346,7 @@ export default {
       this.showAgree = false;
       localStorage.setItem(agreementKey, (new Date()).getTime())
       umeng.init(true)
+      bridge('ad', 'openAd')
     },
     changeDegree(id) {
       this.degreeSelect = id;
@@ -363,7 +367,7 @@ export default {
         return 'source';
       } else if (['file'].includes(this.$route.name)) {
         return 'file';
-      } else if (['mine', 'aboutUs', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo', 'develop'].includes(this.$route.name)) {
+      } else if (['mine', 'aboutUs', 'address', 'order', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo', 'develop'].includes(this.$route.name)) {
         return 'mine';
       } else if (['friend', 'addQuestion', 'informationDetail', 'dailyQuestion', 'zhidaoDetail', 'chat'].includes(this.$route.name)) {
         return 'friend';
@@ -411,14 +415,14 @@ export default {
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    width: 750px;
+    width: 100%;
     flex-shrink: 0;
     flex-grow: 0;
     height: 88px;
     position: relative;
     padding-top: env(safe-area-inset-top);
 
-    &_web_name {
+    .header_web_name {
       display: flex;
       flex: 0;
       flex-direction: row;
@@ -435,6 +439,17 @@ export default {
           width: 48px;
           height: 48px;
           margin: 0 8px;
+        }
+
+        .degreeName {
+          font-size: 32px;
+          display: flex;
+          align-items: center;
+
+          >img {
+            height: 8px;
+            margin-left: 8px;
+          }
         }
       }
 
@@ -509,7 +524,7 @@ export default {
 }
 
 .bottom {
-  width: 750px;
+  width: 100vw;
   background-color: #fcfcfc;
   border-top-style: solid;
   border-top-width: 1px;
@@ -550,6 +565,16 @@ export default {
 }
 
 .login {
+  position: fixed;
+  width: 100vw;
+  background-color: white;
+  top: 0;
+  bottom: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   &.isOffline {
     top: 88px;
   }
@@ -765,6 +790,13 @@ export default {
             height: 48px !important;
           }
         }
+
+        .head_root {
+          .degreeName {
+            margin-left: 80PX;
+            font-size: 14PX;
+          }
+        }
       }
 
       .header_links {
@@ -772,16 +804,20 @@ export default {
         width: 275px;
 
         .header_links_web_name {
-          font-size: 28px;
-          line-height: 66px;
+          width: auto;
+          position: absolute;
+          margin-left: 44PX;
+          font-size: 0.37333rem;
+          line-height: 0.88rem;
         }
       }
     }
 
     .bottom {
       height: 66px;
-      left: 240px;
-      width: 600px;
+      left: 300px;
+      width: 640px;
+      // right: 0;
       position: absolute;
       border: none;
       top: 0;
@@ -790,8 +826,8 @@ export default {
         height: 66px;
 
         .bottom_link_icon {
-          width: 32px !important;
-          height: 32px !important;
+          width: 44px !important;
+          height: 44px !important;
         }
 
         .bottom_link_text {

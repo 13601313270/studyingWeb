@@ -84,7 +84,7 @@ export default {
 
 <style scoped lang="less">
 .content {
-  width: 750px;
+  width: 100vw;
   padding: 20px 0;
   display: flex;
   flex-direction: column;

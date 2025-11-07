@@ -4,54 +4,53 @@
       <div class="subjects_scroll" ref="subjectScroll">
         <text ref="start" key="start"></text>
         <div class="subjectScroll">
-          <div :key="subject.id" v-for="subject in selectSourceList" @click="changeSubject(subject.id)"
-            class="subjects_item">
-            <text :key="subject.id" :class="[selectSub === subject.id ? 'subjects_item_select' : '']">{{ subject.name
-              }}</text>
+          <div :key="subject.id" v-for="subject in sourceList" @click="changeSubject(subject.id)" class="subjects_item"
+            :class="{ active: selectSub === subject.id }">
+            <div :key="subject.id">{{ subject.name }}</div>
           </div>
         </div>
-        <div key="end" class="subjects_item_bottomBorder" ref="subjectBorder"
-          :style="{ left: selectSourceList.map(item => item.id).indexOf(selectSub) * 22 + 4 + 'vw' }"></div>
       </div>
     </div>
-    <scroller class="list" v-if="selectSub === 'english'">
-      <div @click="chooseWord" class="englishItem">
-        <div class="title">
-          超级背单词
-          <div class="desc">艾宾浩斯遗忘曲线，制定科学背单词计划</div>
+    <div class="list" :class="{ englishList: selectSub === 'english' }" v-if="selectSub === 'english'">
+      <div class="source_list">
+        <div @click="chooseWord" class="englishItem">
+          <div class="title">
+            超级背单词
+            <div class="desc">艾宾浩斯遗忘曲线，制定科学背单词计划</div>
+          </div>
+          <img class="icon" src="../icons/word.png" />
         </div>
-        <Icon src="word" width="100" />
-      </div>
-      <div @click="chooseListen" class="englishItem">
-        <div class="title">
-          听力通
-          <div class="desc">1000+听力段落，让你磨足耳朵</div>
+        <div @click="chooseListen" class="englishItem">
+          <div class="title">
+            听力通
+            <div class="desc">1000+听力段落，让你磨足耳朵</div>
+          </div>
+          <Icon class="icon" src="listen" />
         </div>
-        <Icon src="listen" width="100" />
-      </div>
-      <div @click="toEnGrammar" class="englishItem">
-        <div class="title">
-          语法册
-          <div class="desc">随身携带的语法书</div>
+        <div @click="toEnGrammar" class="englishItem">
+          <div class="title">
+            语法册
+            <div class="desc">随身携带的语法书</div>
+          </div>
+          <img class="icon" src="../icons/yf.svg" />
         </div>
-        <img class="icon" src="../icons/yf.svg" />
-      </div>
-      <div @click="chooseWordSearch" class="englishItem">
-        <div class="title">
-          词典
-          <div class="desc">便携词典</div>
+        <div @click="chooseWordSearch" class="englishItem">
+          <div class="title">
+            词典
+            <div class="desc">便携词典</div>
+          </div>
+          <img class="icon" src="../icons/search.svg" />
         </div>
-        <img class="icon" src="../icons/search.svg" />
-      </div>
-      <div @click="chooseRead" class="englishItem">
-        <div class="title">
-          阅读
-          <div class="desc">提分神器</div>
+        <div @click="chooseRead" class="englishItem">
+          <div class="title">
+            阅读
+            <div class="desc">提分神器</div>
+          </div>
+          <img class="icon" src="../icons/enRead.svg" />
         </div>
-        <img class="icon" src="../icons/enRead.svg" />
       </div>
-    </scroller>
-    <scroller class="list" v-else>
+    </div>
+    <div class="list" v-else>
       <div class="source_list error" v-if="!loading && loadError">
         <div class="text">加载失败，请点击重试。</div>
         <Button v-if="loadError" @click="refresh" type="white" text="重新加载"></Button>
@@ -66,7 +65,7 @@
       <div class="loading" v-else>
         <div>加载中...</div>
       </div>
-    </scroller>
+    </div>
   </div>
 </template>
 <script>
@@ -111,7 +110,7 @@ export default {
   },
   computed: {
     ...mapGetters('main', ['degree']),
-    selectSourceList() {
+    sourceList() {
       return [
         {
           id: 'english',
@@ -192,19 +191,8 @@ export default {
   flex-direction: column;
 }
 
-.active {
-  color: #00795c;
-  border-bottom-style: solid;
-  border-bottom-width: 4px;
-  border-bottom-color: #00795c;
-}
-
-.noActive {
-  color: rgba(0, 0, 0, 0.42);
-}
-
 .subjects {
-  width: 750px;
+  width: 100%;
   height: 100px;
   display: flex;
   flex-direction: row;
@@ -212,8 +200,8 @@ export default {
   border-bottom-width: 1px;
   border-bottom-style: solid;
 
-  &_scroll {
-    width: 750px;
+  .subjects_scroll {
+    width: 100%;
     flex-direction: row;
     align-items: center;
     height: 100%;
@@ -270,7 +258,7 @@ export default {
     }
   }
 
-  &_item {
+  .subjects_item {
     font-size: 42px;
     min-width: 105px;
     line-height: 70px;
@@ -278,18 +266,17 @@ export default {
     padding: 20px 30px;
     color: rgba(0, 0, 0, 0.42);
 
-    &_select {
+    &.active {
       color: #00795c;
-    }
 
-    &_bottomBorder {
-      width: 100px;
-      background-color: #00795c;
-      height: 8px;
-      bottom: 2px;
-      border-radius: 4px;
-      position: absolute;
-      left: 0;
+      &::after {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 8px;
+        background-color: #04785c;
+        border-radius: 4px;
+      }
     }
   }
 }
@@ -298,6 +285,7 @@ export default {
   display: flex;
   flex: 1;
   flex-wrap: wrap;
+  align-items: flex-start;
   justify-content: center;
   overflow: auto;
   width: 100%;
@@ -311,81 +299,97 @@ export default {
   .icon {
     width: 100px;
   }
-}
 
-.source_list {
-  padding-top: 20px;
-  padding-bottom: 100px;
-  padding-left: 50px;
-  width: 650px;
+  .source_list {
+    padding-top: 20px;
+    padding-bottom: 100px;
+    width: 100%;
+    max-width: 940PX;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-  &.error {
-    margin-top: 150px;
+    &.error {
+      margin-top: 150px;
 
-    .text {
-      text-align: center;
-      font-size: 32px;
-      margin-bottom: 150px;
+      .text {
+        text-align: center;
+        font-size: 32px;
+        margin-bottom: 150px;
+      }
+    }
+
+    .source_item {
+      text-align: left;
+      flex-shrink: 0;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      border-radius: 18px;
+      width: 650px;
+      height: 420px;
+      border-style: solid;
+      border-color: #e0e0e0;
+      border-width: 2px;
+      background-color: white;
+      box-sizing: border-box;
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
+      overflow: hidden;
+
+      &_title {
+        font-size: 50px;
+        background-color: rgba(255, 255, 255, 0.8);
+        font-family: PingFangSC-Medium;
+        color: #313131;
+        text-align: center;
+        position: absolute;
+        padding: 3px 20px;
+        border-radius: 14px;
+        top: 24px;
+        left: 24px;
+      }
+
+      &_img {
+        opacity: 0.8;
+      }
     }
   }
 }
 
-.source_item {
-  text-align: left;
-  flex-shrink: 0;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  border-radius: 18px;
-  width: 650px;
-  height: 420px;
-  border-style: solid;
-  border-color: #e0e0e0;
-  border-width: 2px;
-  background-color: white;
+.englishList {
+  display: flex;
   box-sizing: border-box;
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-end;
-  overflow: hidden;
 
-  &_title {
-    font-size: 50px;
-    background-color: rgba(255, 255, 255, 0.8);
-    font-family: PingFangSC-Medium;
-    color: #313131;
-    text-align: center;
-    position: absolute;
-    padding: 3px 20px;
-    border-radius: 14px;
-    top: 24px;
-    left: 24px;
-  }
+  .source_list {
+    padding: 24px;
 
-  &_img {
-    opacity: 0.8;
-  }
-}
+    .englishItem {
+      background-color: white;
+      width: 100%;
+      padding: 32px;
+      margin-bottom: 16px;
+      box-sizing: border-box;
+      font-size: 32px;
+      border: solid 1px #00795c;
+      color: #00795c;
+      border-radius: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 500PX;
 
-.englishItem {
-  background-color: white;
-  margin: 32px;
-  padding: 32px;
-  font-size: 32px;
-  border: solid 1px #00795c;
-  color: #00795c;
-  border-radius: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+      .title {
+        font-size: 42px;
+        color: #00795c;
 
-  .title {
-    font-size: 42px;
-    color: #00795c;
-
-    .desc {
-      font-size: 28px;
-      margin-top: 8px;
+        .desc {
+          font-size: 28px;
+          margin-top: 8px;
+        }
+      }
     }
   }
 }
@@ -410,12 +414,6 @@ export default {
         font-size: 24px;
         line-height: 66px;
         min-width: 120px;
-
-        .subjects_item_select {}
-      }
-
-      .subjects_item_bottomBorder {
-        display: none;
       }
 
       .subjects_set {
@@ -426,6 +424,7 @@ export default {
     .source_list {
       display: flex;
       flex-wrap: wrap;
+      flex-direction: row;
       padding: 16px;
       width: 100%;
       box-sizing: border-box;
@@ -433,12 +432,40 @@ export default {
       justify-content: center;
 
       .source_item {
-        width: 300px;
-        height: 200px;
-        margin: 16px 32px 0 0;
+        width: 200PX;
+        height: 130PX;
+        margin: 12px 22px;
 
         .source_item_title {
-          font-size: 28px;
+          font-size: 16PX;
+          top: 8PX;
+          left: 8PX;
+          right: 8PX;
+        }
+      }
+    }
+  }
+
+  .englishList {
+    .source_list {
+      max-width: none;
+
+      .englishItem {
+        margin: 12px;
+        max-width: 400PX;
+        padding: 15PX;
+
+        .title {
+          font-size: 22PX;
+
+          .desc {
+            font-size: 14PX;
+          }
+        }
+
+        >img {
+          width: 48PX;
+          height: 48PX;
         }
       }
     }

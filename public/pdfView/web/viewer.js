@@ -2051,6 +2051,7 @@ window.webViewerOpenFileViaURL = void 0;
       }
       // @ts-ignore
       window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+        group: 'file',
         type: 'readDownloadFileBuffer',
         fileUrl: file,
       }).then((base64) => {

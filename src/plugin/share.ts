@@ -1,6 +1,6 @@
 import androidBridge from "./androidBridge";
 
-function share(title: string, url: string, desc: string, img: string) {
+function share(title: string, url: string, desc: string, img?: string) {
   return new Promise<void>((resolve, reject) => {
     if (navigator.userAgent.includes('studying1v1Android')) {
       androidBridge('Share', 'share', {
@@ -28,6 +28,7 @@ function share(title: string, url: string, desc: string, img: string) {
     } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
       // @ts-ignore
       window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+        group: 'share',
         type: 'share',
         title,
         url,

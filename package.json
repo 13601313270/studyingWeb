@@ -1,6 +1,6 @@
 {
   "name": "falcon_vue",
-  "version": "0.1.19",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -29,7 +29,7 @@
     "@vue/cli-service": "~5.0.0",
     "less": "^4.0.0",
     "less-loader": "^8.0.0",
-    "postcss-px-to-viewport": "^1.1.1",
+    "postcss-pxtorem": "^6.1.0",
     "typescript": "~4.5.5",
     "webpack-cli": "^4.10.0"
   },

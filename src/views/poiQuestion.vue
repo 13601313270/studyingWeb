@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <scroller class="item_list" v-if="!isCheck">
+    <div class="item_list" v-if="!isCheck">
       <div class="item_list_item" v-for="(item, index) in question" :key="item.id"
         :style="{ borderColor: isCheck && item.answer !== chooseResult[index] ? 'red' : 'rgba(35, 80, 63, 0.1)', borderWidth: isCheck && item.answer !== chooseResult[index] ? '2px' : '1px' }">
         <text v-if="item.is_simple === 1" class="item_list_question">{{ item.question.replace(/&nbsp;/, ' ') }}</text>
@@ -28,14 +28,14 @@
                 @click="chooseOption(index, k)">
                 <text style="">{{ k + ' : ' }}</text>
                 <text v-if="item.is_simple === 1" style="line-height: 46px;font-size: 32px;flex:1">{{ item.options[k]
-                  }}</text>
+                }}</text>
                 <div v-else v-html="item.options[k]" class="question_option_value"></div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </scroller>
+    </div>
     <div v-else class="item_list_check">
       <div class="item_list_check_allResult">
         <div v-if="!isOnlyLookResult">
@@ -47,114 +47,118 @@
           <!--                    <div v-if="index===lookQaIndex" class="item_list_check_allResult_item_plot"></div>-->
         </div>
       </div>
-      <scroller class="scroller">
-        <div>
-          <div class="item_list_check_item_nav">
-            <text class="item_list_check_item_title">题目:</text>
-            <Button class="shareButton" @click="share(lookQuestion.id)" icon="share" text="分享此题目" />
+      <div class="scroller">
+        <div class="item_list_check_item_nav">
+          <text class="item_list_check_item_title">题目:</text>
+          <Button class="shareButton" @click="share(lookQuestion.id)" icon="share" text="分享此题目" />
+        </div>
+        <div class="item_list_check_item">
+          <text v-if="lookQuestion.is_simple === 1" class="item_list_check_question">
+            {{ lookQuestion.question.replace(/&nbsp;/, ' ') }}
+          </text>
+          <div v-else class="item_list_check_question" v-html="lookQuestion.question.replace(/http:\/\//g, 'https://')">
           </div>
-          <div class="item_list_check_item">
-            <text v-if="lookQuestion.is_simple === 1" class="item_list_check_question">
-              {{ lookQuestion.question.replace(/&nbsp;/, ' ') }}
-            </text>
-            <div v-else class="item_list_check_question"
-              v-html="lookQuestion.question.replace(/http:\/\//g, 'https://')"></div>
-            <div v-if="lookQuestion.list && lookQuestion.list.length">
-              <div v-for="(lookQuestionQA, lookQuestionQAIndex) in lookQuestion.list">
-                <div class="lookQuestionQAText" v-html="lookQuestionQA.question"></div>
-                <div class="item_list_check_option_list" :class="{ check: isCheck }">
-                  <div v-for="(k) in Object.keys(lookQuestionQA.options).sort()" :key="k">
-                    <div class="question_option"
-                      :style="{ backgroundColor: { right: '#50ba5f', wrong: '#df473b', none: 'white', select: '#b0b0b0' }[optionColorMulti(lookQuestion, lookQaIndex, lookQuestionQAIndex, k)] }"
-                      @click="chooseOption(index, k)">
-                      <span>{{ k + ' : ' }}</span>
-                      <text v-if="lookQuestionQA.is_simple === 1" style="line-height: 46px;font-size: 32px;flex:1">{{
-                        lookQuestion.options[k] }}</text>
-                      <div v-else v-html="lookQuestionQA.options[k]" class="question_option_value"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div v-else>
+          <div v-if="lookQuestion.list && lookQuestion.list.length">
+            <div v-for="(lookQuestionQA, lookQuestionQAIndex) in lookQuestion.list">
+              <div class="lookQuestionQAText" v-html="lookQuestionQA.question"></div>
               <div class="item_list_check_option_list" :class="{ check: isCheck }">
-                <div v-for="(k) in Object.keys(lookQuestion.options).sort()" :key="k">
+                <div v-for="(k) in Object.keys(lookQuestionQA.options).sort()" :key="k">
                   <div class="question_option"
-                    :style="{ backgroundColor: { right: '#50ba5f', wrong: '#df473b', none: 'white', select: '#b0b0b0' }[optionColor(lookQuestion, lookQaIndex, k)] }"
+                    :style="{ backgroundColor: { right: '#50ba5f', wrong: '#df473b', none: 'white', select: '#b0b0b0' }[optionColorMulti(lookQuestion, lookQaIndex, lookQuestionQAIndex, k)] }"
                     @click="chooseOption(index, k)">
                     <span>{{ k + ' : ' }}</span>
-                    <text v-if="lookQuestion.is_simple === 1" style="line-height: 46px;font-size: 32px;flex:1">{{
+                    <text v-if="lookQuestionQA.is_simple === 1" style="line-height: 46px;font-size: 32px;flex:1">{{
                       lookQuestion.options[k] }}</text>
-                    <div v-else v-html="lookQuestion.options[k]" class="question_option_value"></div>
+                    <div v-else v-html="lookQuestionQA.options[k]" class="question_option_value"></div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="answer">
-            <text class="item_list_check_item_title">正确答案:</text>
-            <text class="item_list_check_item_answer" v-if="lookQuestion.list && lookQuestion.list.length">
-              {{ lookQuestion.list.map(v => v.answer).join('') }}
-            </text>
-            <text class="item_list_check_item_answer" v-else>{{ lookQuestion.answer }}</text>
-          </div>
-          <div v-if="lookQuestion.childPoi.length > 0" class="poiTypeList">
-            <text v-if="lookQuestion.childPoi.length > 0" class="title">题型:</text>
-            <childPoiButton v-for="childPoi in lookQuestion.childPoi" :child-poi="childPoi" class="item" />
-          </div>
-          <div class="answerNav">
-            <text class="item_list_check_item_title">解答:</text>
-          </div>
-          <div v-if="isCheck" class="answerContent">
-            <div v-if="lookQuestion.list && lookQuestion.list.length">
-              <div v-for="qaItem in lookQuestion.list">
-                <div v-if="qaItem.explanation && qaItem.explanation.match(/https?:\/\//)">
-                  <div @click="showImgDetail(qaItem.explanation)">
-                    <pic style="margin-left: -18px;" :src="qaItem.explanation.replace('http://', 'https://')"
-                      width="700" />
-                  </div>
-                </div>
-                <div v-else>
-                  <div v-html="qaItem.explanation"></div>
+          <div v-else>
+            <div class="item_list_check_option_list" :class="{ check: isCheck }">
+              <div v-for="(k) in Object.keys(lookQuestion.options).sort()" :key="k">
+                <div class="question_option"
+                  :style="{ backgroundColor: { right: '#50ba5f', wrong: '#df473b', none: 'white', select: '#b0b0b0' }[optionColor(lookQuestion, lookQaIndex, k)] }"
+                  @click="chooseOption(index, k)">
+                  <span>{{ k + ' : ' }}</span>
+                  <text v-if="lookQuestion.is_simple === 1" style="line-height: 46px;font-size: 32px;flex:1">{{
+                    lookQuestion.options[k] }}</text>
+                  <div v-else v-html="lookQuestion.options[k]" class="question_option_value"></div>
                 </div>
               </div>
             </div>
-            <div v-else-if="lookQuestion.explanation && lookQuestion.explanation.match(/https?:\/\//)">
-              <div @click="showImgDetail(lookQuestion.explanation)">
-                <pic style="margin-left: -18px;" :src="lookQuestion.explanation.replace('http://', 'https://')"
-                  width="700" />
-              </div>
-            </div>
-            <div v-else>
-              <div v-html="lookQuestion.explanation"></div>
-            </div>
-          </div>
-          <div class="questionAIAnswer">
-            <div class="teacherContent">
-              <img class="icon" src="../icons/teacher1.png" />
-              <div>
-                <div class="name">AI李老师</div>
-                <div class="desc">AI生成内容仅供参考，一切以学校教学为准</div>
-              </div>
-            </div>
-            <div v-if="questionAIAnswer[lookQaIndex] !== undefined" class="answer">
-              {{ questionAIAnswer[lookQaIndex] || '思考中...' }}
-            </div>
-            <div v-else class="askAi">
-              <Button @click="askAi(lookQuestion.id)" text="依旧不懂?试着问问AI" />
-            </div>
-          </div>
-          <div class="shareBottom">
-            <Button @click="share(lookQuestion.id)" icon="share" text="点击分享此题目，看看朋友们会不会？" />
           </div>
         </div>
-      </scroller>
+        <div class="answer">
+          <text class="item_list_check_item_title">正确答案:</text>
+          <text class="item_list_check_item_answer" v-if="lookQuestion.list && lookQuestion.list.length">
+            {{lookQuestion.list.map(v => v.answer).join('')}}
+          </text>
+          <text class="item_list_check_item_answer" v-else>{{ lookQuestion.answer }}</text>
+        </div>
+        <div v-if="lookQuestion.childPoi.length > 0" class="poiTypeList">
+          <text v-if="lookQuestion.childPoi.length > 0" class="title">题型:</text>
+          <childPoiButton v-for="childPoi in lookQuestion.childPoi" :child-poi="childPoi" class="item" />
+        </div>
+        <div class="answerNav">
+          <text class="item_list_check_item_title">解答:</text>
+        </div>
+        <div v-if="isCheck" class="answerContent">
+          <div v-if="lookQuestion.list && lookQuestion.list.length">
+            <div v-for="qaItem in lookQuestion.list">
+              <div v-if="qaItem.explanation && qaItem.explanation.match(/https?:\/\//)">
+                <div @click="showImgDetail(qaItem.explanation)">
+                  <pic style="margin-left: -18px;" :src="qaItem.explanation.replace('http://', 'https://')"
+                    width="700" />
+                </div>
+              </div>
+              <div v-else>
+                <div v-html="qaItem.explanation"></div>
+              </div>
+            </div>
+          </div>
+          <div v-else-if="lookQuestion.explanation && lookQuestion.explanation.match(/https?:\/\//)">
+            <div @click="showImgDetail(lookQuestion.explanation)">
+              <pic style="margin-left: -18px;" :src="lookQuestion.explanation.replace('http://', 'https://')"
+                width="700" />
+            </div>
+          </div>
+          <div v-else>
+            <div v-html="lookQuestion.explanation"></div>
+          </div>
+        </div>
+        <div class="questionAIAnswer">
+          <div class="teacherContent">
+            <img class="icon" src="../icons/teacher1.png" />
+            <div>
+              <div class="name">AI李老师</div>
+              <div class="desc">AI生成内容仅供参考，一切以学校教学为准</div>
+            </div>
+          </div>
+          <div v-if="questionAIAnswer[lookQaIndex] !== undefined" class="answer">
+            {{ questionAIAnswer[lookQaIndex] || '思考中...' }}
+          </div>
+          <div v-else class="askAi">
+            <Button @click="askAi(lookQuestion.id)" text="依旧不懂?试着问问AI" />
+          </div>
+        </div>
+        <div class="shareBottom">
+          <Button @click="share(lookQuestion.id)" icon="share" text="点击分享此题目，看看朋友们会不会？" />
+        </div>
+      </div>
     </div>
     <div v-if="!isCheck" class="float">
       <div class="float_submit">
         <text class="count">{{ '已答题' + chooseResult.length + '/' + question.length }}</text>
-        <Button class="button" text="直接看答案" @click="checkOptions" type="white" />
-        <Button class="button" text="提交答案" @click="checkOptionsAndCheck" type="white" />
+        <!-- <Button class="button" text="直接看答案" @click="checkOptions" type="white" /> -->
+        <Button class="button" @click="checkOptionsAndCheck" type="white">交卷</Button>
+      </div>
+      <div class="chooseResult">
+        <div v-for="(item, index) in chooseResult" class="chooseItem"
+          :class="{ empty: item === null || item === undefined }">
+          {{ index + 1 }}
+        </div>
       </div>
     </div>
     <div class="imgFloat" v-if="floatImg" @click="floatImg = ''">
@@ -165,16 +169,14 @@
       </scroller>
     </div>
   </div>
-  <Dialog :show="showBuyVip" title="提示" @close="showBuyVip=false">
+  <Dialog :show="showBuyVip" title="提示" @close="showBuyVip = false">
     <div class="chooseUseType">
       <BuyVIPDesc />
-      <div>VIP费用<span class="price">¥12</span>/年</div>
       <div class="chooseUseTypeInfo" v-if="showBuyVip">
         您是免费用户，试题AI解析只有VIP用户可用。
       </div>
-      <div class="chooseUseTypeTools">
-        <Button @click="CallbuyVip" primary class="buyVip" text="成为VIP不限量（12¥/年）"></Button>
-      </div>
+      <div class="split"></div>
+      <VipPriceDesc @buy="CallbuyVip" @toInvite="CallbuyVip" />
     </div>
   </Dialog>
 </template>
@@ -190,8 +192,8 @@ import share from '../plugin/share'
 import Dialog from '@/components/Dialog.vue';
 import BuyVIPDesc from './buyVIPDesc.vue';
 import { showImg } from '../plugin/imagePreview'
-import { buyVip } from '@/plugin/buyVip';
 import log from '@/plugin/log';
+import VipPriceDesc from '@/components/vipPriceDesc.vue';
 
 export default {
   name: 'poiQuestion',
@@ -391,10 +393,10 @@ export default {
       let self = this;
       let usage = {};
       const questionInfo = this.question[this.lookQaIndex];
-      const userInfo = JSON.parse(localStorage.getItem('userInfo')||'{}');
+      const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
       const token = userInfo.account + '@@' + localStorage.getItem('token');
 
-      const eventSource = new EventSource('https://api.studying1v1.com/question/aiExplanation/' + questionInfo['id']+'?token='+token);
+      const eventSource = new EventSource('https://api.studying1v1.com/question/aiExplanation/' + questionInfo['id'] + '?token=' + token);
       this.questionAIAnswer[this.lookQaIndex] = '';
       eventSource.onopen = function () {
         self.questionAIAnswer[self.lookQaIndex] = '';
@@ -432,9 +434,7 @@ export default {
       });
     },
     CallbuyVip() {
-      buyVip().then(() => {
-        this.showBuyVip = false;
-      })
+      this.showBuyVip = false;
     },
   },
   components: {
@@ -443,6 +443,7 @@ export default {
     pic,
     Dialog,
     BuyVIPDesc,
+    VipPriceDesc,
   }
 }
 </script>
@@ -461,10 +462,13 @@ export default {
 .item_list {
   padding-bottom: 10px;
   flex: 1;
-  width: 750px;
+  width: 100vw;
   overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
-  &_item {
+  .item_list_item {
     margin: 20px 0;
     background-color: rgba(35, 80, 63, 0.1);
     border-style: solid;
@@ -472,8 +476,9 @@ export default {
     border-width: 1px;
     border-radius: 18px;
     overflow: hidden;
-    width: 710px;
-    margin-left: 20px;
+    width: 94vw;
+    flex-shrink: 0;
+    max-width: 1000PX;
   }
 
   &_question {
@@ -486,7 +491,8 @@ export default {
 
   &_option_list {
     display: flex;
-    width: 670px;
+    width: 100%;
+    box-sizing: border-box;
     background-color: rgba(134, 180, 161, 0.3);
     padding: 20px;
     display: flex;
@@ -525,7 +531,7 @@ export default {
 }
 
 .item_list_check {
-  width: 750px;
+  width: 100vw;
   height: 100%;
   overflow: hidden;
   flex: 1;
@@ -580,6 +586,9 @@ export default {
 
   .scroller {
     overflow: scroll;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .answer {
@@ -717,14 +726,14 @@ export default {
 
 .float {
   left: 0;
-  width: 750px;
+  width: 100vw;
   background-color: #b1bab7;
   border-bottom-style: solid;
   border-bottom-color: #6d7485;
   border-bottom-width: 1px;
   z-index: 111;
 
-  &_submit {
+  .float_submit {
     display: flex;
     padding: 11px 20px;
     height: 110px;
@@ -739,6 +748,30 @@ export default {
 
     .button {
       margin-left: 5px;
+    }
+  }
+
+  .chooseResult {
+    display: flex;
+    flex-wrap: wrap;
+
+    .chooseItem {
+      width: 54px;
+      height: 54px;
+      border: solid 1px black;
+      border-radius: 8px;
+      margin: 8px;
+      background-color: #00795c;
+      color: white;
+      font-size: 24px;
+      text-align: center;
+      line-height: 54px;
+      overflow: hidden;
+
+      &.empty {
+        background-color: #e0e0eb;
+        color: #5b5b5b;
+      }
     }
   }
 
@@ -787,25 +820,18 @@ export default {
 
 @media (min-width: 1025px) {
   .item_list {
-    :deep(.innerElement) {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    .item_list_item {
 
-      .item_list_item {
-        width: 600px;
+      .item_list_question {
+        font-size: 24px;
+      }
 
-        .item_list_question {
+      .item_list_option_list {
+        width: 100%;
+        box-sizing: border-box;
+
+        .question_option {
           font-size: 24px;
-        }
-
-        .item_list_option_list {
-          width: 100%;
-          box-sizing: border-box;
-
-          .question_option {
-            font-size: 24px;
-          }
         }
       }
     }
@@ -870,12 +896,14 @@ export default {
     }
   }
 
-  .float_submit {
-    height: 40px;
-    padding: 8px;
+  .float {
+    .float_submit {
+      height: 40PX;
+      padding: 8PX;
 
-    .count {
-      font-size: 24px;
+      .count {
+        font-size: 18PX;
+      }
     }
   }
 }
@@ -919,12 +947,22 @@ export default {
     font-size: 32px;
   }
 }
+
 .chooseUseType {
   .chooseUseTypeInfo {
+    font-size: 28px;
+
     .time {
       font-weight: bold;
       margin: 0 8px;
     }
+  }
+
+  .split {
+    width: 100%;
+    height: 2px;
+    background-color: #b2b2b2;
+    margin: 32px 0;
   }
 
   .chooseUseTypeTools {
