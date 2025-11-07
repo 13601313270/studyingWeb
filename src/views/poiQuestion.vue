@@ -153,8 +153,14 @@
     <div v-if="!isCheck" class="float">
       <div class="float_submit">
         <text class="count">{{ '已答题' + chooseResult.length + '/' + question.length }}</text>
-        <Button class="button" text="直接看答案" @click="checkOptions" type="white" />
-        <Button class="button" text="提交答案" @click="checkOptionsAndCheck" type="white" />
+        <!-- <Button class="button" text="直接看答案" @click="checkOptions" type="white" /> -->
+        <Button class="button" @click="checkOptionsAndCheck" type="white" >交卷</Button>
+      </div>
+      <div class="chooseResult">
+        <div v-for="(item, index) in chooseResult" class="chooseItem"
+          :class="{ empty: item === null || item === undefined }">
+          {{ index + 1 }}
+        </div>
       </div>
     </div>
     <div class="imgFloat" v-if="floatImg" @click="floatImg = ''">
@@ -721,7 +727,7 @@ export default {
   border-bottom-width: 1px;
   z-index: 111;
 
-  &_submit {
+  .float_submit {
     display: flex;
     padding: 11px 20px;
     height: 110px;
@@ -736,6 +742,28 @@ export default {
 
     .button {
       margin-left: 5px;
+    }
+  }
+
+  .chooseResult {
+    display: flex;
+    flex-wrap: wrap;
+
+    .chooseItem {
+      width: 54px;
+      height: 54px;
+      border: solid 1px black;
+      border-radius: 8px;
+      margin: 8px;
+      background-color: #00795c;
+      font-size: 18px;
+      text-align: center;
+      line-height: 54px;
+      overflow: hidden;
+
+      &.empty {
+        background-color: #e0e0eb;
+      }
     }
   }
 
