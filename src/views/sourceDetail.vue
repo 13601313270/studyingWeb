@@ -1,28 +1,26 @@
 <template>
   <div class="content">
-    <scroller>
-      <div class="lessons">
-        <div v-for="item in list" :key="item.id" class="lesson_item">
-          <text class="lesson_item_title">{{ item.title }}</text>
-          <div class="video_list" v-if="item.poi.find(v => v.hasVideo)">
-            <div class="title">课 程</div>
-            <div class="list">
-              <div v-for="(poi, key) in item.poi" :key="poi.id" class="item">
-                <text class="user_to_poi_item">{{ key + 1 }}、{{ poi.name }}</text>
-                <Button class="playButton" text="播放" icon="video" :disabled="!poi.hasVideo" @click="poiLesson(poi)" />
-              </div>
+    <div class="lessons">
+      <div v-for="item in list" :key="item.id" class="lesson_item">
+        <text class="lesson_item_title">{{ item.title }}</text>
+        <div class="video_list" v-if="item.poi.find(v => v.hasVideo)">
+          <div class="title">课 程</div>
+          <div class="list">
+            <div v-for="(poi, key) in item.poi" :key="poi.id" class="item">
+              <text class="user_to_poi_item">{{ key + 1 }}、{{ poi.name }}</text>
+              <Button class="playButton" text="播放" icon="video" :disabled="!poi.hasVideo" @click="poiLesson(poi)" />
             </div>
           </div>
-          <div style="flex-grow: 1;"></div>
-          <div class="action_links">
-            <Button v-if="!item.poi.find(v => v.hasVideo)" text="课   程" icon="video" :disabled="!item.hasContent"
-              @click="lesson(item)" />
-            <Button text="题   库" icon="question" @click="gotoQuestion(item)" />
-            <Button v-if="item.lessonKnowledgeExist" text="知识点" icon="light" @click="gotoKnowledge(item)" />
-          </div>
+        </div>
+        <div style="flex-grow: 1;"></div>
+        <div class="action_links">
+          <Button v-if="!item.poi.find(v => v.hasVideo)" text="课   程" icon="video" :disabled="!item.hasContent"
+            @click="lesson(item)" />
+          <Button text="题   库" icon="question" @click="gotoQuestion(item)" />
+          <Button v-if="item.lessonKnowledgeExist" text="知识点" icon="light" @click="gotoKnowledge(item)" />
         </div>
       </div>
-    </scroller>
+    </div>
   </div>
   <Dialog :show="showConinuePoiLesson" title="提示" @close="closeDialog">
     <div class="chooseUseType">
@@ -170,7 +168,8 @@ async function continueUse() {
 
 <style scoped lang="less">
 .content {
-  flex: 1;
+  height: 100%;
+  overflow: auto;
   background-color: #f5f6f7;
 }
 
