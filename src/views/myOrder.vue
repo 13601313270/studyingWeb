@@ -151,7 +151,7 @@ interface OrderItem {
 const orderList = ref<OrderItem[]>([])
 const loading = ref<boolean>(true)
 const showDetail = ref<boolean>(false)
-type stateType = 'order_unpaid' | 'order_making' | 'order_shipped' | 'order_completed' | 'order_refund' | 'order_partial_refund';
+type stateType = 'order_unpaid' | 'order_paid' | 'order_making' | 'order_shipped' | 'order_completed' | 'order_refund' | 'order_partial_refund';
 const selectedOrder = ref<OrderItem & {
   order_status: stateType
   description: string;
@@ -202,6 +202,7 @@ const loadOrders = async () => {
 const getOrderStatusText = (status: stateType) => {
   const statusMap: Record<stateType, string> = {
     order_unpaid: '待支付',
+    order_paid: '已支付',
     order_making: '订单制作中',
     order_shipped: '已发货',
     order_completed: '订单确认收货(已完成)',

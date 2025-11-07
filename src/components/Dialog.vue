@@ -7,7 +7,7 @@
           <div class="left"></div>
           <div class="titleText">{{ title }}</div>
           <div class="close" @click="close">
-            <Icon src="close" :height="40" v-if="!hideClose"></Icon>
+            <Icon src="close" v-if="!hideClose"></Icon>
           </div>
         </div>
         <div class="content">
@@ -136,6 +136,11 @@ export default {
       align-items: center;
       justify-content: center;
       box-sizing: border-box;
+
+      >img {
+        width: 40px;
+        height: 40px;
+      }
     }
   }
 
@@ -145,6 +150,24 @@ export default {
     padding: 20px;
     box-sizing: border-box;
     overflow: auto;
+  }
+}
+
+@media (min-width: 1025px) {
+  .popInner {
+    .title {
+      padding-right: 6px;
+
+      .close {
+        width: 66px;
+        height: 66px;
+
+        >img {
+          width: 44px;
+          height: 44px;
+        }
+      }
+    }
   }
 }
 </style>

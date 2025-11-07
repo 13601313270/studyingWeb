@@ -409,18 +409,20 @@ async function continueUse() {
     padding-top: 18px;
     padding-bottom: 18px;
     min-height: auto;
+    align-items: normal;
 
     .lesson_item {
       width: 400px;
-      height: 300px;
+      // height: 300px;
       padding: 12px;
       margin: 16px;
       display: flex;
       border-radius: 16px;
 
       .lesson_item_title {
-        font-size: 24px;
+        font-size: 26px;
         padding-top: 0;
+        margin-bottom: 4px;
       }
 
       .user_to_poi_list {
@@ -439,10 +441,21 @@ async function continueUse() {
         margin-bottom: 8px;
         padding-top: 4px;
         padding-bottom: 4px;
+        flex-grow: 1;
 
         .title {
           font-size: 26px;
           margin-bottom: 0px;
+        }
+
+        .list {
+          .item {
+            margin-bottom: 8px;
+
+            .user_to_poi_item {
+              font-size: 20px;
+            }
+          }
         }
       }
 

@@ -301,8 +301,11 @@ export default {
 .source_list {
   padding-top: 20px;
   padding-bottom: 100px;
-  padding-left: 30px;
-  width: 650px;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   &.error {
     margin-top: 150px;
@@ -405,6 +408,7 @@ export default {
     .source_list {
       display: flex;
       flex-wrap: wrap;
+      flex-direction: row;
       padding: 16px;
       width: 100%;
       box-sizing: border-box;
@@ -413,7 +417,7 @@ export default {
 
       .source_item {
         width: 300px;
-        height: 200px;
+        height: 190px;
         margin: 16px 32px 0 0;
 
         .source_item_title {

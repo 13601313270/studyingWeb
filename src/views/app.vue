@@ -420,7 +420,7 @@ export default {
     position: relative;
     padding-top: env(safe-area-inset-top);
 
-    &_web_name {
+    .header_web_name {
       display: flex;
       flex: 0;
       flex-direction: row;
@@ -771,6 +771,11 @@ export default {
             height: 48px !important;
           }
         }
+
+        .head_root {
+          .degreeName {
+          }
+        }
       }
 
       .header_links {
@@ -786,7 +791,7 @@ export default {
 
     .bottom {
       height: 66px;
-      left: 240px;
+      left: 280px;
       width: 600px;
       position: absolute;
       border: none;
