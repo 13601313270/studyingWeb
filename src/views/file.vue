@@ -20,7 +20,7 @@
         </div>
       </div>
       <div class="fileListContent">
-        <div class="head" v-if="fileCount > 0">
+        <div class="head" v-if="fileCount > 0" style="display: none;">
           <div>共{{ fileCount }}个资料文件</div>
           <Button @click="printAll">全部打印</Button>
         </div>
@@ -30,7 +30,7 @@
           <div v-for="file in fileList" class="fileItem" :key="file.id">
             <div class="name">{{ file.title }}</div>
             <div class="buttons">
-              <Button @click="printFile([file])">云打印</Button>
+              <Button @click="printFile([file])" style="display: none;">云打印</Button>
               <Button @click="share(file)" icon="share">分享</Button>
               <Button v-if="isFileDownloaded(file.file)" text="打开"
                 @click="open(downLoadFile[file.file.split('/').slice(-1)[0]])">
@@ -328,7 +328,7 @@ const printSent = () => {
     address: chooseAddress.value,
   }).then((res: any) => {
 
-    
+
     console.log('=======hhhhh=========', res)
     if (res.code === 200) {
       // 支付
