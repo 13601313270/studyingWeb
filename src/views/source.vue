@@ -450,6 +450,7 @@ export default {
       .englishItem {
         margin: 12px;
         max-width: 400PX;
+        padding: 15PX;
 
         .title {
           font-size: 22PX;
