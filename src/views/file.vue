@@ -370,7 +370,7 @@ const printSent = () => {
     width: 100%;
     flex-direction: row;
     align-items: center;
-    height: 100px;
+    height: 100%;
     overflow-x: auto;
     position: relative;
 
@@ -533,21 +533,23 @@ const printSent = () => {
   }
 }
 
-@media (min-width: 1200px) {
-
+@media (min-width: 1025px) {
   .fileContent {
-    .fileList {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      flex-wrap: wrap;
+    .fileListContent {
+      .fileList {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
 
-      .fileItem {
-        width: 31%;
-        margin: 1%;
+        .fileItem {
+          width: 31%;
+          margin: 1%;
 
-        .name {
-          min-height: 2rem;
+          .name {
+            min-height: 2rem;
+            font-size: 16PX;
+          }
         }
       }
     }
@@ -666,6 +668,37 @@ const printSent = () => {
 
   .tools {
     margin-top: 32px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .subjects {
+    height: 66px;
+
+    .subjects_item {
+      height: 100%;
+      padding: 0;
+      font-size: 24px;
+      line-height: 66px;
+      min-width: 120px;
+      position: relative;
+
+      &.active {
+        color: #00795c;
+        font-weight: bold;
+
+        &::after {
+          content: '';
+          display: block;
+          position: absolute;
+          bottom: 0;
+          width: 100%;
+          height: 4px;
+          background-color: #04785c;
+          border-radius: 2px;
+        }
+      }
+    }
   }
 }
 </style>

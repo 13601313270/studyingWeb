@@ -1,13 +1,14 @@
 <template>
-  <div class="content">
+  <div class="wordPage">
     <div class="index">
       <text v-if="!todayFinish" style="color:white;font-family: iconfont;">今日剩余：{{ allWords.length }}</text>
       <text v-else> </text>
       <text style="color:white;font-family: iconfont;"
         v-if="Math.abs(knowWordCount[0] - knowWordCount[1]) < 50">您的词汇量：{{
           parseInt(knowWordCount) }}</text>
-      <text style="color:white;font-family: iconfont;" v-else>您的词汇量：{{ parseInt(knowWordCount[0]) }}~{{
-        parseInt(knowWordCount[1]) }}</text>
+      <text style="color:white;font-family: iconfont;text-align: right;" v-else>您的词汇量：{{ parseInt(knowWordCount[0])
+        }}~{{
+          parseInt(knowWordCount[1]) }}</text>
     </div>
     <div class="word" v-if="!todayFinish">
       <text class="word1">单词序：{{ word.numIndex }}</text>
@@ -15,7 +16,7 @@
       <div class="yinbiao">
         <div>
           <div v-if="info.ph_en" @click="play(info.ph_en_mp3)">英：{{ info.ph_en
-            }}</div>
+          }}</div>
           <div class="icon" v-if="info.en_mp3" @click="play(info.en_mp3)">
             <Icon src="play" width="36" />
           </div>
@@ -712,10 +713,10 @@ export default {
 </script>
 
 <style scoped lang="less">
-.content {
+.wordPage {
   background-color: rgba(0, 121, 92, 0.84) !important;
   height: 100%;
-  width: 750px;
+  width: 100vw;
   display: flex;
   flex-direction: column;
   padding-left: 30px;
@@ -743,6 +744,7 @@ export default {
   border-radius: 20px;
   padding: 80px 20px;
   flex-shrink: 0;
+  position: relative;
 }
 
 .word1 {

@@ -265,9 +265,11 @@ export default {
     text-align: center;
     padding: 20px 30px;
     color: rgba(0, 0, 0, 0.42);
+    position: relative;
 
     &.active {
       color: #00795c;
+      font-weight: bold;
 
       &::after {
         content: '';
@@ -414,6 +416,21 @@ export default {
         font-size: 24px;
         line-height: 66px;
         min-width: 120px;
+
+        &.active {
+          color: #00795c;
+
+          &::after {
+            content: '';
+            display: block;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 4px;
+            background-color: #04785c;
+            border-radius: 2px;
+          }
+        }
       }
 
       .subjects_set {

@@ -76,9 +76,7 @@
     </div>
     <div class="actions" v-if="store.state.main.userInfo && store.state.main.userInfo.account">
       <div class="actionItem" @click="showLogout = true">
-        <slot name="label">
-          <text class="logoutText" style="text-align: center">退出登陆</text>
-        </slot>
+        <text class="logoutText" style="text-align: center">退出登陆</text>
       </div>
     </div>
     <div style="flex-grow: 1"></div>
@@ -101,7 +99,7 @@
         </div>
       </div>
     </div>
-    <Dialog :show="showLogout" title="您确定要推出">
+    <Dialog :show="showLogout" title="您确定要推出" @close="showLogout = false">
       <div style="margin: 20px">推出后用户信息不会丢失，后续如果需要，可重新登录</div>
       <div style="display:flex;justify-content: space-around;">
         <Button text="取消" style="width: 40%" @click="showLogout = false"></Button>
@@ -215,13 +213,15 @@ watch(() => store.state.main.userInfo, () => {
 .mine {
   display: flex;
   flex-direction: column;
-  width: 750px;
-  min-height: 100%;
+  width: 100vw;
   background-color: rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .user {
-  width: 750px;
+  width: 100%;
   min-height: 170px;
   display: flex;
   flex-direction: row;
@@ -274,54 +274,45 @@ watch(() => store.state.main.userInfo, () => {
       color: #aaa;
     }
   }
-}
 
-.icon_panel {
-  width: 120px;
-  height: 120px;
-  border-style: solid;
-  border-color: #717171;
-  border-width: 1px;
-  border-radius: 20px;
-  overflow: hidden;
-}
+  .icon {
+    width: 120px;
+    height: 120px;
+  }
 
-.icon {
-  width: 120px;
-  height: 120px;
-}
+  .info {
+    height: 80px;
+    margin-left: 20px;
+    flex: 1;
+    color: red;
+  }
 
-.info {
-  height: 80px;
-  margin-left: 20px;
-  flex: 1;
-  color: red;
-}
-
-.name {
-  color: grey;
-  font-size: 32px;
-}
-
-.coin {
-  height: 80px;
-  width: 130px;
-  margin-left: 20px;
-  color: red;
-  border-left-style: solid;
-  border-left-width: 1px;
-  border-left-color: #a6a6a6;
-  padding-left: 30px;
-
-  &_text {
+  .name {
     color: grey;
     font-size: 32px;
-    text-align: center;
+  }
+
+  .coin {
+    height: 80px;
+    width: 130px;
+    margin-left: 20px;
+    color: red;
+    border-left-style: solid;
+    border-left-width: 1px;
+    border-left-color: #a6a6a6;
+    padding-left: 30px;
+
+    &_text {
+      color: grey;
+      font-size: 32px;
+      text-align: center;
+    }
   }
 }
 
 .actions {
   background: white;
+  width: 100%;
   margin: 10px;
   border-radius: 16px;
 
@@ -344,14 +335,14 @@ watch(() => store.state.main.userInfo, () => {
   }
 
   .logoutText {
-    width: 700px;
+    width: 100%;
     color: #a50000;
   }
 }
 
 .argument {
   display: flex;
-  width: 750px;
+  width: 100%;
   flex-direction: row;
   align-items: center;
   justify-content: center;
@@ -369,46 +360,12 @@ watch(() => store.state.main.userInfo, () => {
   }
 }
 
-.english_ad {
-  background-color: #37977e;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  width: 750px;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  padding-left: 40px;
-  box-sizing: border-box;
-
-  .icon {
-    border-radius: 30px;
-  }
-}
-
-.english_text {
-  font-size: 28px;
-  color: white;
-  margin-left: 50px;
-
-  &.title {
-    font-size: 40px;
-  }
-}
-
-.english_download {
-  background-color: white;
-  padding: 10px 20px;
-  border-radius: 10px;
-  margin-right: 30px;
-  color: #2d2d2d;
-}
-
 .sharePic {
   position: fixed;
   top: 0;
   bottom: 0;
   left: 0;
-  width: 750px;
+  width: 100%;
   background-color: rgba(18, 18, 18, 0.39);
   display: flex;
   align-items: center;
@@ -457,6 +414,20 @@ watch(() => store.state.main.userInfo, () => {
     .shareButton {
       width: 400px;
       margin-top: 32px;
+    }
+  }
+}
+
+@media (min-width: 1025px) {
+  .user {
+    width: 700PX;
+  }
+
+  .actions {
+    width: 700PX;
+
+    .actionItem {
+      font-size: 16PX;
     }
   }
 }
