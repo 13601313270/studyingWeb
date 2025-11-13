@@ -254,7 +254,7 @@ const dbModule = {
       })
     } else {
       if (isSelect) {
-        fetch('http://127.0.0.1:3011/', {
+        fetch('http://127.0.0.1:3012/', {
           method: 'POST',
           body: JSON.stringify({
             sql: sql
@@ -274,7 +274,7 @@ const dbModule = {
             });
           })
       } else {
-        fetch('http://127.0.0.1:3011/', {
+        fetch('http://127.0.0.1:3012/', {
           method: 'POST',
           body: JSON.stringify({
             sql: sql
@@ -344,7 +344,7 @@ export default class {
           resolve(res)
         })
       } else {
-        fetch('http://127.0.0.1:3011/', {
+        fetch('http://127.0.0.1:3012/', {
           method: 'POST',
           body: JSON.stringify({
             sql: 'create table if not exists ' + table + '(' + listStr.join(',') + ')'
