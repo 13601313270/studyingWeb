@@ -1,5 +1,8 @@
 <template>
   <Page title="文件" root>
+    <template #before>
+      <DegreeSelect />
+    </template>
     <div class="filePage">
       <div class="subjects">
         <div class="scroll" ref="subjectScroll">
@@ -101,6 +104,7 @@ import log from '@/plugin/log';
 import VipPriceDesc from '@/components/vipPriceDesc.vue';
 import Check from '@/components/Check.vue';
 import Page from '@/components/Page.vue'
+import DegreeSelect from '../components/degreeSelect.vue'
 
 // 定义响应式数据
 const subjects = ref<any[]>([])

@@ -164,6 +164,9 @@ export default {
       this.setShowLogin(true)
     }
     window.onClickBack = this.clickBack;
+    window.degreeListDialogShow = () => {
+      this.degreeListDialogShow = true;
+    };
 
     setBuyVipCallback(() => {
       this.showBuySuccess = true;
@@ -243,6 +246,7 @@ export default {
 
     request.get('/studying/degree/list').then((list) => {
       this.degreeList = list;
+      this.setDegreeList(list);
     })
 
     // const minVersion = await this.axios.get('/globleConfig?keys=minVersion');
@@ -265,7 +269,7 @@ export default {
 
   },
   methods: {
-    ...mapActions('main', ['setShowLogin', 'setDegree']),
+    ...mapActions('main', ['setShowLogin', 'setDegree', 'setDegreeList']),
     clickBack() {
       if (this.showImgUrl) {
         // 如果图片再预览状态点击了返回，则先触发图片预览的关闭
@@ -310,7 +314,6 @@ export default {
       this.degreeSelect = id;
       this.setDegree(id)
       this.degreeListDialogShow = false;
-
       localStorage.setItem(degreeSelectCacheKey, id)
     }
   },
@@ -337,10 +340,6 @@ export default {
       // @ts-ignore
       return ['source', 'friend', 'file', 'mall', 'mine'].includes(this.$route.name);
     },
-    selectDegreeInfo() {
-      console.log('this.degreeList', this.degreeList)
-      return this.degreeList.find(v => v.id === this.degreeSelect);
-    }
   },
   components: { icon, Button, Login, ImgPreview, Dialog, BuyVIPDesc }
 }

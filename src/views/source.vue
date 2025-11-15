@@ -1,5 +1,8 @@
 <template>
   <Page title="课程" root>
+    <template #before>
+      <DegreeSelect />
+    </template>
     <div class="source">
       <div class="subjects">
         <div class="subjects_scroll" ref="subjectScroll">
@@ -79,6 +82,7 @@ import Button from '../components/Button.vue'
 import Icon from '../components/icon.vue'
 import log from '@/plugin/log'
 import Page from '../components/Page.vue'
+import DegreeSelect from '../components/degreeSelect.vue'
 
 export default {
   name: 'source',
@@ -183,7 +187,7 @@ export default {
     }
   },
   components: {
-    Switch, Button, Icon, Page
+    Switch, Button, Icon, Page, DegreeSelect
   }
 }
 </script>

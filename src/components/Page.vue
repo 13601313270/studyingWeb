@@ -3,10 +3,7 @@
     <div class="header_web_name">
       <div class="head_root" v-if="root">
         <img class="icon" src="../icons/icons.png" />
-        <!-- <div class="degreeName" v-if="selectDegreeInfo" @click="degreeListDialogShow = true">
-          <span>{{ selectDegreeInfo.name }}</span>
-          <img src="../icons/sanjiao-white.svg" />
-        </div> -->
+        <slot name="before"></slot>
       </div>
       <div v-else class="header_web_name_back" @click="clickBack">
         <img class="header_web_name_back_img" src="../icons/back.png" />
@@ -31,7 +28,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import program from '@/plugin/program';
@@ -56,6 +53,7 @@ onMounted(() => {
     isOffline.value = false;
   })
 })
+const degreeList = computed(() => store.getters['main/degreeList'])
 function clickBack() {
   window.onClickBack()
 }

@@ -28,11 +28,17 @@ export default function (group: string, method: string, param = {}): Promise<any
   } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
     return iosBridge(group, method, param);
   } else {
-    return webBridge();
+    return webBridge(group, method, param);
   }
 }
-function webBridge() {
+function webBridge(group: string, method: string, param = {}) {
   return new Promise((resolve, reject) => {
-    reject();
+    if (group === 'ad' && method === 'openAd') {
+      resolve(null);
+    } else if (group === 'UMeng' && method === 'init') {
+      resolve(null);
+    } else {
+      reject(group + method);
+    }
   })
 }
