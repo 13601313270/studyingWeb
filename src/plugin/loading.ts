@@ -2,6 +2,7 @@ import { createVNode, render } from 'vue'
 import toastTemplate from '../components/MaskLoading.vue'
 export interface IProps {
   background?: string;
+  text?: string;
   color?: string;
 }
 const defaultOpt = { // 创建默认参数

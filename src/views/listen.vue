@@ -1,11 +1,11 @@
 <template>
   <Page title="听力">
-    <div class="header_others">
+    <template #others>
       <div class="logButton" @click="showTimeDialog = true">
         <img src="../icons/log.png" width="48" height="48" />
         <span>连读{{ dayContinuous }}天</span>
       </div>
-    </div>
+    </template>
     <div class="content">
       <div class="cate">
         <div v-for="item in cateList">
@@ -429,29 +429,19 @@ const dayContinuous = computed(() => {
 </script>
 
 <style scoped lang="less">
-.header_others {
-  margin-right: 8px;
-  height: 88px;
-  top: env(safe-area-inset-top);
+.logButton {
+  height: 56px;
+  border: solid 1px white;
+  border-radius: 8px;
   display: flex;
   align-items: center;
-  position: fixed;
-  right: 0;
+  color: white;
+  padding: 4px 8px;
+  font-size: 28px;
 
-  .logButton {
-    height: 56px;
-    border: solid 1px white;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    color: white;
-    padding: 4px 8px;
-    font-size: 28px;
-
-    >img {
-      width: 48px;
-      height: 48px;
-    }
+  >img {
+    width: 48px;
+    height: 48px;
   }
 }
 

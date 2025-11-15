@@ -22,9 +22,7 @@
       </template>
     </div>
     <div class="header_others">
-      <!-- <div v-if="$route.name === 'lessonDetail'" @click="toListenLog">
-        <icon src="log" width="56" height="56" />
-      </div> -->
+      <slot name="others"></slot>
     </div>
   </div>
   <div v-if="isOffline" class="offline" :class="{}">网络连接断开</div>

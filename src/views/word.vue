@@ -4,7 +4,7 @@
       <div v-if="wordTarget" class="target" @click="showTestTransform = !showTestTransform">
         <span>{{ wordTarget.title }}</span>
         <span>{{ wordTarget.target }}</span>
-        <!-- <img src="../assets/sanjiao-white.svg" /> -->
+        <img src="../icons/sanjiao-white.svg" />
       </div>
     </template>
     <!-- wordTarget -->
@@ -276,7 +276,7 @@ async function init() {
 }
 async function changeTestTarget(id: number) {
   const handle = Loading({
-    message: '正在加载单词...'
+    text: '正在加载单词...'
   })
   const allWord: any[] = await request.get('/en/word/initAllType?type=' + id)
   console.log('allWord', allWord)
