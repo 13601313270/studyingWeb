@@ -46,21 +46,19 @@
   </Dialog>
   <div class="split"></div>
   <div class="frindList">
-    <div>
-      <div v-for="item in frindList" class="friendItem">
-        <div class="icon">
-          <img :src="item.icon + '?x-oss-process=image/resize,m_fill,h_200,w_200'" />
-        </div>
-        <div class="info">
-          <div class="name">{{ item.name || item.account }}</div>
-          <div class="city">城市：{{ item.city || '未知' }}</div>
-          <div class="sex">性别：{{ item.sex === 1 ? '女' : '' }}{{ item.sex === 0 ? '男' : '' }}</div>
-          <!-- <div>{{ item.inviteTime }}</div> -->
-          <!-- <div>{{ item.content }}</div> -->
-        </div>
-        <div class="action">
-          <Button @click="toChat(item)" text="发私信"></Button>
-        </div>
+    <div v-for="item in frindList" class="friendItem">
+      <div class="icon">
+        <img :src="item.icon + '?x-oss-process=image/resize,m_fill,h_200,w_200'" />
+      </div>
+      <div class="info">
+        <div class="name">{{ item.name || item.account }}</div>
+        <div class="city">城市：{{ item.city || '未知' }}</div>
+        <div class="sex">性别：{{ item.sex === 1 ? '女' : '' }}{{ item.sex === 0 ? '男' : '' }}</div>
+        <!-- <div>{{ item.inviteTime }}</div> -->
+        <!-- <div>{{ item.content }}</div> -->
+      </div>
+      <div class="action">
+        <Button @click="toChat(item)" text="发私信"></Button>
       </div>
     </div>
   </div>
@@ -192,6 +190,7 @@ function toChat(uid: friendItem) {
 <style scoped lang="less">
 .frindList {
   flex: 1;
+  padding-bottom: 32px;
 
   .title {
     display: flex;

@@ -1,5 +1,5 @@
 <template>
-  <Page>
+  <Page :title="title">
     <div v-if="info" class="content">
       <div v-html="info.content"></div>
     </div>
@@ -12,7 +12,6 @@ import { useRoute } from 'vue-router';
 import request from '../plugin/request'
 import Page from '@/components/Page.vue';
 
-const store = useStore<any>()
 const route = useRoute()
 type Info = {
   id: number,
@@ -20,12 +19,13 @@ type Info = {
   content: string,
 }
 const info = ref<Info>()
+const title = ref<string>('');
 
 onMounted(async () => {
   const { id } = route.params;
   const res = await request.get('/en/grammar/item/' + id) as Info;
   info.value = res;
-  store.dispatch('main/setPath', [{ name: res.title.split('（')[0] }])
+  title.value = res.title.split('（')[0];
 
 })
 </script>

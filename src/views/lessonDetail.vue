@@ -1,8 +1,8 @@
 <template>
-  <div class="content">
+  <Page :title="title">
     <VideoLesson v-if="content" :content="content" @firstPlay="firstPlay" @playStep="playStep" @end="end"
       :actions="[{ text: '去做题', action: gotoQuestion }]" />
-  </div>
+  </Page>
 </template>
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
@@ -13,6 +13,7 @@ import request from '@/plugin/request'
 import { stop } from '../plugin/audio'
 import { Store } from '@/store';
 import Loading from '@/plugin/loading';
+import Page from '@/components/Page.vue';
 
 const router = useRouter()
 const route = useRoute()
@@ -32,12 +33,6 @@ onMounted(() => {
     content.value = data.content;
     title.value = data.title;
     course.value = data.course;
-    request.get('/source/' + course.value + '/info').then((sourceData: any) => {
-      store.dispatch('main/setPath', [
-        { name: sourceData.name, path: '/source/' + course.value },
-        { name: title.value + '课程' },
-      ])
-    });
     loadImg.value = [];
   });
   // this.logAction('lessonDetail');

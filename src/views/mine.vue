@@ -1,5 +1,5 @@
 <template>
-  <div class="mine">
+  <Page title="我的" class="mine" root>
     <div class="user" v-if="store.state.main.userInfo && store.state.main.userInfo.account">
       <div v-if="userInfo2.icon" class="user_icon">
         <pic @click="previewImg(userInfo2.icon.replace('http://', 'https://'))"
@@ -112,7 +112,7 @@
         <VipPriceDesc @buy="showBuyVip = false" @to-invite="showBuyVip = false" />
       </div>
     </Dialog>
-  </div>
+  </Page>
 </template>
 
 <script lang="ts" setup>
@@ -129,6 +129,7 @@ import { showImg } from '../plugin/imagePreview'
 import toScore from '@/plugin/toScore';
 import BuyVIPDesc from './buyVIPDesc.vue';
 import VipPriceDesc from '@/components/vipPriceDesc.vue';
+import Page from '@/components/Page.vue';
 
 const store = useStore<any>()
 const router = useRouter()
@@ -313,8 +314,8 @@ watch(() => store.state.main.userInfo, () => {
 .actions {
   background: white;
   width: 100%;
-  margin: 10px;
   border-radius: 16px;
+  box-sizing: border-box;
 
   .actionItem {
     height: 88px;

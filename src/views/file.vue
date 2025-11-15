@@ -1,49 +1,51 @@
 <template>
-  <div class="filePage">
-    <div class="subjects">
-      <div class="scroll" ref="subjectScroll">
-        <text ref="start" key="start"></text>
-        <div class="subjectScroll">
-          <div :key="subject.id" v-for="subject in subjects" @click="changeSubject(subject.id)" class="subjects_item"
-            :class="{ active: selectSub === subject.id }">
-            <div :key="subject.id">{{ subject.name }}</div>
+  <Page title="文件" root>
+    <div class="filePage">
+      <div class="subjects">
+        <div class="scroll" ref="subjectScroll">
+          <text ref="start" key="start"></text>
+          <div class="subjectScroll">
+            <div :key="subject.id" v-for="subject in subjects" @click="changeSubject(subject.id)" class="subjects_item"
+              :class="{ active: selectSub === subject.id }">
+              <div :key="subject.id">{{ subject.name }}</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="fileContent">
-      <div class="sourceList">
-        <div v-for="source in sourceList" :key="source.key" class="sourceItem"
-          :class="[+selectCourse === source.id ? 'select' : '']" @click="changeSource(source)">
-          <!--<img :src="source.img" width="30"/>-->
-          <text>{{ source.name }}</text>
+      <div class="fileContent">
+        <div class="sourceList">
+          <div v-for="source in sourceList" :key="source.key" class="sourceItem"
+            :class="[+selectCourse === source.id ? 'select' : '']" @click="changeSource(source)">
+            <!--<img :src="source.img" width="30"/>-->
+            <text>{{ source.name }}</text>
+          </div>
         </div>
-      </div>
-      <div class="fileListContent">
-        <div class="head" v-if="fileCount > 0" style="display: none;">
-          <div>共{{ fileCount }}个资料文件</div>
-          <Button @click="printAll">全部打印</Button>
-        </div>
-        <div class="fileList">
-          <div v-if="loading" class="loading">加载中...</div>
-          <div v-else-if="!loading && fileList.length === 0" class="loading">该分类下暂无资料</div>
-          <div v-for="file in fileList" class="fileItem" :key="file.id">
-            <div class="name">{{ file.title }}</div>
-            <div class="buttons">
-              <Button @click="printFile([file])" style="display: none;">云打印</Button>
-              <Button @click="share(file)" icon="share">分享</Button>
-              <Button v-if="isFileDownloaded(file.file)" text="打开"
-                @click="open(downLoadFile[file.file.split('/').slice(-1)[0]])">
-              </Button>
-              <Button :text="downLoading[file.file] ? '下载中' : (isFileDownloaded(file.file) ? '重新下载' : '下载')"
-                :disabled="downLoading[file.file]" @click="download(file)">
-              </Button>
+        <div class="fileListContent">
+          <div class="head" v-if="fileCount > 0" style="display: none;">
+            <div>共{{ fileCount }}个资料文件</div>
+            <Button @click="printAll">全部打印</Button>
+          </div>
+          <div class="fileList">
+            <div v-if="loading" class="loading">加载中...</div>
+            <div v-else-if="!loading && fileList.length === 0" class="loading">该分类下暂无资料</div>
+            <div v-for="file in fileList" class="fileItem" :key="file.id">
+              <div class="name">{{ file.title }}</div>
+              <div class="buttons">
+                <Button @click="printFile([file])" style="display: none;">云打印</Button>
+                <Button @click="share(file)" icon="share">分享</Button>
+                <Button v-if="isFileDownloaded(file.file)" text="打开"
+                  @click="open(downLoadFile[file.file.split('/').slice(-1)[0]])">
+                </Button>
+                <Button :text="downLoading[file.file] ? '下载中' : (isFileDownloaded(file.file) ? '重新下载' : '下载')"
+                  :disabled="downLoading[file.file]" @click="download(file)">
+                </Button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </Page>
   <Dialog :show="showConinueUrl !== '' || showConinueOpenPath !== ''" title="提示"
     @close="showConinueUrl = '', showConinueOpenPath = ''">
     <div class="chooseUseType">
@@ -98,6 +100,7 @@ import toast from '@/plugin/toast';
 import log from '@/plugin/log';
 import VipPriceDesc from '@/components/vipPriceDesc.vue';
 import Check from '@/components/Check.vue';
+import Page from '@/components/Page.vue'
 
 // 定义响应式数据
 const subjects = ref<any[]>([])

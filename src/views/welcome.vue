@@ -1,47 +1,42 @@
 <template>
-  <div>
+  <Page title="欢迎">
     <div class="welcome">
       <icon src="icon_green" class="icon" />
       <div class="title">松鼠学</div>
       <div class="slogan">学习面前，人人平等</div>
       <Button class="toAppButton" text="开启新版本" @click="toApp" primary></Button>
     </div>
-  </div>
+  </Page>
 </template>
 
-<script>
+<script lang="ts" setup>
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import Page from '@/components/Page.vue';
 import Button from '../components/Button.vue'
 import Icon from '@/components/icon.vue'
 import isMobileDevice from '@/plugin/isMobileDevice';
 
-export default {
-  name: 'mine',
-  data() {
-    return {
-      info: {
-        title: '',
-        content: ''
-      },
-      secret: '',
-      versionUrl: '',
-      showBindDevelopPhone: 0,
-      codeInfo: null,
-      preList: [],
-    }
-  },
-  created() {
-    if (localStorage.getItem('welcomeBegin') || !isMobileDevice()) {
-      this.toApp()
-    }
-  },
-  methods: {
-    toApp() {
-      window.initFinish()
-      localStorage.setItem('welcomeBegin', 'true')
-      this.$router.replace('/source')
-    }
-  },
-  components: { Button, Icon },
+const info = ref({
+  title: '',
+  content: ''
+})
+const secret = ref('');
+const versionUrl = ref('');
+const showBindDevelopPhone = ref(0);
+const codeInfo = ref(null);
+const preList = ref([]);
+const $router = useRouter();
+onMounted(() => {
+  if (localStorage.getItem('welcomeBegin') || !isMobileDevice()) {
+    toApp()
+  }
+})
+function toApp() {
+  // @ts-ignore
+  window.initFinish()
+  localStorage.setItem('welcomeBegin', 'true')
+  $router.replace('/source')
 }
 </script>
 

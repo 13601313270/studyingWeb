@@ -9,6 +9,7 @@ const defaultOpt = { // 创建默认参数
 
 export interface ResultParams {
   destory: () => void;
+  setText: (text: string) => void;
 }
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const Loading = (options?: IProps): ResultParams => {
@@ -27,8 +28,17 @@ const Loading = (options?: IProps): ResultParams => {
       clearTimeout(t)
     }, 300);
   }
+  const setText = (text: string) => {
+    if (container.getElementsByClassName('message')) {
+      const message = container.getElementsByClassName('message')[0] as HTMLElement
+      if (message) {
+        message.innerHTML = text
+      }
+    }
+  }
   return {
-    destory
+    destory,
+    setText
   }
 }
 export default Loading

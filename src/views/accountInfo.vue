@@ -1,22 +1,24 @@
 <template>
-  <div style="display: flex;flex-direction: column;">
-    <div v-if="userInfo2">
-      <div class="header">
-        <pic v-if="userInfo2.icon" class="icon" @click="showImgDetail(userInfo2.icon.replace('http://', 'https://'))"
-          :src="userInfo2.icon.replace('http://', 'https://') + '?x-oss-process=image/resize,m_fill,h_160,w_160'"
-          :width="80" />
-        <text class="name">账号:</text>
-        <text class="header_value">{{ userInfo2.account }}</text>
-        <!--                <text class="name">金币:</text>-->
-        <!--                <text class="header_value">{{userInfo2.coin}}</text>-->
-        <!--                <text class="tips">学习圈获取:1:每日5题，2:问答发表优质回答</text>-->
+  <Page title="账号信息" style="">
+    <div style="display: flex;flex-direction: column;height: 100%;">
+      <div v-if="userInfo2">
+        <div class="header">
+          <pic v-if="userInfo2.icon" class="icon" @click="showImgDetail(userInfo2.icon.replace('http://', 'https://'))"
+            :src="userInfo2.icon.replace('http://', 'https://') + '?x-oss-process=image/resize,m_fill,h_160,w_160'"
+            :width="80" />
+          <text class="name">账号:</text>
+          <text class="header_value">{{ userInfo2.account }}</text>
+          <!--                <text class="name">金币:</text>-->
+          <!--                <text class="header_value">{{userInfo2.coin}}</text>-->
+          <!--                <text class="tips">学习圈获取:1:每日5题，2:问答发表优质回答</text>-->
+        </div>
       </div>
-    </div>
-    <div class="moreAction">
-      <Button text="注销账号" error @click="showDelete = true"></Button>
-      <div style="flex-grow: 1;"></div>
-      <Button @click="gotoDevelop" v-if="userInfo2 && ['12345678', '13601313270'].includes(userInfo2.account)"
-        :text="'开发(测试账号' + userInfo2.account + '特有功能)'"></Button>
+      <div class="moreAction">
+        <Button text="注销账号" error @click="showDelete = true"></Button>
+        <div style="flex-grow: 1;"></div>
+        <Button @click="gotoDevelop" v-if="userInfo2 && ['12345678', '13601313270'].includes(userInfo2.account)"
+          :text="'开发(测试账号' + userInfo2.account + '特有功能)'"></Button>
+      </div>
     </div>
     <Dialog :show="showDelete" title="是否确定注销账户" @close="showDelete = false">
       <div style="margin-bottom: 20px;overflow: auto;">
@@ -29,7 +31,7 @@
         <Button text="确定" style="width: 40%" error @click="deleteAccount"></Button>
       </div>
     </Dialog>
-  </div>
+  </Page>
 </template>
 
 <script setup lang="ts">
@@ -46,6 +48,7 @@ import Message from '../components/Message.vue';
 import Camera from '@/components/Camera.vue';
 import Icon from '@/components/icon.vue';
 import Dialog from '@/components/Dialog.vue';
+import Page from '@/components/Page.vue';
 
 // Vuex store and router
 const store = useStore();

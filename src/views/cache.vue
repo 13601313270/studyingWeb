@@ -1,16 +1,18 @@
 <template>
-  <div class="content">
-    <div class="title">缓存内容包括：</div>
-    <div class="cacheList">
-      <div v-if="DBList.length === 0" style="color: #aaa">
-        暂无可以删除的缓存内容难过
+  <Page title="缓存设置">
+    <div class="content">
+      <div class="title">缓存内容包括：</div>
+      <div class="cacheList">
+        <div v-if="DBList.length === 0" style="color: #aaa">
+          暂无可以删除的缓存内容难过
+        </div>
+        <div v-for="(text, index) in cacheListText">
+          {{ index + 1 }}、{{ text }}
+        </div>
       </div>
-      <div v-for="(text, index) in cacheListText">
-        {{ index + 1 }}、{{ text }}
-      </div>
+      <Button text="清空本地缓存" error @click="showDelete = true"></Button>
     </div>
-    <Button text="清空本地缓存" error @click="showDelete = true"></Button>
-  </div>
+  </Page>
   <Dialog :show="showDelete" title="是否确定清除本地缓存" @close="showDelete = false">
     <div style="margin-bottom: 20px;overflow: auto;">
 
@@ -27,6 +29,7 @@ import toast from '../plugin/toast'
 import request from '../plugin/request'
 import Button from '../components/Button.vue'
 import Dialog from '@/components/Dialog.vue';
+import Page from '@/components/Page.vue';
 
 const tableNameMap = {
   option: '单词创建记录',
@@ -59,7 +62,7 @@ export default {
           this.DBList = res.data.map(v => v.name);
         }, () => {
         });
-      } else {
+      } else if (typeof openDatabase === 'function') {
         var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
         var totalSize = 0;
         // 执行SQL查询语句
@@ -99,7 +102,7 @@ export default {
           this.showDelete = false
           this.init();
         }, 500);
-      } else {
+      } else if (typeof openDatabase === 'function') {
         var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
         var totalSize = 0;
         // 执行SQL查询语句
@@ -133,7 +136,7 @@ export default {
       return returnTextList;
     }
   },
-  components: { Button, Dialog },
+  components: { Button, Dialog, Page },
 }
 </script>
 

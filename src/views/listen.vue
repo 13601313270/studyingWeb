@@ -1,83 +1,85 @@
 <template>
-  <div class="header_others">
-    <div class="logButton" @click="showTimeDialog = true">
-      <Icon src="log" width="48" height="48" />
-      <span>连读{{ dayContinuous }}天</span>
-    </div>
-  </div>
-  <div class="content">
-    <div class="cate">
-      <div v-for="item in cateList">
-        <div class="cateItem" @click="init(item.id)" :class="{ active: item.id === cateActive }">{{ item.name }}
-        </div>
+  <Page title="听力">
+    <div class="header_others">
+      <div class="logButton" @click="showTimeDialog = true">
+        <img src="../icons/log.png" width="48" height="48" />
+        <span>连读{{ dayContinuous }}天</span>
       </div>
     </div>
-    <div ref="allDaysList" class="allDaysList">
-      <div>
-        <Button v-if="cateActive" class="changeButton" text="换一组" @click="init(cateActive)"></Button>
-      </div>
-      <Dialog :show="showTimeDialog" title="听力时长记录" @close="showTimeDialog = false">
-        <Calendar :chooseList="chooseList" />
-        <div class="splitLine"></div>
-        <div class="setHourTitle">设置每日提醒时间</div>
-        <div class="setHourContent">
-          <Switch :value="listenHourIsOpen" @input="SwitchListennotification" />
-          <Button class="hourText" v-if="listenHourIsOpen" @click="daySelectShow = true" :text="listenHour === null ? '未设置' :
-            HourToStr(listenHour)"></Button>
-          <Select :show="daySelectShow" title="选择提醒时间" @close="daySelectShow = false" :list="dayHourList"
-            @select="Listennotification">
-          </Select>
+    <div class="content">
+      <div class="cate">
+        <div v-for="item in cateList">
+          <div class="cateItem" @click="init(item.id)" :class="{ active: item.id === cateActive }">{{ item.name }}
+          </div>
         </div>
-      </Dialog>
-      <div class="list" @scroll="scroll" ref="scrollDom">
-        <div v-for="(item, index) in list" class="item"
-          :class="{ active: activeListen && activeListen.id === item.id }">
-          <div class="info">
-            <div>{{ item.title }}</div>
-            <div style="display: flex;flex-direction: row;align-items: center;">
-              <div v-if="item.difficult">难度：{{ item.difficult }}</div>
-              <span v-if="item.isReaded" class="listFinish">已完成</span>
+      </div>
+      <div ref="allDaysList" class="allDaysList">
+        <div>
+          <Button v-if="cateActive" class="changeButton" text="换一组" @click="init(cateActive)"></Button>
+        </div>
+        <Dialog :show="showTimeDialog" title="听力时长记录" @close="showTimeDialog = false">
+          <Calendar :chooseList="chooseList" />
+          <div class="splitLine"></div>
+          <div class="setHourTitle">设置每日提醒时间</div>
+          <div class="setHourContent">
+            <Switch :value="listenHourIsOpen" @input="SwitchListennotification" />
+            <Button class="hourText" v-if="listenHourIsOpen" @click="daySelectShow = true" :text="listenHour === null ? '未设置' :
+              HourToStr(listenHour)"></Button>
+            <Select :show="daySelectShow" title="选择提醒时间" @close="daySelectShow = false" :list="dayHourList"
+              @select="Listennotification">
+            </Select>
+          </div>
+        </Dialog>
+        <div class="list" @scroll="scroll" ref="scrollDom">
+          <div v-for="(item, index) in list" class="item"
+            :class="{ active: activeListen && activeListen.id === item.id }">
+            <div class="info">
+              <div>{{ item.title }}</div>
+              <div style="display: flex;flex-direction: row;align-items: center;">
+                <div v-if="item.difficult">难度：{{ item.difficult }}</div>
+                <span v-if="item.isReaded" class="listFinish">已完成</span>
+              </div>
+            </div>
+            <div :class="activeListen && activeListen.id === item.id ? 'stop' : 'play'"
+              @click="activeListen && activeListen.id === item.id ? stopVue() : playItem(item, index)">
+              <Icon :src="activeListen && activeListen.id === item.id ? 'stop' : 'play'" width="42" />
             </div>
           </div>
-          <div :class="activeListen && activeListen.id === item.id ? 'stop' : 'play'"
-            @click="activeListen && activeListen.id === item.id ? stopVue() : playItem(item, index)">
-            <Icon :src="activeListen && activeListen.id === item.id ? 'stop' : 'play'" width="42" />
+        </div>
+      </div>
+      <div v-if="activeListen" class="activeListen">
+        <div class="activeBack" @click="stopVue()"></div>
+        <div class="inner">
+          <div class="activeListenContent">
+            <div>听力正文</div>
+            <div v-for="item in activeListen.file.content">
+              <span class="user">{{ item.voice.charAt(0).toUpperCase() + item.voice.slice(1) }}</span>: {{
+                item.importArticle
+              }}
+            </div>
+            <br />
+            <div v-if="activeListen.content">题目：</div>
+            <div v-html="activeListen.content?.replaceAll('\n', '<br/>')"></div>
+          </div>
+          <div class="tools">
+            <div class="button" :class="{ finish: activeListenIsRecord }"
+              @click="activeListenIsRecord ? notFinish() : finish()">
+              {{ activeListenIsRecord ? '已完成' : '完成' }}
+            </div>
+            <div class="button" @click="replay">
+              <Icon src="recycle_white"></Icon>
+            </div>
+            <div class="button" @click="activeIsPlay ? parse() : playItem(activeListen, activeListenIndex)">
+              <Icon :src="activeIsPlay ? 'stop' : 'play'" />
+            </div>
+            <div class="button" @click="next">
+              <Icon src="next_white" />
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div v-if="activeListen" class="activeListen">
-      <div class="activeBack" @click="stopVue()"></div>
-      <div class="inner">
-        <div class="activeListenContent">
-          <div>听力正文</div>
-          <div v-for="item in activeListen.file.content">
-            <span class="user">{{ item.voice.charAt(0).toUpperCase() + item.voice.slice(1) }}</span>: {{
-              item.importArticle
-            }}
-          </div>
-          <br />
-          <div v-if="activeListen.content">题目：</div>
-          <div v-html="activeListen.content?.replaceAll('\n', '<br/>')"></div>
-        </div>
-        <div class="tools">
-          <div class="button" :class="{ finish: activeListenIsRecord }"
-            @click="activeListenIsRecord ? notFinish() : finish()">
-            {{ activeListenIsRecord ? '已完成' : '完成' }}
-          </div>
-          <div class="button" @click="replay">
-            <Icon src="recycle_white"></Icon>
-          </div>
-          <div class="button" @click="activeIsPlay ? parse() : playItem(activeListen, activeListenIndex)">
-            <Icon :src="activeIsPlay ? 'stop' : 'play'" />
-          </div>
-          <div class="button" @click="next">
-            <Icon src="next_white" />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  </Page>
 </template>
 
 <script lang="ts" setup>
@@ -94,6 +96,7 @@ import Calendar from '../components/Calendar/index.vue'
 import Dialog from '@/components/Dialog.vue'
 import Switch from '@/components/switch.vue'
 import Select from '@/components/Select.vue'
+import Page from '@/components/Page.vue'
 
 function getTimeStr(sleep = 0) {
   let time = new Date()
@@ -444,6 +447,11 @@ const dayContinuous = computed(() => {
     color: white;
     padding: 4px 8px;
     font-size: 28px;
+
+    >img {
+      width: 48px;
+      height: 48px;
+    }
   }
 }
 
