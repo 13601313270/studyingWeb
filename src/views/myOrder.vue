@@ -73,7 +73,9 @@
         <div class="dialog-content" @click.stop>
           <div class="dialog-header">
             <h2>订单详情</h2>
-            <button class="close-btn" @click="showDetail = false">×</button>
+            <div class="close-btn">
+              <img src="../icons/close.png" alt="关闭" @click="showDetail = false"></img>
+            </div>
           </div>
           <div class="dialog-body" v-if="selectedOrder">
             <div class="detail-section">
@@ -151,7 +153,7 @@ interface OrderItem {
 const orderList = ref<OrderItem[]>([])
 const loading = ref<boolean>(true)
 const showDetail = ref<boolean>(false)
-type stateType = 'order_unpaid' | 'order_paid' | 'order_making' | 'order_shipped' | 'order_completed' | 'order_refund' | 'order_partial_refund';
+type stateType = 0 | 1 | -1;
 const selectedOrder = ref<OrderItem & {
   order_status: stateType
   description: string;
@@ -201,19 +203,15 @@ const loadOrders = async () => {
 // 获取订单状态文本
 const getOrderStatusText = (status: stateType) => {
   const statusMap: Record<stateType, string> = {
-    order_unpaid: '待支付',
-    order_paid: '已支付',
-    order_making: '订单制作中',
-    order_shipped: '已发货',
-    order_completed: '订单确认收货(已完成)',
-    order_refund: '订单已退款',
-    order_partial_refund: '订单部分退款',
+    0: '订单制作中',
+    1: '已发货',
+    [-1]: '已取消',
   }
   return statusMap[status] || '未知状态'
 }
 
 // 获取订单状态样式类
-const getStatusClass = (status: string) => {
+const getStatusClass = (status: stateType) => {
   return `status-${status}`
 }
 
@@ -227,6 +225,7 @@ const viewOrderDetail = async (order: OrderItem) => {
     showDetail.value = true;
     selectedOrder.value = {
       ...order,
+      order_status: res.data.status,
       ...res.data
     };
   }
@@ -507,24 +506,27 @@ onMounted(() => {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 32px;
+        padding: 12px;
+        padding-left: 24px;
         border-bottom: 1px solid #eee;
 
         h2 {
           margin: 0;
-          font-size: 24px;
+          font-size: 36px;
           font-weight: bold;
         }
 
         .close-btn {
-          background: none;
-          border: none;
-          font-size: 48px;
+          width: 88px;
+          height: 88px;
           cursor: pointer;
-          color: #999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
 
-          &:hover {
-            color: #333;
+          >img {
+            width: 50px;
+            height: 50px;
           }
         }
       }

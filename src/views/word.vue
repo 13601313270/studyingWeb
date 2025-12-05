@@ -24,14 +24,14 @@
         <!-- <div class="word1">单词序：{{ word.numIndex }}</div> -->
         <div class="word2">{{ word.word }}</div>
         <div class="yinbiao">
-          <div>
+          <div class="item">
             <div v-if="info.ph_en" @click="play(info.ph_en_mp3)">英：{{ info.ph_en }}</div>
             <div class="icon" v-if="info.en_mp3" @click="play(info.en_mp3)">
               <img src="../icons/play.png" />
             </div>
           </div>
           <div class="split"></div>
-          <div>
+          <div class="item">
             <div v-if="info.ph_am" @click="play(info.ph_am_mp3)">美：{{ info.ph_am }}</div>
             <div class="icon" v-if="info.am_mp3" @click="play(info.am_mp3)">
               <img src="../icons/play.png" />
@@ -817,16 +817,18 @@ const UserInterfaceStyle = null;
   font-size: 35px;
   color: white;
 
-  .icon {
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .item {
+    .icon {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-    >img {
-      width: 36px;
-      height: 36px;
+      >img {
+        width: 36px;
+        height: 36px;
+      }
     }
   }
 

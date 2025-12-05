@@ -34,7 +34,7 @@
             <div v-for="file in fileList" class="fileItem" :key="file.id">
               <div class="name">{{ file.title }}</div>
               <div class="buttons">
-                <Button @click="printFile([file])" style="display: none;">云打印</Button>
+                <Button @click="printFile([file])">云打印</Button>
                 <Button @click="share(file)" icon="share">分享</Button>
                 <Button v-if="isFileDownloaded(file.file)" text="打开"
                   @click="open(downLoadFile[file.file.split('/').slice(-1)[0]])">
@@ -333,23 +333,9 @@ const printSent = () => {
   request.post('/studying/print/file', {
     files: waitPrintFileList.value,
     address: chooseAddress.value,
-  }).then((res: any) => {
-
-
-    console.log('=======hhhhh=========', res)
-    if (res.code === 200) {
-      // 支付
-      request.put('/studying/print/pay/' + res.data).then((sss: any) => {
-        console.log(sss);
-      })
-      toast({
-        'message': '打印成功',
-        'duration': 3000
-      })
-    }
   }).catch(err => {
     toast({
-      'message': '打印失败',
+      'message': '打印失败:' + err.message,
       'duration': 3000
     })
   })

@@ -1,6 +1,7 @@
 <template>
   <div v-if="selectDegreeInfo" class="degreeSelect" @click="showDegreeSelect">
     {{ selectDegreeInfo.name }}
+    <!-- <img src="../icons/sanjiao-white.svg" /> -->
   </div>
 </template>
 <script setup lang="ts">
@@ -17,3 +18,16 @@ const selectDegreeInfo = computed(() => {
   return degreeList.value.find((v: any) => v.id === degree.value);
 })
 </script>
+<style lang="less" scoped>
+.degreeSelect {
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+
+  img {
+    width: 12px;
+    height: 12px;
+    margin-left: 8px;
+  }
+}
+</style>
