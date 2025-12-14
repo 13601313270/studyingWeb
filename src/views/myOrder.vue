@@ -81,19 +81,36 @@
             <div class="detail-section">
               <h3>订单信息</h3>
               <div class="detail-row">
-                <span>订单号：</span>
+                <span class="title">订单号：</span>
                 <span>{{ selectedOrder.orderId }}</span>
               </div>
               <div class="detail-row">
-                <span>下单时间：</span>
+                <span class="title">下单时间：</span>
                 <span>{{ selectedOrder.ctime }}</span>
               </div>
               <div class="detail-row">
-                <span>订单状态：</span>
+                <span class="title">订单状态：</span>
                 <span :class="getStatusClass(selectedOrder.order_status)">
                   {{ getOrderStatusText(selectedOrder.order_status) }}
                 </span>
               </div>
+              <div class="detail-row" v-if="selectedOrder.courierCompany">
+                <div class="title">快递公司：</div>
+                <div>{{ selectedOrder.courierCompany }}</div>
+              </div>
+              <div v-if="selectedOrder.logistics" class="detail-row">
+                <div class="title">物流信息</div>
+                <div v-if="selectedOrder.logistics.code === 400">{{ selectedOrder.logistics.msg }}</div>
+                <div v-else-if="selectedOrder.logistics.code === 200">
+                  <div v-if="selectedOrder.logistics.data" class="logisticContent">
+                    <div v-for="value in selectedOrder.logistics.data.list" class="item">
+                      <div>{{ value.time }}</div>
+                      <div>{{ value.status }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- <div>{{ selectedOrder.logistics }}</div> -->
             </div>
 
             <div class="detail-section">
@@ -158,6 +175,19 @@ const selectedOrder = ref<OrderItem & {
   order_status: stateType
   description: string;
   out_order_no: string;
+  // 快递信息
+  courierCompany?: string;
+  deliveryTime?: string;
+  logistics?: {
+    code: 400 | 200,
+    msg: string,
+    data?: {
+      list: Array<{
+        time: string,
+        status: string
+      }>
+    },
+  }
 } | null>(null)
 const currentTab = ref<string>('all')
 
@@ -226,6 +256,7 @@ const viewOrderDetail = async (order: OrderItem) => {
     selectedOrder.value = {
       ...order,
       order_status: res.data.status,
+      logistics: res.logistics,
       ...res.data
     };
   }
@@ -550,6 +581,11 @@ onMounted(() => {
             padding: 12px 0;
             font-size: 28px;
 
+            .title {
+              width: 160px;
+              flex-shrink: 0;
+            }
+
             &.total {
               border-top: 1px solid #eee;
               margin-top: 24px;
@@ -560,6 +596,17 @@ onMounted(() => {
                 font-size: 32px;
                 color: #ff6b35;
               }
+            }
+          }
+
+          .logisticContent {
+            .item {
+              color: rgb(82, 82, 82);
+              background-color: #f5f5f5;
+              padding: 8px;
+              box-sizing: border-box;
+              border-radius: 8px;
+              margin-bottom: 8px;
             }
           }
 
