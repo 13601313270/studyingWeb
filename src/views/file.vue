@@ -91,7 +91,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import request from '@/plugin/request'
 import Button from '@/components/Button.vue'
@@ -284,9 +284,12 @@ const share = (file: any) => {
 
 // 生命周期钩子
 onMounted(async () => {
+  init();
+})
+async function init() {
   loading.value = true;
   try {
-    subjects.value = await request.get('/subjectV3?degree=1');
+    subjects.value = await request.get('/subjectV3?degree=' + degree.value);
     const selectSubStorage = await localStorage.getItem('sourceFileChoose')
     selectSub.value = selectSubStorage ? +selectSubStorage : subjects.value[0]?.id || -1;
     refresh();
@@ -294,7 +297,7 @@ onMounted(async () => {
     console.error(error);
     loading.value = false;
   }
-})
+}
 
 const showPrintAllDialog = ref<boolean>(false)
 const waitPrintFileList = ref<any[]>([])
@@ -330,6 +333,13 @@ const printFile = (files: string[]) => {
   showPrintAllDialog.value = true;
 }
 const printSent = () => {
+  if (!chooseAddress.value) {
+    toast({
+      'message': '请选择地址',
+      'duration': 3000
+    })
+    return;
+  }
   request.post('/studying/print/file', {
     files: waitPrintFileList.value,
     address: chooseAddress.value,
@@ -340,6 +350,10 @@ const printSent = () => {
     })
   })
 }
+watch(() => degree.value, async (newDegree) => {
+  localStorage.removeItem('sourceFileChoose')
+  init();
+}, { immediate: false })
 </script>
 
 <style lang="less" scoped>

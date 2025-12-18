@@ -98,18 +98,6 @@
                 <div class="title">快递公司：</div>
                 <div>{{ selectedOrder.courierCompany }}</div>
               </div>
-              <div v-if="selectedOrder.logistics" class="detail-row">
-                <div class="title">物流信息</div>
-                <div v-if="selectedOrder.logistics.code === 400">{{ selectedOrder.logistics.msg }}</div>
-                <div v-else-if="selectedOrder.logistics.code === 200">
-                  <div v-if="selectedOrder.logistics.data" class="logisticContent">
-                    <div v-for="value in selectedOrder.logistics.data.list" class="item">
-                      <div>{{ value.time }}</div>
-                      <div>{{ value.status }}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
               <!-- <div>{{ selectedOrder.logistics }}</div> -->
             </div>
 
@@ -141,6 +129,20 @@
                 <span>实付款：</span>
                 <span class="amount">¥{{ selectedOrder.price }}</span>
               </div> -->
+            </div>
+            <div class="detail-section" v-if="selectedOrder.logistics">
+              <h3>物流信息</h3>
+              <div class="detail-row">
+                <div v-if="selectedOrder.logistics.code === 400">{{ selectedOrder.logistics.msg }}</div>
+                <div v-else-if="selectedOrder.logistics.code === 200">
+                  <div v-if="selectedOrder.logistics.data" class="logisticContent">
+                    <div v-for="value in selectedOrder.logistics.data.list" class="item">
+                      <div>{{ value.time }}</div>
+                      <div>{{ value.status }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
