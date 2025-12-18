@@ -10,10 +10,6 @@
         <text class="name">学员：</text>
         <text class="name">{{ userInfo2.account }}</text>
       </div>
-      <!--            <div class="coin" v-if="userInfo2">-->
-      <!--                <text class="coin_text">金币</text>-->
-      <!--                <text class="coin_text">{{userInfo2.coin}}</text>-->
-      <!--            </div>-->
       <div class="payed" :style="{ opacity: showIsPayed ? '1' : '0', transform: showIsPayed ? '' : 'scale(1.3)' }">
         <img src="../icons/isPayed.png" />
         <span>VIP</span>
@@ -130,12 +126,10 @@ import toScore from '@/plugin/toScore';
 import BuyVIPDesc from './buyVIPDesc.vue';
 import VipPriceDesc from '@/components/vipPriceDesc.vue';
 import Page from '@/components/Page.vue';
+import Loading from '@/plugin/loading'
 
 const store = useStore<any>()
 const router = useRouter()
-// var modal = weex.requireModule('modal');
-// const localStorage = weex.requireModule('storage');
-// const clipboard = weex.requireModule('clipboard');
 
 const userInfo2 = ref<any>({})
 const isiOS = navigator.userAgent.includes('iPhone');
@@ -147,7 +141,9 @@ const showBuyVip = ref<boolean>(false)
 
 onMounted(() => {
   if (store.state.main.userInfo && store.state.main.userInfo.account) {
+    const loading = Loading();
     request.get('/user/getInfo').then(res => {
+      loading.destory()
       userInfo2.value = res;
       setTimeout(() => {
         showIsPayed.value = userInfo2.value && userInfo2.value.isVip;
@@ -195,17 +191,17 @@ function testNotification() {
 }
 
 watch(() => store.state.main.userInfo, () => {
-  console.log('=====1=====')
   if (store.state.main.userInfo && store.state.main.userInfo.account) {
-    console.log('=====2=====')
+    const loading = Loading();
     request.get('/user/getInfo').then(res => {
-      console.log('=====3=====')
+      loading.destory()
       userInfo2.value = res;
       // 动画是等页面滑动结束后，再展开因为滑动过程这个position: fixed的图标，会造成计算位置错误
       setTimeout(() => {
-        console.log('=====4=====')
         showIsPayed.value = userInfo2.value && userInfo2.value.isVip;
       }, 200)
+    }).catch(() => {
+      loading.destory()
     });
   }
 })
