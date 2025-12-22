@@ -11,9 +11,7 @@ export function setBuyVipCallback(callback: () => void) {
   buySuccessCallback = callback;
 }
 export function buyVip(product: 'studyingMonthVIP' | 'studyingYearVIP'): Promise<void> {
-  console.log('=====b=====')
   return new Promise((resolve, reject) => {
-    console.log('=====c=====')
     function bridgeSuccess() {
       request.put('/user/buyVipV2', {
         product
@@ -27,10 +25,6 @@ export function buyVip(product: 'studyingMonthVIP' | 'studyingYearVIP'): Promise
       })
     }
     const handle = Loading();
-    console.log('=====0=====')
-    // setTimeout(() => {
-    //   handle.destory()// 如果用户没有走完购买程序，取消了，那么得能销毁。估计3秒，可以唤醒系统支付
-    // }, 3000)
     // @ts-ignore
     if (window.Bridge) {
       bridge('pay', 'alipay', { product }).then((res) => {

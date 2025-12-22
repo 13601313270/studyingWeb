@@ -37,7 +37,14 @@ function webBridge(group: string, method: string, param = {}) {
       resolve(null);
     } else if (group === 'UMeng' && method === 'init') {
       resolve(null);
+    } else if (group === 'pay' && method === 'alipay') {
+      setTimeout(() => {
+        resolve({
+          result: true,
+        })
+      }, 5500);
     } else {
+      console.log(group + method + ' no bridge');
       reject(group + method);
     }
   })

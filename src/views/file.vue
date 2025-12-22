@@ -24,9 +24,9 @@
           </div>
         </div>
         <div class="fileListContent">
-          <div class="head" v-if="fileCount > 0" style="display: none;">
+          <div class="head" v-if="fileCount > 0">
             <div>共{{ fileCount }}个资料文件</div>
-            <Button @click="printAll">全部打印</Button>
+            <Button @click="printAll">云打印</Button>
           </div>
           <div class="fileList">
             <div v-if="loading" class="loading">加载中...</div>
@@ -34,7 +34,7 @@
             <div v-for="file in fileList" class="fileItem" :key="file.id">
               <div class="name">{{ file.title }}</div>
               <div class="buttons">
-                <Button @click="printFile([file])">云打印</Button>
+                <!-- <Button @click="printFile([file])">云打印</Button> -->
                 <Button @click="share(file)" icon="share">分享</Button>
                 <Button v-if="isFileDownloaded(file.file)" text="打开"
                   @click="open(downLoadFile[file.file.split('/').slice(-1)[0]])">
@@ -66,10 +66,18 @@
   <Dialog :show="showPrintAllDialog" title="提示" @close="showPrintAllDialog = false">
     <div class="printDialog">
       <div class="title">
-        是否确认打印{{ fileList.length === waitPrintFileList.length ? '全部' : '' }}{{ waitPrintFileList.length }}个资料文件？
+        是否确认打印{{ fileList.length === waitPrintFileList.length ? '全部' : '' }}<span class="num">{{
+          waitPrintFileList.length
+          }}</span>个资料文件？
       </div>
       <div class="list">
-        <div v-for="file in waitPrintFileList" :key="file.id" class="listItem">{{ file.title }}</div>
+        <div v-for="file in waitPrintFileList" :key="file.id" class="listItem">
+          <div class="pageCountItem">{{ file.pageCount }}页</div>
+          <div style="flex-grow: 1;">{{ file.title }}</div>
+          <div class="close" @click="removePrintFile(file.id)">
+            <img src="../icons/close.png" />
+          </div>
+        </div>
       </div>
       <div class="addressTitle">请选择打印地址：{{ chooseAddress }}</div>
       <div class="addressList">
@@ -83,8 +91,18 @@
           </div>
         </div>
       </div>
+      <div class="pageCount">
+        <div>
+          共<span class="num">{{waitPrintFileList.reduce((total, file) => total + file.pageCount, 0)}}</span>页纸张
+        </div>
+        <div class="priceDesc">
+          打印费<span class="num">{{ printPrice }}</span>元，邮寄费<span class="num">{{ postPrice }}</span>元，共计<span
+            class="num">{{ allPriceAll
+            }}</span>元
+        </div>
+      </div>
       <div class="tools">
-        <Button class="cancel" @click="printSent" text="确认打印"></Button>
+        <Button class="print" @click="printSent" :text="'确认打印(' + allPriceAll + '元)'"></Button>
       </div>
     </div>
   </Dialog>
@@ -93,6 +111,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
+import calcNumber from 'calc-number'
 import request from '@/plugin/request'
 import Button from '@/components/Button.vue'
 import sharePlugin from '../plugin/share'
@@ -105,13 +124,21 @@ import VipPriceDesc from '@/components/vipPriceDesc.vue';
 import Check from '@/components/Check.vue';
 import Page from '@/components/Page.vue'
 import DegreeSelect from '../components/degreeSelect.vue'
+import bridge from '@/plugin/bridge'
+import Loading from '@/plugin/loading'
 
+type FileItem = {
+  id: number;
+  title: string;
+  file: string;
+  pageCount: number;
+}
 // 定义响应式数据
 const subjects = ref<any[]>([])
 const selectSub = ref<number>(-1)
 const sourceList = ref<any[]>([])
 const selectCourse = ref<number>(-1)
-const fileList = ref<any[]>([])
+const fileList = ref<FileItem[]>([])
 const fileCount = ref<number>(-1)
 const downLoadList = ref<any[]>([])
 const loading = ref<boolean>(false)
@@ -300,7 +327,8 @@ async function init() {
 }
 
 const showPrintAllDialog = ref<boolean>(false)
-const waitPrintFileList = ref<any[]>([])
+const waitPrintFileList = ref<FileItem[]>([])
+const paperSize = ref<number>(2)
 interface Address {
   id: number
   name: string
@@ -325,14 +353,15 @@ const chooseAddress = ref<number>()
 const printAll = () => {
   printFile(fileList.value);
 }
-const printFile = (files: string[]) => {
+const printFile = (files: FileItem[]) => {
   request.get('/studying/address/myAddress').then(res => {
     addressList.value = res as any;
   })
   waitPrintFileList.value = files;
+  getFilePrice();
   showPrintAllDialog.value = true;
 }
-const printSent = () => {
+const printSent = async () => {
   if (!chooseAddress.value) {
     toast({
       'message': '请选择地址',
@@ -340,14 +369,61 @@ const printSent = () => {
     })
     return;
   }
-  request.post('/studying/print/file', {
-    files: waitPrintFileList.value,
+  const { token, printOrderID } = await request.post('/studying/print/aliToken', {
+    paperSize: paperSize.value,
+    files: waitPrintFileList.value.map(v => v.id),
     address: chooseAddress.value,
-  }).catch(err => {
+  }) as any;
+  console.log('!!!!', token, printOrderID);
+  const handle = Loading();
+  bridge('pay', 'alipay', { token }).then((res) => {
+    console.log('支付结果', res)
+    handle.destory()
+    if (res.result === true) {
+      toast({
+        'message': '支付完成',
+        'duration': 3000
+      })
+      request.post('/studying/print/file', {
+        orderId: printOrderID,
+        files: waitPrintFileList.value.map(v => v.id),
+        address: chooseAddress.value,
+      }).catch(err => {
+        toast({
+          'message': '打印失败:' + err.message,
+          'duration': 3000
+        })
+      })
+    } else {
+      toast({
+        'message': '未支付成功',
+        'duration': 3000
+      })
+    }
+  }).catch((err) => {
+    handle.destory()
     toast({
-      'message': '打印失败:' + err.message,
+      'message': err.message || '支付失败',
       'duration': 3000
     })
+  })
+}
+function removePrintFile(id: number) {
+  waitPrintFileList.value = waitPrintFileList.value.filter(v => v.id !== id);
+  getFilePrice()
+}
+const printPrice = ref<number>(0)
+const allPriceAll = ref<number>(0)
+const postPrice = ref<number>(0)
+function getFilePrice() {
+  request.post('/studying/print/getFilePrice', {
+    paperSize: paperSize.value,
+    files: waitPrintFileList.value.map(v => v.id),
+    address: chooseAddress.value,
+  }).then((res: any) => {
+    allPriceAll.value = calcNumber(`${res.totalPrice} / 100`);
+    printPrice.value = calcNumber(`${res.printPrice} / 100`);
+    postPrice.value = calcNumber(`${res.postPrice} / 100`);
   })
 }
 watch(() => degree.value, async (newDegree) => {
@@ -600,6 +676,11 @@ watch(() => degree.value, async (newDegree) => {
   .title {
     font-size: 36px;
     line-height: 72px;
+
+    .num {
+      font-weight: bold;
+      color: #bb1a1a;
+    }
   }
 
   .list {
@@ -618,10 +699,48 @@ watch(() => degree.value, async (newDegree) => {
       background-color: #f0f0f0;
       border-radius: 4px;
       margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+
+      .pageCountItem {
+        border: solid 2px #d5d5d5;
+        flex-shrink: 0;
+        padding: 0 4px;
+        margin-right: 4px;
+      }
+
+      .close {
+        width: 44px;
+        height: 44px;
+        margin-left: 16px;
+        flex-shrink: 0;
+
+        >img {
+          width: 32px;
+          height: 32px;
+        }
+      }
     }
 
     :last-child {
       margin-bottom: 0;
+    }
+  }
+
+  .pageCount {
+    margin-top: 20px;
+    font-size: 32px;
+
+    .priceDesc {
+      font-size: 32px;
+      color: #333;
+    }
+
+    .num {
+      font-weight: bold;
+      color: #bb1a1a;
     }
   }
 
@@ -675,6 +794,10 @@ watch(() => degree.value, async (newDegree) => {
 
   .tools {
     margin-top: 32px;
+
+    .print {
+      margin-top: 8px;
+    }
   }
 }
 

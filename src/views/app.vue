@@ -19,7 +19,7 @@
         @click="to('/source')">
         <icon class="bottom_link_icon" :src="tabType === 'source' ? 'main_active' : 'main'" />
         <text class="bottom_link_text"
-          :class="[tabType === 'source' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">课程</text>
+          :class="[tabType === 'source' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">学科</text>
       </div>
       <div class="bottom_link" :class="[tabType === 'file' ? 'bottom_link_active' : 'bottom_link_blur']"
         @click="to('/file')">
