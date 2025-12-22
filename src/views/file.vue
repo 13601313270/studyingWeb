@@ -68,7 +68,7 @@
       <div class="title">
         是否确认打印{{ fileList.length === waitPrintFileList.length ? '全部' : '' }}<span class="num">{{
           waitPrintFileList.length
-          }}</span>个资料文件？
+        }}</span>个资料文件？
       </div>
       <div class="list">
         <div v-for="file in waitPrintFileList" :key="file.id" class="listItem">
@@ -79,7 +79,7 @@
           </div>
         </div>
       </div>
-      <div class="addressTitle">请选择打印地址：{{ chooseAddress }}</div>
+      <div class="addressTitle">请选择打印地址：</div>
       <div class="addressList">
         <div v-for="address in addressList" :key="address.id" class="addressItem"
           :class="{ active: chooseAddress === address.id }" @click="chooseAddress = address.id">
@@ -102,7 +102,7 @@
         </div>
       </div>
       <div class="tools">
-        <Button class="print" @click="printSent" :text="'确认打印(' + allPriceAll + '元)'"></Button>
+        <Button class="print" @click="printSent" :text="'确认打印，邮寄到家(' + allPriceAll + '元)'"></Button>
       </div>
     </div>
   </Dialog>

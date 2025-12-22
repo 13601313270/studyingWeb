@@ -15,23 +15,23 @@
     </div>
     <div class="bottom" :style="{}"
       v-if="$route.meta.hideBottom !== true && (!['lessonDetail', 'lessonDetailNew', 'poiLessonDetail'].includes($route.name) && $route.name !== 'welcome')">
-      <div class="bottom_link" :class="[tabType === 'source' ? 'bottom_link_active' : 'bottom_link_blur']"
-        @click="to('/source')">
+      <div class="bottom_link" :class="[tabType === 'source' ? 'active' : 'bottom_link_blur']" @click="to('/source')">
         <icon class="bottom_link_icon" :src="tabType === 'source' ? 'main_active' : 'main'" />
-        <text class="bottom_link_text"
-          :class="[tabType === 'source' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">学科</text>
+        <text class="bottom_link_text">学科</text>
       </div>
-      <div class="bottom_link" :class="[tabType === 'file' ? 'bottom_link_active' : 'bottom_link_blur']"
-        @click="to('/file')">
+      <div class="bottom_link" :class="[tabType === 'file' ? 'active' : 'bottom_link_blur']" @click="to('/file')">
         <icon class="bottom_link_icon" :src="tabType === 'file' ? 'file_active' : 'file'" />
-        <text class="bottom_link_text"
-          :class="[tabType === 'file' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">资料库</text>
+        <text class="bottom_link_text">资料</text>
       </div>
-      <div class="bottom_link" :class="[tabType === 'friend' ? 'bottom_link_active' : 'bottom_link_blur']"
-        @click="to('/friend')" v-if="channel !== 'huawei'">
+      <div class="bottom_link" :class="[tabType === 'shop' ? 'active' : 'bottom_link_blur']" @click="to('/shop')">
+        <img class="bottom_link_icon" v-if="tabType === 'shop'" src="../icons/shop_active.png" />
+        <img class="bottom_link_icon" v-else src="../icons/shop.png" />
+        <text class="bottom_link_text">商店</text>
+      </div>
+      <div class="bottom_link" :class="[tabType === 'friend' ? 'active' : 'bottom_link_blur']" @click="to('/friend')"
+        v-if="channel !== 'huawei'">
         <icon class="bottom_link_icon" :src="tabType === 'friend' ? 'friend_active' : 'friend'" />
-        <text class="bottom_link_text"
-          :class="[tabType === 'friend' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">消息</text>
+        <text class="bottom_link_text">消息</text>
         <div class="tip" v-if="notUsedInformationCount > 0">
           <text class="tipText">{{ notUsedInformationCount }}</text>
         </div>
@@ -44,11 +44,9 @@
       <!--                <icon class="bottom_link_icon" width="40" height="40" :src="tabType==='mall'?'mall_active':'mall'"/>-->
       <!--                <text class="bottom_link_text" :class="[tabType==='mall'?'bottom_link_text_active':'bottom_link_text_blur']">商城</text>-->
       <!--            </div>-->
-      <div class="bottom_link" :class="[tabType === 'mine' ? 'bottom_link_active' : 'bottom_link_blur']"
-        @click="to('/mine')">
+      <div class="bottom_link" :class="[tabType === 'mine' ? 'active' : 'bottom_link_blur']" @click="to('/mine')">
         <icon class="bottom_link_icon" :src="tabType === 'mine' ? 'user_active' : 'user'" />
-        <text class="bottom_link_text"
-          :class="[tabType === 'mine' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">我的</text>
+        <text class="bottom_link_text">我的</text>
       </div>
     </div>
     <ImgPreview v-if="showImgUrl" :url="showImgUrl.replace('http://', 'https://')" @cancel="showImgUrl = ''" />
@@ -328,6 +326,8 @@ export default {
         return 'source';
       } else if (['file'].includes(this.$route.name)) {
         return 'file';
+      } else if (['shop'].includes(this.$route.name)) {
+        return 'shop';
       } else if (['mine', 'aboutUs', 'address', 'order', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo', 'develop'].includes(this.$route.name)) {
         return 'mine';
       } else if (['friend', 'dailyQuestion', 'chat'].includes(this.$route.name)) {
@@ -396,11 +396,12 @@ export default {
   align-items: flex-start;
   padding-bottom: env(safe-area-inset-bottom);
 
-  &_link {
+  .bottom_link {
     height: 100px;
     flex: 1;
     text-align: center;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
@@ -410,18 +411,20 @@ export default {
       height: 44px;
     }
 
+    &.active {
+      .bottom_link_text {
+        color: #19392d;
+        font-weight: bold;
+      }
+    }
+
     &_text {
       font-size: 28px;
       line-height: 28px;
       height: 24px;
       color: #5a5e5d;
       text-align: center;
-      margin-left: 8px;
-
-      &_active {
-        color: #1a2e27;
-        font-weight: bold;
-      }
+      margin-top: 8px;
     }
   }
 }
