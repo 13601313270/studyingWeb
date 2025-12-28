@@ -398,7 +398,7 @@ export default {
   background-color: #fcfcfc;
   border-top-style: solid;
   border-top-width: 1PX;
-  border-top-color: #a5afab;
+  border-top-color: #bfc4c2;
   display: flex;
   flex-direction: row;
   align-items: flex-start;

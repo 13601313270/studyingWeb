@@ -252,6 +252,7 @@ function toAddAddress() {
   display: flex;
   flex-direction: row;
   align-items: center;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 16px);
 
   .number {
     font-weight: bold;

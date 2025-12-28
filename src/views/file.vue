@@ -530,6 +530,7 @@ watch(() => degree.value, async (newDegree) => {
     display: flex;
     flex-grow: 1;
     flex-direction: column;
+    background-color: #f0f0f0;
 
     .head {
       font-size: 36px;
@@ -538,6 +539,10 @@ watch(() => degree.value, async (newDegree) => {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      background-color: white;
+      margin-left: 4px;
+      margin-right: 4px;
+      // border-radius: 0 0 15px 15px;
     }
 
     .fileList {
