@@ -20,7 +20,8 @@
         <text class="bottom_link_text">学科</text>
       </div>
       <div class="bottom_link" :class="[tabType === 'file' ? 'active' : 'bottom_link_blur']" @click="to('/file')">
-        <icon class="bottom_link_icon" :src="tabType === 'file' ? 'file_active' : 'file'" />
+        <img class="bottom_link_icon" v-if="tabType === 'file'" src="../icons/file_active.png" />
+        <img class="bottom_link_icon" v-else src="../icons/file.png" />
         <text class="bottom_link_text">资料</text>
       </div>
       <div class="bottom_link" :class="[tabType === 'shop' ? 'active' : 'bottom_link_blur']" @click="to('/shop')">
@@ -396,7 +397,7 @@ export default {
   width: 100vw;
   background-color: #fcfcfc;
   border-top-style: solid;
-  border-top-width: 1px;
+  border-top-width: 1PX;
   border-top-color: #a5afab;
   display: flex;
   flex-direction: row;
