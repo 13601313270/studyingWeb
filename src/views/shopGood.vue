@@ -55,10 +55,15 @@
           </div>
         </div>
         <div class="tools">
+          <div class="payWay">
+            <img src="../icons/alipay.png" />
+            支付方式：支付宝
+          </div>
           <Button class="print" @click="printSent" :text="'确认打印，邮寄到家(' + allPriceAll + '元)'"></Button>
         </div>
       </div>
     </Dialog>
+
   </Page>
 </template>
 <script setup lang="ts">
@@ -396,6 +401,18 @@ function toAddAddress() {
 
   .tools {
     margin-top: 32px;
+
+    .payWay {
+      font-size: 32px;
+      line-height: 46px;
+      display: flex;
+      align-items: center;
+
+      >img {
+        width: 66px;
+        margin-right: 12px;
+      }
+    }
 
     .print {
       margin-top: 8px;
