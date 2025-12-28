@@ -1,5 +1,5 @@
 <template>
-  <Page title="学习记录">
+  <Page title="学习记录" foot-active="source">
     <div class="title">
       <text v-if="count > maxCount">
         {{ '最近' + maxCount + '条记录' }}

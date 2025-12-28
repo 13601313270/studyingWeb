@@ -1,5 +1,5 @@
 <template>
-  <Page title="消息" class="friend" root>
+  <Page title="消息" class="friend" root foot-active="friend">
     <FriendList />
   </Page>
 </template>

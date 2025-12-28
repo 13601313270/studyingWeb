@@ -1,5 +1,5 @@
 <template>
-  <Page :title="info.title">
+  <Page :title="info.title" foot-active="mine">
     <div class="content">
       <div v-html="info.content"></div>
     </div>

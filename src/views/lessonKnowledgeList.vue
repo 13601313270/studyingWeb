@@ -1,5 +1,5 @@
 <template>
-  <Page :title="info ? (info.title + '知识点') : ''">
+  <Page :title="info ? (info.title + '知识点') : ''" foot-active="source">
     <div class="content">
       <div class="lessons" v-for="item in list.filter(item2 => item2.type === 1)" :key="item.id">
         <text class="lessons_title">{{ item.title }}</text>

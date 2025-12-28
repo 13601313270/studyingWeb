@@ -1,5 +1,5 @@
 <template>
-  <Page :title="info ? info.title : ''">
+  <Page :title="info ? info.title : ''" foot-active="source">
     <div @click="showImgDetail" class="imgContent" v-if="info">
       <img :src="info.img.replace('http://', 'https://')" style="width: 100%" />
     </div>

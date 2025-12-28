@@ -1,5 +1,5 @@
 <template>
-  <Page title="关于我们">
+  <Page title="关于我们" foot-active="mine">
     <div>
       <div class="content">{{ info.content }}</div>
     </div>

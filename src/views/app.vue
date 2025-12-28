@@ -14,7 +14,7 @@
       <Login />
     </div>
     <div class="bottom" :style="{}"
-      v-if="$route.meta.hideBottom !== true && (!['lessonDetail', 'lessonDetailNew', 'poiLessonDetail'].includes($route.name) && $route.name !== 'welcome')">
+      v-if="$route.meta.hideBottom !== true && (!['lessonDetail', 'lessonDetailNew', 'poiLessonDetail'].includes($route.name))">
       <div class="bottom_link" :class="[tabType === 'source' ? 'active' : 'bottom_link_blur']" @click="to('/source')">
         <icon class="bottom_link_icon" :src="tabType === 'source' ? 'main_active' : 'main'" />
         <text class="bottom_link_text">学科</text>
@@ -316,25 +316,32 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('main', ['showLogin']),
+    ...mapGetters('main', ['showLogin', 'footActive']),
     path() {
       // @ts-ignore
       return this.$store.getters['main/path']
     },
     tabType() {
-      if (['source', 'sourceDetail', 'lessonDetail', 'lessonDetailNew', 'poiLessonDetail', 'lessonQuestionList', 'poiQuestion', 'lessonKnowledgeList', 'lessonKnowledgeDetail', 'listen', 'word', 'enGrammar', 'enGrammarItem', 'wordSearch', 'enRead', 'enReadDetail'].includes(this.$route.name)) {
+      if (this.footActive === 'source') {
         return 'source';
-      } else if (['file'].includes(this.$route.name)) {
+      } else if (this.footActive === 'file') {
         return 'file';
-      } else if (['shop'].includes(this.$route.name)) {
+      } else if (this.footActive === 'shop') {
         return 'shop';
-      } else if (['mine', 'aboutUs', 'address', 'order', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo', 'develop'].includes(this.$route.name)) {
-        return 'mine';
-      } else if (['friend', 'dailyQuestion', 'chat'].includes(this.$route.name)) {
+      } else if (this.footActive === 'friend') {
         return 'friend';
-      } else if (['mall'].includes(this.$route.name)) {
-        return 'mall'
+      } else if (this.footActive === 'mine') {
+        return 'mine';
       }
+      // else if (['shop'].includes(this.$route.name)) {
+      //   return 'shop';
+      // } else if (['mine', 'aboutUs', 'address', 'order', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo', 'develop'].includes(this.$route.name)) {
+      //   return 'mine';
+      // } else if (['friend', 'dailyQuestion', 'chat'].includes(this.$route.name)) {
+      //   return 'friend';
+      // } else if (['mall'].includes(this.$route.name)) {
+      //   return 'mall'
+      // }
     },
     isInRootPage() {
       // @ts-ignore

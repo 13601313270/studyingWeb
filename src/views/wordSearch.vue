@@ -1,5 +1,5 @@
 <template>
-  <Page title="词典">
+  <Page title="词典" foot-active="source">
     <div class="content">
       <Input placeholder="请输入单词" @input="search" v-model="searchWord" />
       <div class="searchList">

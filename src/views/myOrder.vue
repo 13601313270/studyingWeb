@@ -1,5 +1,5 @@
 <template>
-  <Page title="我的订单">
+  <Page title="我的订单" foot-active="mine">
     <div class="myOrder">
       <!-- 订单状态筛选 -->
       <!-- <div class="filter-tabs">
@@ -156,6 +156,7 @@ import { ref, onMounted } from 'vue'
 import Page from '@/components/Page.vue'
 import request from '@/plugin/request'
 import Loading from '@/plugin/loading'
+import toast from '@/plugin/toast'
 
 // 订单状态类型
 interface OrderItem {
@@ -261,6 +262,12 @@ const viewOrderDetail = async (order: OrderItem) => {
       logistics: res.logistics,
       ...res.data
     };
+  } else {
+    loading.destory()
+    toast({
+      'message': res.error,
+      'duration': 3000
+    })
   }
 }
 

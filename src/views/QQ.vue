@@ -1,5 +1,5 @@
 <template>
-  <Page title="QQ交流群">
+  <Page title="QQ交流群" foot-active="mine">
     <div class="group" v-for="group in allQQGroup" :key="group.number">
       <div class="info">
         <div class="title">{{ group.title }}</div>

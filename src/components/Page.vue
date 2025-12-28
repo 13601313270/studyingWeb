@@ -28,17 +28,16 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onActivated, onMounted, ref, watch } from 'vue';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
-import program from '@/plugin/program';
+import { FootActiveEnum } from '@/store';
 
 const store = useStore();
-const router = useRouter();
 
 const props = defineProps<{
   title: string,
-  root?: boolean
+  root?: boolean,
+  footActive: FootActiveEnum,
 }>();
 const title = ref<string>(props.title || '');
 const isOffline = ref<boolean>(false);
@@ -46,6 +45,9 @@ const isOffline = ref<boolean>(false);
 onMounted(() => {
   console.log(props.title)
   store.dispatch('main/setPath', [{ name: props.title }]);
+  if (props.footActive) {
+    store.dispatch('main/setFootActive', props.footActive);
+  }
   window.addEventListener("offline", () => {
     isOffline.value = true;
   })
@@ -61,6 +63,11 @@ watch(() => props.title, (newTitle) => {
   console.log(newTitle)
   title.value = newTitle || '';
   store.dispatch('main/setPath', [{ name: newTitle }]);
+})
+onActivated(() => {
+  if (props.footActive) {
+    store.dispatch('main/setFootActive', props.footActive);
+  }
 })
 </script>
 <style lang="less" scoped>

@@ -1,5 +1,5 @@
 <template>
-  <Page title="听力">
+  <Page title="听力" foot-active="source">
     <template #others>
       <div class="logButton" @click="showTimeDialog = true">
         <img src="../icons/log.png" width="48" height="48" />
@@ -42,7 +42,7 @@
             </div>
             <div :class="activeListen && activeListen.id === item.id ? 'stop' : 'play'"
               @click="activeListen && activeListen.id === item.id ? stopVue() : playItem(item, index)">
-              <Icon :src="activeListen && activeListen.id === item.id ? 'stop' : 'play'" width="42" />
+              <Icon :src="activeListen && activeListen.id === item.id ? 'stop' : 'play'" :width="42" />
             </div>
           </div>
         </div>

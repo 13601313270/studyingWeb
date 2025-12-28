@@ -1,5 +1,7 @@
 import { createStore } from 'vuex'
 
+type FootActiveEnum = 'source' | 'file' | 'shop' | 'friend' | 'mine';
+
 type IState = {
   path: any[],
   token: string,
@@ -7,6 +9,7 @@ type IState = {
   showLogin: boolean,
   degree: number,
   degreeList: any[],
+  footActive: FootActiveEnum,
 }
 const main = {
   namespaced: true,
@@ -17,6 +20,7 @@ const main = {
     userInfo: {},
     degree: 1,
     degreeList: [],
+    footActive: 'source',
   },
   getters: {
     path: (state: IState) => state.path,
@@ -25,6 +29,7 @@ const main = {
     showLogin: (state: IState) => state.showLogin,
     degree: (state: IState) => state.degree,
     degreeList: (state: IState) => state.degreeList,
+    footActive: (state: IState) => state.footActive,
   },
   mutations: {
     set_path(state: IState, path: any) {
@@ -44,6 +49,9 @@ const main = {
     },
     set_degree_list(state: IState, type: any) {
       state.degreeList = type
+    },
+    set_foot_active(state: IState, type: FootActiveEnum) {
+      state.footActive = type
     },
   },
   actions: {
@@ -65,6 +73,9 @@ const main = {
     setDegreeList({ commit }: any, type: any) {
       return commit('set_degree_list', type);
     },
+    setFootActive({ commit }: any, type: FootActiveEnum) {
+      return commit('set_foot_active', type);
+    },
   },
 }
 
@@ -78,4 +89,4 @@ export default createStore({
   }
 })
 
-export type { Store }
+export type { Store, FootActiveEnum }

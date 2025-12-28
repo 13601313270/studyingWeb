@@ -1,5 +1,5 @@
 <template>
-  <Page title="题库">
+  <Page title="题库" foot-active="source">
     <div style="height: 100%">
       <div class="content">
         <div class="lessons" v-for="item in pois">

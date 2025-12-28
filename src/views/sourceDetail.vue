@@ -1,5 +1,5 @@
 <template>
-  <Page :title="title">
+  <Page :title="title" footActive='source'>
     <div class="content">
       <div class="lessons">
         <div v-for="item in list" :key="item.id" class="lesson_item">

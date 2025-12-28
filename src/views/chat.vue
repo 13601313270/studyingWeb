@@ -1,5 +1,5 @@
 <template>
-  <Page title="私信" v-if="chatUser">
+  <Page title="私信" v-if="chatUser" foot-active='friend'>
     <div class="chatPage">
       <div class="content">
         <div v-if="chatListing">loading</div>

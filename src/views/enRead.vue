@@ -1,5 +1,5 @@
 <template>
-  <Page title="阅读">
+  <Page title="阅读" foot-active="source">
     <div class="enRead">
       <div>
         <Button class="changeButton" text="换一组" @click="initPage(1)"></Button>

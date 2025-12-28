@@ -1,5 +1,5 @@
 <template>
-  <Page title="我的" class="mine" root>
+  <Page title="我的" class="mine" root foot-active="mine">
     <div class="user" v-if="store.state.main.userInfo && store.state.main.userInfo.account">
       <div v-if="userInfo2.icon" class="user_icon">
         <pic @click="previewImg(userInfo2.icon.replace('http://', 'https://'))"

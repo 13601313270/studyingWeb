@@ -1,5 +1,5 @@
 <template>
-  <Page title="课程详情">
+  <Page title="课程详情" foot-active="source">
     <div class="home">
       <div v-for="layer in layers" style="flex:1;margin-bottom: 40px;">
         <div v-for="widget in layer" :style="widget.style"

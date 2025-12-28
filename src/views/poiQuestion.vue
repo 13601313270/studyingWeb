@@ -1,5 +1,5 @@
 <template>
-  <Page title="题库">
+  <Page title="题库" foot-active="source">
     <div class="content">
       <div class="item_list" v-if="!isCheck">
         <div class="item_list_item" v-for="(item, index) in question" :key="item.id"

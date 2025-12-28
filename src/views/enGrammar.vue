@@ -1,5 +1,5 @@
 <template>
-  <Page title="语法册">
+  <Page title="语法册" foot-active="source">
     <div class="list">
       <div v-for="item in list" class="item" @click="toDetail(item.id)">
         {{ item.title }}

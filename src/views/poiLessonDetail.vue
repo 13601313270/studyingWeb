@@ -1,5 +1,5 @@
 <template>
-  <Page :title="title">
+  <Page :title="title" foot-active="source">
     <VideoLesson v-if="content" :content="content" @firstPlay="firstPlay" @playStep="playStep" @end="end"
       :actions="[{ text: '去做题', action: gotoQuestion }]" />
   </Page>

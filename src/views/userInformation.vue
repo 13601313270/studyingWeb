@@ -1,5 +1,5 @@
 <template>
-  <Page title="用户信息">
+  <Page title="用户信息" foot-active="mine">
     <div>
       <div class="header">
         <pic v-if="userInfo2.icon" class="icon" @click="showImgDetail(userInfo2.icon.replace('http://', 'https://'))"

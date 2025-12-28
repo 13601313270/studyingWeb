@@ -1,5 +1,5 @@
 <template>
-  <Page title="账号信息" style="">
+  <Page title="账号信息" foot-active="mine">
     <div style="display: flex;flex-direction: column;height: 100%;">
       <div v-if="userInfo2">
         <div class="header">

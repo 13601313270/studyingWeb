@@ -1,5 +1,5 @@
 <template>
-  <Page title="文件" root>
+  <Page title="文件" root footActive='file'>
     <template #before>
       <DegreeSelect />
     </template>
@@ -26,7 +26,7 @@
         <div class="fileListContent">
           <div class="head" v-if="fileCount > 0">
             <div>共{{ fileCount }}个资料文件</div>
-            <Button @click="printAll">云打印</Button>
+            <!-- <Button @click="printAll">云打印</Button> -->
           </div>
           <div class="fileList">
             <div v-if="loading" class="loading">加载中...</div>
@@ -79,7 +79,7 @@
           </div>
         </div>
       </div>
-      <div class="addressTitle">请选择打印地址：</div>
+      <div class="addressTitle">请选择收获地址：</div>
       <div class="addressList">
         <div v-for="address in addressList" :key="address.id" class="addressItem"
           :class="{ active: chooseAddress === address.id }" @click="chooseAddress = address.id">

@@ -1,5 +1,5 @@
 <template>
-  <Page title="超级背单词">
+  <Page title="超级背单词" foot-active="source">
     <template #others>
       <div v-if="wordTarget" class="target" @click="showTestTransform = !showTestTransform">
         <span>{{ wordTarget.title }}</span>

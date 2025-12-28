@@ -1,23 +1,12 @@
 <template>
-  <div
-    class="picturePreview"
-    @click="onCancel"
-    @touchstart="touchstart"
-    @touchmove="touchmove"
-    @touchend="touchend"
-  >
+  <div class="picturePreview" @click="onCancel" @touchstart="touchstart" @touchmove="touchmove" @touchend="touchend">
     <!-- <div style="position:absolute;z-index: 99;background: black;">
       <div>{{split.centerX}},{{split.centerY}}</div>
       <div>{{this.beforeWhiteBackSize.height / this.beforeWhiteBackSize.width * this.windowWidth / 2}}</div>
       <div>{{splitStep}}</div>
     </div> -->
-    <img
-      class="previewImg"
-      :class="{moving:!moving}"
-      :src="url"
-      :style="beforeSplitImgStyle"
-    />
-  </div>  
+    <img class="previewImg" :class="{ moving: !moving }" :src="url" :style="beforeSplitImgStyle" />
+  </div>
 </template>
 <script>
 export default {
@@ -28,16 +17,15 @@ export default {
     console.log(11)
     const img = new Image();
     img.onload = () => {
-      console.log(11112222,img,img.width)
       this.beforeWhiteBackSize = {
         width: img.width,
         height: img.height
       }
-      this.split.centerY = this.beforeWhiteBackSize.height / (this.beforeWhiteBackSize.width / this.windowWidth)/2
+      this.split.centerY = this.beforeWhiteBackSize.height / (this.beforeWhiteBackSize.width / this.windowWidth) / 2
     }
     img.src = this.url;
   },
-  data(){
+  data() {
     return {
       beforeWhiteBackSize: {},
       moving: false,
@@ -126,9 +114,9 @@ export default {
       const splitImgRealSizeHeight = this.beforeWhiteBackSize.height / runningZoom
       console.log('---------------')
       const initHeight = this.beforeWhiteBackSize.height / (this.beforeWhiteBackSize.width / this.windowWidth)
-      const bottom = (this.windowHeight/ 2  - initHeight * runningZoom) * -1 / runningZoom
-      if(initHeight * runningZoom<this.windowHeight){
-        this.split.centerY = initHeight/2;
+      const bottom = (this.windowHeight / 2 - initHeight * runningZoom) * -1 / runningZoom
+      if (initHeight * runningZoom < this.windowHeight) {
+        this.split.centerY = initHeight / 2;
       } else if (this.split.centerY - this.splitStep.centerY < splitImgRealSizeHeight / 2 / this.beforeWhiteBackSize.height * this.windowHeight) {
         this.split.centerY = splitImgRealSizeHeight / 2 / this.beforeWhiteBackSize.height * this.windowHeight
       } else if (this.split.centerY - this.splitStep.centerY > bottom) {
@@ -168,7 +156,7 @@ export default {
       transform += ' scale(' + (this.split.zoom * this.splitStep.zoom) + ')';
       transform += ' translateX(' + parseInt(this.windowWidth / 2 - this.split.centerX + this.splitStep.centerX) + 'px)'
       transform += ' translateY(' + parseInt(this.beforeWhiteBackSize.height / this.beforeWhiteBackSize.width * this.windowWidth / 2 - this.split.centerY + this.splitStep.centerY) + 'px)'
-      return {transform}
+      return { transform }
     }
   },
 }
@@ -184,10 +172,14 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  top: 0;
+  z-index: 1;
 }
+
 .previewImg {
   width: 100%;
 }
+
 .moving {
   transition: transform 0.3s;
 }

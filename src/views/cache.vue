@@ -1,5 +1,5 @@
 <template>
-  <Page title="缓存设置">
+  <Page title="缓存设置" foot-active="mine">
     <div class="content">
       <div class="title">缓存内容包括：</div>
       <div class="cacheList">

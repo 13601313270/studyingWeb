@@ -1,5 +1,5 @@
 <template>
-  <Page title="开发设置">
+  <Page title="开发设置" foot-active="mine">
     <div class="develop">
       <Button text="取消VIP" @click="closeVip"></Button>
       <Button text="取消已受邀状态" @click="closeBeInvite"></Button>

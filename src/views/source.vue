@@ -1,5 +1,5 @@
 <template>
-  <Page title="课程" root>
+  <Page title="课程" root footActive='source'>
     <template #before>
       <DegreeSelect />
     </template>
