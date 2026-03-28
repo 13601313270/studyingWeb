@@ -34,8 +34,8 @@
       <div v-if="isInstalledWeChat" class="otherLogin">
         <text class="title">或通过以下方式登录</text>
         <div class="list">
-          <div @click="weChatLogin">
-            <icon src="wechat" width="120" />
+          <div @click="weChatLogin" class="item">
+            <img src="../icons/wechat.png" />
           </div>
         </div>
       </div>
@@ -43,12 +43,11 @@
       </div>
       <div class="tempCodeBack" v-if="showTempCode">
         <div class="tempCode">
-          <div @click="showTempCode = false" class="close">
-            <icon src="close" width="40" />
+          <div @click="showTempCode = false" class="tools">
+            <img src="../icons/close.png" />
           </div>
-          <div style="display: flex;align-items: flex-end;">
-            <icon width="400" height="200"
-              :src="'https://api.studying1v1.com/register/checkImg/' + phone + '?rand=' + random" />
+          <div class="tempCodeImg">
+            <img :src="'https://api.studying1v1.com/register/checkImg/' + phone + '?rand=' + random" />
             <Button class="changeOne" @click="getTempCode" text="换一张"></Button>
           </div>
           <div class="tempInputText">请输入上面图片中的数字</div>
@@ -103,11 +102,10 @@
       <div class="tempCodeBack" v-if="showTempCodeBind">
         <div class="tempCode">
           <div class="tools">
-            <icon src="close" width="60" @click="showTempCodeBind = false" />
+            <img src="../icons/close.png" @click="showTempCodeBind = false" />
           </div>
-          <div style="display: flex;align-items: flex-end;">
-            <icon width="400" height="200"
-              :src="'https://api.studying1v1.com/register/checkImg/' + phone + '?rand=' + random" />
+          <div class="tempCodeImg">
+            <img :src="'https://api.studying1v1.com/register/checkImg/' + phone + '?rand=' + random" />
             <Button class="changeOne" @click="getTempCodeBind" text="换一张"></Button>
           </div>
           <div class="tempInputText">请输入上面图片中的数字</div>
@@ -384,7 +382,7 @@ onMounted(() => {
   .close {
     position: absolute;
     left: 30px;
-    top: calc(env(safe-area-inset-top) + 20px);
+    top: 30px;
 
     >img {
       width: 50px;
@@ -422,6 +420,13 @@ onMounted(() => {
       flex-direction: row;
       justify-content: center;
       margin-top: 40px;
+
+      .item {
+
+        >img {
+          height: 120px;
+        }
+      }
     }
   }
 
@@ -493,12 +498,26 @@ onMounted(() => {
     border-radius: 20px;
     display: flex;
     flex-direction: column;
+    position: relative;
+
+    .tempCodeImg {
+      display: flex;
+      align-items: flex-end;
+      flex-direction: column;
+
+      >img {
+        width: 100%;
+      }
+    }
 
     .tools {
       display: flex;
       justify-content: end;
 
-      .close {}
+      >img {
+        width: 60px;
+        height: 60px;
+      }
     }
 
     .tempInputText {
