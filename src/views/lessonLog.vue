@@ -1,113 +1,120 @@
 <template>
-  <div style="">
-      <div>
-          <text v-if="count>maxCount" style="text-align: center;color:grey;margin-top: 10px;">
-              {{'最近'+maxCount+'条记录'}}
-          </text>
+  <Page title="学习记录" foot-active="source">
+    <div class="title">
+      <text v-if="count > maxCount">
+        {{ '最近' + maxCount + '条记录' }}
+      </text>
+    </div>
+    <div class="actions">
+      <div class="item" v-for="item in list">
+        <div class="item_in">
+          <text class="name">开始时间:</text>
+          <text class="value">{{ item.ctime }}</text>
+        </div>
+        <div class="item_in">
+          <text class="name">上次听到:</text>
+          <text class="value">{{listLesson.map(item => item.title)[item.playTime]}}</text>
+        </div>
       </div>
-      <!--        <text>{{listLesson.map(item=>item.title)}}</text>-->
-      <div class="actions">
-          <div class="item" v-for="item in list">
-              <div class="item_in">
-                  <text class="name">开始时间:</text>
-                  <text class="value">{{item.ctime}}</text>
-              </div>
-              <div class="item_in">
-                  <text class="name">上次听到:</text>
-                  <text class="value">{{listLesson.map(item=>item.title)[item.playTime]}}</text>
-              </div>
-          </div>
-      </div>
-  </div>
+    </div>
+  </Page>
 </template>
 
-<script>
-  import {mapActions} from 'vuex';
-  import request from '../plugin/request'
-  export default {
-      name: 'mine',
-      data() {
+<script lang="ts" setup>
+import request from '../plugin/request'
+import { onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import Page from '@/components/Page.vue';
 
-          return {
-              id: 0,
-              content: '',
-              page: 0,
-              list: [],
-              listLesson: [],
-              maxCount: 10,
-              count: 0,
-          }
-      },
-      mounted() {
-          this.id = this.$route.params.id;
-          const self = this;
-          request.get('/lesson/' + this.$route.params.id + '/detail').then(data => {
-              self.content = data.content;
-              const lessonList = [];
+const id = ref(0);
+const content = ref('');
+const page = ref(0);
+const list = ref<Array<{
+  ctime: string,
+  playTime: number
+}>>([]);
+const listLesson = ref<Array<{
+  deep: number,
+  index: number,
+  before?: string,
+  title?: string,
+  desc?: string,
+  after?: string,
+}>>([]);
+const maxCount = ref(10);
+const count = ref(0);
+const route = useRoute();
 
-              function update(dataArr, deep) {
-                  dataArr.forEach((data, index) => {
-                      let item = {deep, index};
-                      if (data.before) {
-                          item.before = data.before;
-                      }
-                      if (data.title) {
-                          item.title = data.title;
-                      }
-                      if (data.desc) {
-                          item.desc = data.desc;
-                      }
-                      if (data.after) {
-                          item.after = data.after;
-                      }
-                      lessonList.push(item);
-                      if (data.child) {
-                          update(data.child, deep + 1)
-                      }
-                  });
-              }
+onMounted(() => {
+  id.value = +route.params.id;
+  request.get('/lesson/' + route.params.id + '/detail').then((data: any) => {
+    content.value = data.content;
+    const lessonList: any[] = [];
 
-              update(data.content, 1);
-              self.listLesson = lessonList;
-          });
-          request.get('/lesson/' + this.id + '/record?page=' + this.page).then(res => {
-              this.list = res.list;
-              this.count = res.count;
-          });
-          // this.logAction('lessonLog');
-      },
-      methods: {
-          ...mapActions('main', ['setPath']),
-      },
-      components: {}
-  }
+    function update(dataArr: any[], deep: number) {
+      dataArr.forEach((data: any, index: number) => {
+        let item: any = { deep, index };
+        if (data.before) {
+          item.before = data.before;
+        }
+        if (data.title) {
+          item.title = data.title;
+        }
+        if (data.desc) {
+          item.desc = data.desc;
+        }
+        if (data.after) {
+          item.after = data.after;
+        }
+        lessonList.push(item);
+        if (data.child) {
+          update(data.child, deep + 1)
+        }
+      });
+    }
+
+    update(data.content, 1);
+    listLesson.value = lessonList;
+  });
+  request.get('/lesson/' + id.value + '/record?page=' + page.value).then((res: any) => {
+    list.value = res.list;
+    count.value = res.count;
+  });
+  // this.logAction('lessonLog');
+})
 </script>
 
 <style scoped lang="less">
-  .item {
-      border-bottom-style: solid;
-      border-bottom-color: #cdcdcd;
-      border-bottom-width: 1px;
-      padding: 20px 20px 20px 50px;
-  }
+.title {
+  text-align: center;
+  color: grey;
+  margin-top: 10px;
+}
 
-  .item_in {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      margin-bottom: 20px;
-  }
+.item {
+  border-bottom-style: solid;
+  border-bottom-color: #cdcdcd;
+  border-bottom-width: 1px;
+  padding: 20px 20px 20px 50px;
+}
 
-  .name {
-      font-size: 32px;
-      margin-right: 70px;
-      width: 150px;
-      color: #343434;
-  }
+.item_in {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
 
-  .value {
-      font-size: 32px;
-      flex: 1;
-      color: #5d5d5d;
-  }
+.name {
+  font-size: 32px;
+  margin-right: 70px;
+  width: 150px;
+  color: #343434;
+}
+
+.value {
+  font-size: 32px;
+  flex: 1;
+  color: #5d5d5d;
+}
 </style>

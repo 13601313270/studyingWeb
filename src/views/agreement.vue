@@ -1,32 +1,24 @@
 <template>
-    <div>
-        <div style="display: flex;justify-content: center;align-items: center">
-            <text class="title">{{info.title}}</text>
-        </div>
-        <div class="content">
-            <div v-html="info.content"></div>
-        </div>
+  <Page :title="info.title" foot-active="mine">
+    <div class="content">
+      <div v-html="info.content"></div>
     </div>
+  </Page>
 </template>
 
-<script>
-    import request from '../plugin/request'
-export default {
-    name: 'mine',
-    data() {
-        return {
-            info: {
-                title: '',
-                content: ''
-            }
-        }
-    },
-    created() {
-        request.get('/agreement').then(res => {
-            this.info = res;
-        });
-    }
-}
+<script lang="ts" setup>
+import { onMounted, ref } from 'vue';
+import request from '../plugin/request'
+import Page from '@/components/Page.vue';
+const info = ref({
+  title: '',
+  content: ''
+})
+onMounted(() => {
+  request.get('/agreement').then((res: any) => {
+    info.value = res;
+  });
+})
 </script>
 
 <style scoped lang="less">
@@ -35,6 +27,7 @@ export default {
   margin-top: 50px;
   margin-bottom: 20px;
 }
+
 .content {
   font-size: 28px;
   padding: 30px;

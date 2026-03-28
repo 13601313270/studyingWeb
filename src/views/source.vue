@@ -1,72 +1,77 @@
 <template>
-  <div class="source">
-    <div class="subjects">
-      <div class="subjects_scroll" ref="subjectScroll">
-        <text ref="start" key="start"></text>
-        <div class="subjectScroll">
-          <div :key="subject.id" v-for="subject in sourceList" @click="changeSubject(subject.id)" class="subjects_item"
-            :class="{ active: selectSub === subject.id }">
-            <div :key="subject.id">{{ subject.name }}</div>
+  <Page title="课程" root footActive='source'>
+    <template #before>
+      <DegreeSelect />
+    </template>
+    <div class="source">
+      <div class="subjects">
+        <div class="subjects_scroll" ref="subjectScroll">
+          <text ref="start" key="start"></text>
+          <div class="subjectScroll">
+            <div :key="subject.id" v-for="subject in sourceList" @click="changeSubject(subject.id)"
+              class="subjects_item" :class="{ active: selectSub === subject.id }">
+              <div :key="subject.id">{{ subject.name }}</div>
+            </div>
           </div>
+        </div>
+      </div>
+      <div class="list" :class="{ englishList: selectSub === 'english' }" v-if="selectSub === 'english'">
+        <div class="source_list">
+          <div @click="chooseWord" class="englishItem">
+            <div class="title">
+              超级背单词
+              <div class="desc">艾宾浩斯遗忘曲线，制定科学背单词计划</div>
+            </div>
+            <img class="icon" src="../icons/word.png" />
+          </div>
+          <div @click="chooseListen" class="englishItem">
+            <div class="title">
+              听力通
+              <div class="desc">1000+听力段落，让你磨足耳朵</div>
+            </div>
+            <Icon class="icon" src="listen" />
+          </div>
+          <div @click="toEnGrammar" class="englishItem">
+            <div class="title">
+              语法册
+              <div class="desc">随身携带的语法书</div>
+            </div>
+            <img class="icon" src="../icons/yf.svg" />
+          </div>
+          <div @click="chooseWordSearch" class="englishItem">
+            <div class="title">
+              词典
+              <div class="desc">便携词典</div>
+            </div>
+            <img class="icon" src="../icons/search.svg" />
+          </div>
+          <div @click="chooseRead" class="englishItem">
+            <div class="title">
+              阅读
+              <div class="desc">提分神器</div>
+            </div>
+            <img class="icon" src="../icons/enRead.svg" />
+          </div>
+        </div>
+      </div>
+      <div class="list" v-else>
+        <div class="source_list error" v-if="!loading && loadError">
+          <div class="text">加载失败，请点击重试。</div>
+          <Button v-if="loadError" @click="refresh" type="white" text="重新加载"></Button>
+        </div>
+        <div class="source_list" v-else-if="!loading">
+          <div v-for="item in list" :key="item.id" class="source_item" @click="choose(item.id)">
+            <img class="source_item_img" style="width:100%" v-if="item.img"
+              :src="item.img.replace('http://', 'https://') + '?x-oss-process=image/resize,m_fill,h_420,w_650'" />
+            <text class="source_item_title">{{ item.name }}</text>
+          </div>
+        </div>
+        <div class="loading" v-else>
+          <div>加载中...</div>
         </div>
       </div>
     </div>
-    <div class="list" :class="{ englishList: selectSub === 'english' }" v-if="selectSub === 'english'">
-      <div class="source_list">
-        <div @click="chooseWord" class="englishItem">
-          <div class="title">
-            超级背单词
-            <div class="desc">艾宾浩斯遗忘曲线，制定科学背单词计划</div>
-          </div>
-          <img class="icon" src="../icons/word.png" />
-        </div>
-        <div @click="chooseListen" class="englishItem">
-          <div class="title">
-            听力通
-            <div class="desc">1000+听力段落，让你磨足耳朵</div>
-          </div>
-          <Icon class="icon" src="listen" />
-        </div>
-        <div @click="toEnGrammar" class="englishItem">
-          <div class="title">
-            语法册
-            <div class="desc">随身携带的语法书</div>
-          </div>
-          <img class="icon" src="../icons/yf.svg" />
-        </div>
-        <div @click="chooseWordSearch" class="englishItem">
-          <div class="title">
-            词典
-            <div class="desc">便携词典</div>
-          </div>
-          <img class="icon" src="../icons/search.svg" />
-        </div>
-        <div @click="chooseRead" class="englishItem">
-          <div class="title">
-            阅读
-            <div class="desc">提分神器</div>
-          </div>
-          <img class="icon" src="../icons/enRead.svg" />
-        </div>
-      </div>
-    </div>
-    <div class="list" v-else>
-      <div class="source_list error" v-if="!loading && loadError">
-        <div class="text">加载失败，请点击重试。</div>
-        <Button v-if="loadError" @click="refresh" type="white" text="重新加载"></Button>
-      </div>
-      <div class="source_list" v-else-if="!loading">
-        <div v-for="item in list" :key="item.id" class="source_item" @click="choose(item.id)">
-          <img class="source_item_img" style="width:100%" v-if="item.img"
-            :src="item.img.replace('http://', 'https://') + '?x-oss-process=image/resize,m_fill,h_420,w_650'" />
-          <text class="source_item_title">{{ item.name }}</text>
-        </div>
-      </div>
-      <div class="loading" v-else>
-        <div>加载中...</div>
-      </div>
-    </div>
-  </div>
+  </Page>
 </template>
 <script>
 import { mapGetters } from 'vuex';
@@ -76,6 +81,8 @@ import Switch from '../components/switch'
 import Button from '../components/Button.vue'
 import Icon from '../components/icon.vue'
 import log from '@/plugin/log'
+import Page from '../components/Page.vue'
+import DegreeSelect from '../components/degreeSelect.vue'
 
 export default {
   name: 'source',
@@ -180,7 +187,7 @@ export default {
     }
   },
   components: {
-    Switch, Button, Icon
+    Switch, Button, Icon, Page, DegreeSelect
   }
 }
 </script>
@@ -189,6 +196,8 @@ export default {
 .source {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  background: #fff;
 }
 
 .subjects {
@@ -265,9 +274,11 @@ export default {
     text-align: center;
     padding: 20px 30px;
     color: rgba(0, 0, 0, 0.42);
+    position: relative;
 
     &.active {
       color: #00795c;
+      font-weight: bold;
 
       &::after {
         content: '';
@@ -414,6 +425,21 @@ export default {
         font-size: 24px;
         line-height: 66px;
         min-width: 120px;
+
+        &.active {
+          color: #00795c;
+
+          &::after {
+            content: '';
+            display: block;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 4px;
+            background-color: #04785c;
+            border-radius: 2px;
+          }
+        }
       }
 
       .subjects_set {

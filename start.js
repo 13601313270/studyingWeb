@@ -47,7 +47,7 @@ service.run(command, args, rawArgv).catch(err => {
  * 本地开发sqlite测试数据库启动
  */
 const hostname = '127.0.0.1';
-const port = 3011;
+const port = 3012;
 let DB_PATH = path.join(__dirname, '/Etc.End.db')
 
 const server = http.createServer((req, res) => {

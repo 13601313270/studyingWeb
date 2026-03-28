@@ -1,5 +1,5 @@
 <template>
-  <Page title="我的订单">
+  <Page title="我的订单" foot-active="mine">
     <div class="myOrder">
       <!-- 订单状态筛选 -->
       <!-- <div class="filter-tabs">
@@ -73,25 +73,32 @@
         <div class="dialog-content" @click.stop>
           <div class="dialog-header">
             <h2>订单详情</h2>
-            <button class="close-btn" @click="showDetail = false">×</button>
+            <div class="close-btn">
+              <img src="../icons/close.png" alt="关闭" @click="showDetail = false"></img>
+            </div>
           </div>
           <div class="dialog-body" v-if="selectedOrder">
             <div class="detail-section">
               <h3>订单信息</h3>
               <div class="detail-row">
-                <span>订单号：</span>
+                <span class="title">订单号：</span>
                 <span>{{ selectedOrder.orderId }}</span>
               </div>
               <div class="detail-row">
-                <span>下单时间：</span>
+                <span class="title">下单时间：</span>
                 <span>{{ selectedOrder.ctime }}</span>
               </div>
               <div class="detail-row">
-                <span>订单状态：</span>
+                <span class="title">订单状态：</span>
                 <span :class="getStatusClass(selectedOrder.order_status)">
                   {{ getOrderStatusText(selectedOrder.order_status) }}
                 </span>
               </div>
+              <div class="detail-row" v-if="selectedOrder.courierCompany">
+                <div class="title">快递公司：</div>
+                <div>{{ selectedOrder.courierCompany }}</div>
+              </div>
+              <!-- <div>{{ selectedOrder.logistics }}</div> -->
             </div>
 
             <div class="detail-section">
@@ -123,6 +130,20 @@
                 <span class="amount">¥{{ selectedOrder.price }}</span>
               </div> -->
             </div>
+            <div class="detail-section" v-if="selectedOrder.logistics">
+              <h3>物流信息</h3>
+              <div class="detail-row">
+                <div v-if="selectedOrder.logistics.code === 400">{{ selectedOrder.logistics.msg }}</div>
+                <div v-else-if="selectedOrder.logistics.code === 200">
+                  <div v-if="selectedOrder.logistics.data" class="logisticContent">
+                    <div v-for="value in selectedOrder.logistics.data.list" class="item">
+                      <div>{{ value.time }}</div>
+                      <div>{{ value.status }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -135,6 +156,7 @@ import { ref, onMounted } from 'vue'
 import Page from '@/components/Page.vue'
 import request from '@/plugin/request'
 import Loading from '@/plugin/loading'
+import toast from '@/plugin/toast'
 
 // 订单状态类型
 interface OrderItem {
@@ -151,11 +173,24 @@ interface OrderItem {
 const orderList = ref<OrderItem[]>([])
 const loading = ref<boolean>(true)
 const showDetail = ref<boolean>(false)
-type stateType = 'order_unpaid' | 'order_paid' | 'order_making' | 'order_shipped' | 'order_completed' | 'order_refund' | 'order_partial_refund';
+type stateType = 0 | 1 | -1;
 const selectedOrder = ref<OrderItem & {
   order_status: stateType
   description: string;
   out_order_no: string;
+  // 快递信息
+  courierCompany?: string;
+  deliveryTime?: string;
+  logistics?: {
+    code: 400 | 200,
+    msg: string,
+    data?: {
+      list: Array<{
+        time: string,
+        status: string
+      }>
+    },
+  }
 } | null>(null)
 const currentTab = ref<string>('all')
 
@@ -201,19 +236,15 @@ const loadOrders = async () => {
 // 获取订单状态文本
 const getOrderStatusText = (status: stateType) => {
   const statusMap: Record<stateType, string> = {
-    order_unpaid: '待支付',
-    order_paid: '已支付',
-    order_making: '订单制作中',
-    order_shipped: '已发货',
-    order_completed: '订单确认收货(已完成)',
-    order_refund: '订单已退款',
-    order_partial_refund: '订单部分退款',
+    0: '订单制作中',
+    1: '已发货',
+    [-1]: '已取消',
   }
   return statusMap[status] || '未知状态'
 }
 
 // 获取订单状态样式类
-const getStatusClass = (status: string) => {
+const getStatusClass = (status: stateType) => {
   return `status-${status}`
 }
 
@@ -227,8 +258,16 @@ const viewOrderDetail = async (order: OrderItem) => {
     showDetail.value = true;
     selectedOrder.value = {
       ...order,
+      order_status: res.data.status,
+      logistics: res.logistics,
       ...res.data
     };
+  } else {
+    loading.destory()
+    toast({
+      'message': res.error,
+      'duration': 3000
+    })
   }
 }
 
@@ -507,24 +546,27 @@ onMounted(() => {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 32px;
+        padding: 12px;
+        padding-left: 24px;
         border-bottom: 1px solid #eee;
 
         h2 {
           margin: 0;
-          font-size: 24px;
+          font-size: 36px;
           font-weight: bold;
         }
 
         .close-btn {
-          background: none;
-          border: none;
-          font-size: 48px;
+          width: 88px;
+          height: 88px;
           cursor: pointer;
-          color: #999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
 
-          &:hover {
-            color: #333;
+          >img {
+            width: 50px;
+            height: 50px;
           }
         }
       }
@@ -548,6 +590,11 @@ onMounted(() => {
             padding: 12px 0;
             font-size: 28px;
 
+            .title {
+              width: 160px;
+              flex-shrink: 0;
+            }
+
             &.total {
               border-top: 1px solid #eee;
               margin-top: 24px;
@@ -558,6 +605,17 @@ onMounted(() => {
                 font-size: 32px;
                 color: #ff6b35;
               }
+            }
+          }
+
+          .logisticContent {
+            .item {
+              color: rgb(82, 82, 82);
+              background-color: #f5f5f5;
+              padding: 8px;
+              box-sizing: border-box;
+              border-radius: 8px;
+              margin-bottom: 8px;
             }
           }
 

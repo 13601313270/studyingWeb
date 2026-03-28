@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div style="height: 100%" @scroll="scroll">
+  <Page title="题库" foot-active="source">
+    <div style="height: 100%">
       <div class="content">
         <div class="lessons" v-for="item in pois">
           <text class="lessons_title">{{ item.name }}入门</text>
@@ -21,64 +21,53 @@
           <div class="lessons_content">
             <text class="question_page_button" v-for="quizIndex in getPageCount(item.poi, 5)"
               @click="quizQuestions(item.poi, 5, quizIndex - 1)">题组
-              {{ getPageCount(item.poi, 5).length > 1 ? quizIndex : '' }}</text>
+              {{ getPageCount(item.poi, 5) > 1 ? quizIndex : '' }}</text>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </Page>
 </template>
 
-<script>
-import { mapActions } from 'vuex';
+<script setup lang="ts">
+import Page from '@/components/Page.vue';
 import request from '../plugin/request'
+import { onActivated, onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
-export default {
-  name: 'lessonQuestionList',
-  created() {
-    this.init()
-    // this.logAction('lessonQuestionList');
-  },
-  activated() {
-    if (this.id !== this.$route.params.id) {
-      this.init()
-    }
-  },
-  data() {
-    return {
-      id: -1,
-      pois: [],
-      countList: []
-    }
-  },
-  methods: {
-    ...mapActions('main', ['setPath']),
-    init() {
-      this.id = this.$route.params.id;
-      request.get('/lesson/' + this.$route.params.id + '/poi').then(res => {
-        this.pois = res;
-      });
-      request.get('/lesson/' + this.$route.params.id + '/question/countListV2').then(res => {
-        this.countList = res;
-      });
-    },
-    getPageCount(poi, difficult) {
-      let item = this.countList.find(item => {
-        return item.difficult === difficult && poi === item.poi;
-      });
-      if (item) {
-        return Math.max(Math.min(Math.round(item.count / 20), 20), 1);
-      } else {
-        return 0;
-      }
-    },
-    quizQuestions(poi, difficult, page) {
-      this.$router.push('/poi/' + poi + '/question/' + difficult + '/' + page);
-    },
-    scroll() {
-      console.log(111)
-    },
+const id = ref<number>(-1);
+const pois = ref<{ poi: number, name: string }[]>([]);
+const countList = ref<{ poi: number, difficult: number, count: number }[]>([]);
+
+onMounted(() => {
+  init()
+})
+onActivated(() => {
+  init()
+})
+const route = useRoute();
+const router = useRouter();
+function init() {
+  id.value = Number(route.params.id);
+  request.get('/lesson/' + route.params.id + '/poi').then((res: any) => {
+    pois.value = res;
+  });
+  request.get('/lesson/' + route.params.id + '/question/countListV2').then((res: any) => {
+    countList.value = res;
+  });
+}
+function getPageCount(poi: any, difficult: number): number {
+  let item = countList.value.find(item => {
+    return item.difficult === difficult && poi === item.poi;
+  });
+  if (item) {
+    return Math.max(Math.min(Math.round(item.count / 20), 20), 1);
+  } else {
+    return 0;
   }
+}
+function quizQuestions(poi: any, difficult: number, page: number) {
+  router.push('/poi/' + poi + '/question/' + difficult + '/' + page);
 }
 </script>
 

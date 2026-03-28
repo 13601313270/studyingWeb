@@ -1,5 +1,5 @@
 <template>
-  <Page title="阅读">
+  <Page title="阅读" foot-active="source">
     <div v-if="info">
       <div class="title">{{ title }}</div>
       <div class="levelContent" v-if="info.contentList && info.contentList.length">
@@ -23,7 +23,7 @@
           <div class="splitLine" v-else-if="section.substring(0, 10) === '----------'">
           </div>
           <div v-else-if="section.substring(0, 7) === '![Image'">
-            <img class="showImg" :src="section.match(/\]\((https?:\/\/.+)\)/)[1]" />
+            <img class="showImg" :src="(section.match(/\]\((https?:\/\/.+)\)/) || ['', ''])[1]" />
           </div>
           <div v-else>
             {{ section }}

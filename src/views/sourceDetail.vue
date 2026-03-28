@@ -1,27 +1,29 @@
 <template>
-  <div class="content">
-    <div class="lessons">
-      <div v-for="item in list" :key="item.id" class="lesson_item">
-        <text class="lesson_item_title">{{ item.title }}</text>
-        <div class="video_list" v-if="item.poi.find(v => v.hasVideo)">
-          <div class="title">课 程</div>
-          <div class="list">
-            <div v-for="(poi, key) in item.poi" :key="poi.id" class="item">
-              <text class="user_to_poi_item">{{ key + 1 }}、{{ poi.name }}</text>
-              <Button class="playButton" text="播放" icon="video" :disabled="!poi.hasVideo" @click="poiLesson(poi)" />
+  <Page :title="title" footActive='source'>
+    <div class="content">
+      <div class="lessons">
+        <div v-for="item in list" :key="item.id" class="lesson_item">
+          <text class="lesson_item_title">{{ item.title }}</text>
+          <div class="video_list" v-if="item.poi.find(v => v.hasVideo)">
+            <div class="title">课 程</div>
+            <div class="list">
+              <div v-for="(poi, key) in item.poi" :key="poi.id" class="item">
+                <text class="user_to_poi_item">{{ key + 1 }}、{{ poi.name }}</text>
+                <Button class="playButton" text="播放" icon="video" :disabled="!poi.hasVideo" @click="poiLesson(poi)" />
+              </div>
             </div>
           </div>
-        </div>
-        <div style="flex-grow: 1;"></div>
-        <div class="action_links">
-          <Button v-if="!item.poi.find(v => v.hasVideo)" text="课   程" icon="video" :disabled="!item.hasContent"
-            @click="lesson(item)" />
-          <Button text="题   库" icon="question" @click="gotoQuestion(item)" />
-          <Button v-if="item.lessonKnowledgeExist" text="知识点" icon="light" @click="gotoKnowledge(item)" />
+          <div style="flex-grow: 1;"></div>
+          <div class="action_links">
+            <Button v-if="!item.poi.find(v => v.hasVideo)" text="课   程" icon="video" :disabled="!item.hasContent"
+              @click="lesson(item)" />
+            <Button text="题   库" icon="question" @click="gotoQuestion(item)" />
+            <Button v-if="item.lessonKnowledgeExist" text="知识点" icon="light" @click="gotoKnowledge(item)" />
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </Page>
   <Dialog :show="showConinuePoiLesson" title="提示" @close="closeDialog">
     <div class="chooseUseType">
       <BuyVIPDesc />
@@ -47,6 +49,7 @@ import BuyVIPDesc from './buyVIPDesc.vue';
 import toast from '@/plugin/toast';
 import log from '@/plugin/log';
 import VipPriceDesc from '@/components/vipPriceDesc.vue';
+import Page from '@/components/Page.vue';
 
 const router = useRouter();
 const route = useRoute();
@@ -72,6 +75,7 @@ type Detail = {
 const list = ref<Detail[]>([]);
 const info = ref({});
 const score = ref([]);
+const title = ref<string>('')
 
 // 确认次数弹窗
 const showConinuePoiLesson = ref<Poi | null>(null);
@@ -86,7 +90,7 @@ const refresh = () => {
   request.get('/source/' + route.params.id + '/info').then(data => {
     Object.assign(info, data);
     // @ts-ignore
-    store.dispatch('main/setPath', [{ name: data.name }]);
+    title.value = data.name;
   });
 
   request.get('/source/' + route.params.id + '/lessonsV3').then(data => {

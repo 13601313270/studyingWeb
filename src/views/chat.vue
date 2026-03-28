@@ -1,35 +1,32 @@
 <template>
-  <div class="chatPage" v-if="chatUser">
-    <!-- <div class="user" v-if="transformFinish">
-      <img class="icon" :src="chatUser.icon + '?x-oss-process=image/resize,m_fill,h_100,w_100'" />
-      <div class="name">{{ chatUser.name }}</div>
-      <div v-if="chatUser.isVip">VIP</div>
-    </div> -->
-    <div class="content">
-      <div v-if="chatListing">loading</div>
-      <div v-if="chatList.length === 0 && !chatListing">
-        <div class="receive">
-          <div class="icon"><img :src="chatUser.icon + '?x-oss-process=image/resize,m_fill,h_100,w_100'" /></div>
-          <div class="content">我们已互现关注，开始聊天吧</div>
+  <Page title="私信" v-if="chatUser" foot-active='friend'>
+    <div class="chatPage">
+      <div class="content">
+        <div v-if="chatListing">loading</div>
+        <div v-if="chatList.length === 0 && !chatListing">
+          <div class="receive">
+            <div class="icon"><img :src="chatUser.icon + '?x-oss-process=image/resize,m_fill,h_100,w_100'" /></div>
+            <div class="content">我们已互现关注，开始聊天吧</div>
+          </div>
+        </div>
+        <div v-for="item in chatList">
+          <div v-if="item.sender_id === +route.params.id" class="receive">
+            <div class="icon"><img :src="chatUser.icon + '?x-oss-process=image/resize,m_fill,h_100,w_100'" /></div>
+            <div class="content">{{ item.content }}</div>
+          </div>
+          <div v-else-if="item.receiver_id === +route.params.id" class="sent">
+            <div class="content">{{ item.content }}</div>
+            <div class="icon"><img :src="myInfo.icon + '?x-oss-process=image/resize,m_fill,h_100,w_100'" /></div>
+          </div>
         </div>
       </div>
-      <div v-for="item in chatList">
-        <div v-if="item.sender_id === +route.params.id" class="receive">
-          <div class="icon"><img :src="chatUser.icon + '?x-oss-process=image/resize,m_fill,h_100,w_100'" /></div>
-          <div class="content">{{ item.content }}</div>
-        </div>
-        <div v-else-if="item.receiver_id === +route.params.id" class="sent">
-          <div class="content">{{ item.content }}</div>
-          <div class="icon"><img :src="myInfo.icon + '?x-oss-process=image/resize,m_fill,h_100,w_100'" /></div>
-        </div>
+      <div class="footer">
+        <textarea placeholder="发消息..." rows="1" maxlength="120" ref="textareaRef" v-model="sentMessage"
+          class="input"></textarea>
+        <Button class="sentButton" text="发送" @click="sent"></Button>
       </div>
     </div>
-    <div class="footer">
-      <textarea placeholder="发消息..." rows="1" maxlength="120" ref="textareaRef" v-model="sentMessage"
-        class="input"></textarea>
-      <Button class="sentButton" text="发送" @click="sent"></Button>
-    </div>
-  </div>
+  </Page>
 </template>
 <script setup lang="ts">
 import { onActivated, onMounted, onUnmounted, ref } from 'vue';
@@ -37,6 +34,7 @@ import { useRoute } from 'vue-router';
 import request from '../plugin/request'
 import Button from '@/components/Button.vue';
 import toast from '@/plugin/toast';
+import Page from '@/components/Page.vue';
 
 type ChatItem = {
   receiver_id: number,
@@ -149,6 +147,7 @@ function sent() {
 <style scoped lang="less">
 .chatPage {
   display: flex;
+  height: 100%;
   flex-direction: column;
 }
 

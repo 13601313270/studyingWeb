@@ -1,5 +1,5 @@
 <template>
-  <Page title="我的收件地址">
+  <Page title="我的收件地址" foot-active="mine">
     <div class="address-container">
       <!-- 地址列表 -->
       <div class="address-list" v-if="addressList.length > 0">

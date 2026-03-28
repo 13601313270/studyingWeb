@@ -1,45 +1,7 @@
 <template>
   <div class="app_content">
-    <div class="header" v-if="$route.name !== 'welcome'">
-      <div class="header_web_name">
-        <div class="head_root" v-if="isInRootPage">
-          <img class="icon" src="../icons/icons.png" />
-          <div class="degreeName" v-if="selectDegreeInfo" @click="degreeListDialogShow = true">
-            <span>{{ selectDegreeInfo.name }}</span>
-            <img src="../icons/sanjiao-white.svg" />
-          </div>
-        </div>
-        <div v-else class="header_web_name_back" @click="clickBack">
-          <img class="header_web_name_back_img" src="../icons/back.png" />
-          <!-- <icon class="header_web_name_back_img" width="48" height="48" :src="isInRootPage ? 'icons' : 'back'" /> -->
-        </div>
-      </div>
-      <div class="header_links">
-        <template v-if="isInRootPage">
-          <text class="header_links_web_name">松鼠学.</text>
-        </template>
-        <template
-          v-else-if="['dailyQuestion', 'QQ', 'aboutUs', 'cache', 'agreement', 'informationDetail', 'zhidaoDetail', 'friend'].includes($route.name)">
-          <text class="header_links_web_name"></text>
-        </template>
-        <template v-else>
-          <text class="header_links_web_name" v-if="path && path.length > 0">{{ path[path.length - 1].name }}</text>
-        </template>
-      </div>
-      <div class="header_others">
-        <div v-if="$route.name === 'addQuestion'">
-          <Button @click="add" style="height:34px;" text="发布"></Button>
-        </div>
-        <div v-else-if="$route.name === 'lessonDetail'" @click="toListenLog">
-          <icon src="log" width="56" height="56" />
-        </div>
-        <!-- <div v-else-if="$route.name === 'friend'" @click="toAddQuestion">
-          <icon src="add" width="56" height="56" />
-        </div> -->
-      </div>
-    </div>
-    <div v-if="isOffline" class="offline" :class="{ showLogin }">网络连接断开</div>
-    <div style="flex: 1;overflow-y: scroll;position: relative;">
+    <div style="flex: 1;overflow-y: hidden;position: relative;display: flex;
+    flex-direction: column;">
       <router-view v-slot="{ Component }" class="page">
         <transition :name="transitionType">
           <keep-alive include="source,sourceDetail,friend,lessonQuestionList,enRead">
@@ -48,29 +10,29 @@
         </transition>
       </router-view>
     </div>
-
     <div class="login" :class="{ isOffline }" v-if="showLogin">
       <Login />
     </div>
     <div class="bottom" :style="{}"
-      v-if="$route.meta.hideBottom !== true && (!['lessonDetail', 'lessonDetailNew', 'poiLessonDetail', 'lessonAllChildPoiVideo', 'lessonLog'].includes($route.name) && $route.name !== 'welcome')">
-      <div class="bottom_link" :class="[tabType === 'source' ? 'bottom_link_active' : 'bottom_link_blur']"
-        @click="to('/source')">
+      v-if="$route.meta.hideBottom !== true && (!['lessonDetail', 'lessonDetailNew', 'poiLessonDetail'].includes($route.name))">
+      <div class="bottom_link" :class="[tabType === 'source' ? 'active' : 'bottom_link_blur']" @click="to('/source')">
         <icon class="bottom_link_icon" :src="tabType === 'source' ? 'main_active' : 'main'" />
-        <text class="bottom_link_text"
-          :class="[tabType === 'source' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">课程</text>
+        <text class="bottom_link_text">学科</text>
       </div>
-      <div class="bottom_link" :class="[tabType === 'file' ? 'bottom_link_active' : 'bottom_link_blur']"
-        @click="to('/file')">
-        <icon class="bottom_link_icon" :src="tabType === 'file' ? 'file_active' : 'file'" />
-        <text class="bottom_link_text"
-          :class="[tabType === 'file' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">资料库</text>
+      <div class="bottom_link" :class="[tabType === 'file' ? 'active' : 'bottom_link_blur']" @click="to('/file')">
+        <img class="bottom_link_icon" v-if="tabType === 'file'" src="../icons/file_active.png" />
+        <img class="bottom_link_icon" v-else src="../icons/file.png" />
+        <text class="bottom_link_text">资料</text>
       </div>
-      <div class="bottom_link" :class="[tabType === 'friend' ? 'bottom_link_active' : 'bottom_link_blur']"
-        @click="to('/friend')" v-if="channel !== 'huawei'">
+      <div class="bottom_link" :class="[tabType === 'shop' ? 'active' : 'bottom_link_blur']" @click="to('/shop')">
+        <img class="bottom_link_icon" v-if="tabType === 'shop'" src="../icons/shop_active.png" />
+        <img class="bottom_link_icon" v-else src="../icons/shop.png" />
+        <text class="bottom_link_text">商店</text>
+      </div>
+      <div class="bottom_link" :class="[tabType === 'friend' ? 'active' : 'bottom_link_blur']" @click="to('/friend')"
+        v-if="channel !== 'huawei'">
         <icon class="bottom_link_icon" :src="tabType === 'friend' ? 'friend_active' : 'friend'" />
-        <text class="bottom_link_text"
-          :class="[tabType === 'friend' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">消息</text>
+        <text class="bottom_link_text">消息</text>
         <div class="tip" v-if="notUsedInformationCount > 0">
           <text class="tipText">{{ notUsedInformationCount }}</text>
         </div>
@@ -83,11 +45,9 @@
       <!--                <icon class="bottom_link_icon" width="40" height="40" :src="tabType==='mall'?'mall_active':'mall'"/>-->
       <!--                <text class="bottom_link_text" :class="[tabType==='mall'?'bottom_link_text_active':'bottom_link_text_blur']">商城</text>-->
       <!--            </div>-->
-      <div class="bottom_link" :class="[tabType === 'mine' ? 'bottom_link_active' : 'bottom_link_blur']"
-        @click="to('/mine')">
+      <div class="bottom_link" :class="[tabType === 'mine' ? 'active' : 'bottom_link_blur']" @click="to('/mine')">
         <icon class="bottom_link_icon" :src="tabType === 'mine' ? 'user_active' : 'user'" />
-        <text class="bottom_link_text"
-          :class="[tabType === 'mine' ? 'bottom_link_text_active' : 'bottom_link_text_blur']">我的</text>
+        <text class="bottom_link_text">我的</text>
       </div>
     </div>
     <ImgPreview v-if="showImgUrl" :url="showImgUrl.replace('http://', 'https://')" @cancel="showImgUrl = ''" />
@@ -203,6 +163,9 @@ export default {
       this.setShowLogin(true)
     }
     window.onClickBack = this.clickBack;
+    window.degreeListDialogShow = () => {
+      this.degreeListDialogShow = true;
+    };
 
     setBuyVipCallback(() => {
       this.showBuySuccess = true;
@@ -226,8 +189,8 @@ export default {
       const rootPages = ['source', 'file', 'friend', 'mall', 'mine']
       let sort = [
         ...rootPages,
-        'sourceDetail', 'lessonDetail', 'word', 'wordSearch', 'listen', 'lessonDetailNew', 'poiLessonDetail', 'lessonAllChildPoiVideo', 'lessonQuestionList', 'lessonKnowledgeList', 'poiQuestion', 'lessonLog', 'enGrammar', 'enGrammarItem', 'enRead', 'enReadDetail',
-        'addQuestion', 'informationDetail', 'dailyQuestion', 'zhidaoDetail', 'lessonKnowledgeDetail', 'chat',
+        'sourceDetail', 'lessonDetail', 'word', 'wordSearch', 'listen', 'lessonDetailNew', 'poiLessonDetail', 'lessonQuestionList', 'lessonKnowledgeList', 'poiQuestion', 'lessonLog', 'enGrammar', 'enGrammarItem', 'enRead', 'enReadDetail',
+        'dailyQuestion', 'lessonKnowledgeDetail', 'chat',
         'address', 'order', 'aboutUs', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo', 'develop'
       ];
       if (sort.indexOf(newVal) > sort.indexOf(oldVal)) {
@@ -282,6 +245,7 @@ export default {
 
     request.get('/studying/degree/list').then((list) => {
       this.degreeList = list;
+      this.setDegreeList(list);
     })
 
     // const minVersion = await this.axios.get('/globleConfig?keys=minVersion');
@@ -304,7 +268,7 @@ export default {
 
   },
   methods: {
-    ...mapActions('main', ['setShowLogin', 'setDegree']),
+    ...mapActions('main', ['setShowLogin', 'setDegree', 'setDegreeList']),
     clickBack() {
       if (this.showImgUrl) {
         // 如果图片再预览状态点击了返回，则先触发图片预览的关闭
@@ -336,9 +300,6 @@ export default {
     gotoAgreementPage() {
       this.$router.push('/agreement')
     },
-    toAddQuestion() {
-      this.$router.push('/addQuestion')
-    },
     agreeDisagree() {
       program.exit()
     },
@@ -352,37 +313,41 @@ export default {
       this.degreeSelect = id;
       this.setDegree(id)
       this.degreeListDialogShow = false;
-
       localStorage.setItem(degreeSelectCacheKey, id)
     }
   },
   computed: {
-    ...mapGetters('main', ['showLogin']),
+    ...mapGetters('main', ['showLogin', 'footActive']),
     path() {
       // @ts-ignore
       return this.$store.getters['main/path']
     },
     tabType() {
-      if (['source', 'sourceDetail', 'lessonDetail', 'lessonDetailNew', 'poiLessonDetail', 'lessonQuestionList', 'poiQuestion', 'lessonKnowledgeList', 'lessonKnowledgeDetail', 'lessonAllChildPoiVideo', 'listen', 'word', 'enGrammar', 'enGrammarItem', 'wordSearch', 'enRead', 'enReadDetail'].includes(this.$route.name)) {
+      if (this.footActive === 'source') {
         return 'source';
-      } else if (['file'].includes(this.$route.name)) {
+      } else if (this.footActive === 'file') {
         return 'file';
-      } else if (['mine', 'aboutUs', 'address', 'order', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo', 'develop'].includes(this.$route.name)) {
-        return 'mine';
-      } else if (['friend', 'addQuestion', 'informationDetail', 'dailyQuestion', 'zhidaoDetail', 'chat'].includes(this.$route.name)) {
+      } else if (this.footActive === 'shop') {
+        return 'shop';
+      } else if (this.footActive === 'friend') {
         return 'friend';
-      } else if (['mall'].includes(this.$route.name)) {
-        return 'mall'
+      } else if (this.footActive === 'mine') {
+        return 'mine';
       }
+      // else if (['shop'].includes(this.$route.name)) {
+      //   return 'shop';
+      // } else if (['mine', 'aboutUs', 'address', 'order', 'cache', 'agreement', 'QQ', 'userInformation', 'accountInfo', 'develop'].includes(this.$route.name)) {
+      //   return 'mine';
+      // } else if (['friend', 'dailyQuestion', 'chat'].includes(this.$route.name)) {
+      //   return 'friend';
+      // } else if (['mall'].includes(this.$route.name)) {
+      //   return 'mall'
+      // }
     },
     isInRootPage() {
       // @ts-ignore
       return ['source', 'friend', 'file', 'mall', 'mine'].includes(this.$route.name);
     },
-    selectDegreeInfo() {
-      console.log('this.degreeList', this.degreeList)
-      return this.degreeList.find(v => v.id === this.degreeSelect);
-    }
   },
   components: { icon, Button, Login, ImgPreview, Dialog, BuyVIPDesc }
 }
@@ -406,101 +371,6 @@ export default {
   display: flex;
   flex-grow: 1;
   flex-direction: column;
-
-  .header {
-    line-height: 88px;
-    background-color: #00795c;
-    color: white;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-    flex-shrink: 0;
-    flex-grow: 0;
-    height: 88px;
-    position: relative;
-    padding-top: env(safe-area-inset-top);
-
-    .header_web_name {
-      display: flex;
-      flex: 0;
-      flex-direction: row;
-      align-items: center;
-      height: 100%;
-      position: absolute;
-
-      .head_root {
-        display: flex;
-        align-items: center;
-        font-size: 28px;
-
-        .icon {
-          width: 48px;
-          height: 48px;
-          margin: 0 8px;
-        }
-
-        .degreeName {
-          font-size: 32px;
-          display: flex;
-          align-items: center;
-
-          >img {
-            height: 8px;
-            margin-left: 8px;
-          }
-        }
-      }
-
-      &_back {
-        min-width: 88px;
-        height: 88px;
-        opacity: 0.8;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        &_img {
-          width: 48px;
-          height: 48px;
-        }
-      }
-    }
-
-    &_links {
-      display: flex;
-      flex: 1;
-      font-size: 32px;
-      width: 100%;
-      height: 100%;
-      flex-direction: row;
-      color: white;
-
-      &_web_name {
-        color: rgba(255, 255, 255, 0.9);
-        display: block;
-        font-family: PingFangSC-Medium;
-        width: 590px;
-        flex-grow: 1;
-        font-size: 36px;
-        text-align: center;
-      }
-    }
-
-    >.header_others {
-      margin-right: 20px;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      position: absolute;
-      right: 0;
-
-      >div {
-        height: 56px;
-      }
-    }
-  }
 
   .offline {
     background: #f75a5a;
@@ -527,18 +397,19 @@ export default {
   width: 100vw;
   background-color: #fcfcfc;
   border-top-style: solid;
-  border-top-width: 1px;
-  border-top-color: #a5afab;
+  border-top-width: 1PX;
+  border-top-color: #bfc4c2;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   padding-bottom: env(safe-area-inset-bottom);
 
-  &_link {
+  .bottom_link {
     height: 100px;
     flex: 1;
     text-align: center;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
@@ -548,18 +419,20 @@ export default {
       height: 44px;
     }
 
+    &.active {
+      .bottom_link_text {
+        color: #19392d;
+        font-weight: bold;
+      }
+    }
+
     &_text {
       font-size: 28px;
       line-height: 28px;
       height: 24px;
       color: #5a5e5d;
       text-align: center;
-      margin-left: 8px;
-
-      &_active {
-        color: #1a2e27;
-        font-weight: bold;
-      }
+      margin-top: 8px;
     }
   }
 }
@@ -765,112 +638,6 @@ export default {
 
 .right-enter-to {
   transform: translateX(0px);
-}
-
-@media (min-width: 1025px) {
-
-  /* 中等屏幕宽度下的样式 */
-  .app_content {
-    .header {
-      height: 66px;
-
-      .header_web_name {
-        min-width: 66px;
-
-        .header_web_name_back {
-          min-width: 66px;
-          height: 66px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          .header_web_name_back_img {
-            margin: 0;
-            width: 48px !important;
-            height: 48px !important;
-          }
-        }
-
-        .head_root {
-          .degreeName {
-            margin-left: 80PX;
-            font-size: 14PX;
-          }
-        }
-      }
-
-      .header_links {
-        flex-grow: 0;
-        width: 275px;
-
-        .header_links_web_name {
-          width: auto;
-          position: absolute;
-          margin-left: 44PX;
-          font-size: 0.37333rem;
-          line-height: 0.88rem;
-        }
-      }
-    }
-
-    .bottom {
-      height: 66px;
-      left: 300px;
-      width: 640px;
-      // right: 0;
-      position: absolute;
-      border: none;
-      top: 0;
-
-      .bottom_link {
-        height: 66px;
-
-        .bottom_link_icon {
-          width: 44px !important;
-          height: 44px !important;
-        }
-
-        .bottom_link_text {
-          font-size: 22px;
-          margin: 0;
-        }
-
-        &.bottom_link_blur {
-          background-color: #00795c;
-
-          .bottom_link_icon {
-            display: none;
-          }
-
-          .bottom_link_text {
-            color: white;
-          }
-        }
-      }
-    }
-
-    .ba {
-      display: flex;
-      flex-direction: row;
-      padding: 8px;
-      border-top: solid 1px #eee;
-
-      a {
-        color: #333;
-        font-size: 14px;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        margin-right: 12px;
-      }
-
-      .ga {
-        img {
-          height: 14px;
-        }
-      }
-    }
-  }
 }
 
 .buySuccess {

@@ -6,7 +6,6 @@ import sourceDetail from '../views/sourceDetail.vue'
 import lessonDetail from '../views/lessonDetail.vue'
 import poiLessonDetail from '../views/poiLessonDetail.vue'
 import lessonDetailNew from '../views/lessonDetailNew.vue';
-import lessonAllChildPoiVideo from '../views/lessonAllChildPoiVideo.vue';
 import lessonQuestionList from '../views/lessonQuestionList.vue';
 import poiQuestion from '../views/poiQuestion.vue';
 import poiLessonQuestionList from '../views/poiLessonQuestionList.vue';
@@ -14,8 +13,6 @@ import lessonKnowledgeList from '../views/lessonKnowledgeList.vue';
 import lessonKnowledgeDetail from '../views/lessonKnowledgeDetail.vue'
 import mine from '../views/mine.vue';
 import friend from "../views/friend.vue";
-import InformationDetail from '../views/informationDetail.vue'
-import zhidaoDetail from '../views/zhidaoDetail.vue'
 import userInformation from '../views/userInformation.vue'
 import accountInfo from '../views/accountInfo.vue'
 import aboutUs from '../views/aboutUs.vue'
@@ -23,7 +20,6 @@ import cache from '../views/cache.vue';
 import agreement from '../views/agreement.vue'
 import QQ from '../views/QQ.vue'
 import lessonLog from '../views/lessonLog.vue'
-import addQuestion from '../views/addQuestion.vue'
 import file from '../views/file.vue'
 import word from '../views/word.vue'
 import wordSearch from '../views/wordSearch.vue'
@@ -36,6 +32,8 @@ import enRead from '@/views/enRead.vue'
 import enReadDetail from '@/views/enReadDetail.vue'
 import address from '@/views/address.vue'
 import myOrder from '@/views/myOrder.vue'
+import Shop from '@/views/shop.vue'
+import ShopGood from '@/views/shopGood.vue'
 
 type RouterItem = RouteRecordRaw & {
   meta?: {
@@ -48,6 +46,9 @@ const routes: Array<RouterItem> = [
     path: '/',
     name: 'welcome',
     component: welcome,
+    meta: {
+      hideBottom: true,
+    }
   },
   {
     path: '/source',
@@ -76,11 +77,6 @@ const routes: Array<RouterItem> = [
     path: '/lessonNew/:id',
     name: 'lessonDetailNew',
     component: lessonDetailNew,
-  },
-  {
-    path: '/lessonAllChildPoiVideo/:id',
-    name: 'lessonAllChildPoiVideo',
-    component: lessonAllChildPoiVideo,
   },
   {
     path: '/lesson/:id/questionList',
@@ -118,21 +114,6 @@ const routes: Array<RouterItem> = [
     component: friend,
   },
   {
-    path: '/addQuestion',
-    name: 'addQuestion',
-    component: addQuestion,
-  },
-  {
-    path: '/informationDetail',
-    name: 'informationDetail',
-    component: InformationDetail,
-  },
-  {
-    path: '/zhidaoDetail/:id',
-    name: 'zhidaoDetail',
-    component: zhidaoDetail
-  },
-  {
     path: '/userInformation',
     name: 'userInformation',
     component: userInformation,
@@ -166,6 +147,9 @@ const routes: Array<RouterItem> = [
     path: '/lessonLog/:id',
     name: 'lessonLog',
     component: lessonLog,
+    meta: {
+      hideBottom: true,
+    }
   },
   {
     path: '/file',
@@ -229,6 +213,19 @@ const routes: Array<RouterItem> = [
     path: '/order',
     name: 'order',
     component: myOrder,
+  },
+  {
+    path: '/shop',
+    name: 'shop',
+    component: Shop,
+  },
+  {
+    path: '/shopGood/:id',
+    name: 'shopGood',
+    component: ShopGood,
+    meta: {
+      hideBottom: true,
+    }
   }
 ]
 export default routes;

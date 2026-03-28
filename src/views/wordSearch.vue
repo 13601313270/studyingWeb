@@ -1,5 +1,5 @@
 <template>
-  <Page title="词典">
+  <Page title="词典" foot-active="source">
     <div class="content">
       <Input placeholder="请输入单词" @input="search" v-model="searchWord" />
       <div class="searchList">
@@ -79,9 +79,15 @@ function choose(word: string) {
 <style lang="less" scoped>
 .content {
   padding: 16px;
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 
   .searchList {
     margin-top: 16px;
+    overflow: auto;
 
     .searchItem {
       border: solid 1px rgb(98, 98, 98);

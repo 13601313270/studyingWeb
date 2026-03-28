@@ -1,7 +1,7 @@
 import androidBridge from "./androidBridge";
 
 // 表配置
-let sqlConfig: {
+const sqlConfig: {
   [key in string]: Array<{
     name: string,
     type: NumberConstructor | StringConstructor,
@@ -50,6 +50,50 @@ let sqlConfig: {
     }
     // 1 2 3 4 5 6 7 8
   ],
+  wordTop1: [
+    {
+      name: 'id',
+      type: Number,
+      autoincrement: true,
+      notNull: true
+    },
+    {
+      name: 'word',
+      type: String,
+      notNull: true
+    },
+    {
+      name: 'count',
+      type: Number,
+      notNull: true
+    },
+    {
+      name: 'translate',
+      type: String
+    }
+  ],
+  wordTop2: [
+    {
+      name: 'id',
+      type: Number,
+      autoincrement: true,
+      notNull: true
+    },
+    {
+      name: 'word',
+      type: String,
+      notNull: true
+    },
+    {
+      name: 'count',
+      type: Number,
+      notNull: true
+    },
+    {
+      name: 'translate',
+      type: String
+    }
+  ],
   wordRecord: [
     {
       name: 'id',
@@ -72,7 +116,7 @@ let sqlConfig: {
       type: String
     }
   ],
-  wordTimeRecord: [
+  wordDateRecord: [
     {
       name: 'id',
       type: Number,
@@ -98,6 +142,16 @@ let sqlConfig: {
       name: 'dontKnow',
       type: Number,
       notNull: true
+    },
+    {
+      name: 'knowWordCountMin',
+      type: Number,
+      notNull: false
+    },
+    {
+      name: 'knowWordCountMax',
+      type: Number,
+      notNull: false
     }
   ],
   // 听力时长记录
@@ -148,7 +202,7 @@ let sqlConfig: {
       notNull: true
     },
   ],
-  readFinish: [
+  readFinishRecord: [
     {
       name: 'id',
       type: Number,
@@ -157,6 +211,31 @@ let sqlConfig: {
     },
     {
       name: 'article_id',
+      type: Number,
+      notNull: true
+    },
+    {
+      name: 'readingTime',
+      type: Number,
+      notNull: true
+    },
+    {
+      name: 'totalWords',
+      type: Number,
+      notNull: true
+    },
+    {
+      name: 'wordsPerMinute',
+      type: Number,
+      notNull: true
+    },
+    {
+      name: 'date',
+      type: String,
+      notNull: true
+    },
+    {
+      name: 'level',
       type: Number,
       notNull: true
     }
@@ -194,15 +273,15 @@ let sqlConfig: {
 }
 
 // @ts-ignore
-const indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB
+// const indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB
 
 const dbModule = {
   sql(table: string, sql: string, callBack: any, isSelect: boolean) {
-    if (navigator.userAgent.includes('studying1v1Android')) {
+    if (navigator.userAgent.includes('studying1v1Android') || (window.webkit && window.webkit.messageHandlers.jsUseWKWebView)) {
       androidBridge('Db', 'sql', {
         sql,
         isQuery: isSelect,
-      }).then(({ result }) => {
+      }).then(({ result }: any) => {
         if (isSelect) {
           const list = result.map((item: any) => {
             const itemUpdate: any = {}
@@ -254,10 +333,10 @@ const dbModule = {
       })
     } else {
       if (isSelect) {
-        fetch('http://127.0.0.1:3011/', {
+        fetch('http://127.0.0.1:3012/', {
           method: 'POST',
           body: JSON.stringify({
-            sql: sql
+            sql
           }),
         })
           .then(res => res.json())
@@ -274,10 +353,10 @@ const dbModule = {
             });
           })
       } else {
-        fetch('http://127.0.0.1:3011/', {
+        fetch('http://127.0.0.1:3012/', {
           method: 'POST',
           body: JSON.stringify({
-            sql: sql
+            sql
           }),
         })
           .then(res => res.json())
@@ -285,37 +364,16 @@ const dbModule = {
             callBack(!!res);
           })
       }
-      // @ts-ignore
-      // var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
-      // // @ts-ignore
-      // db.transaction(function (tx) {
-      //   if (isSelect) {
-      //     // @ts-ignore
-      //     tx.executeSql(sql, [], function (tx, results) {
-      //       const list = [];
-      //       const len = results.rows.length;
-      //       for (let i = 0; i < len; i++) {
-      //         list.push(results.rows.item(i));
-      //       }
-      //       callBack({
-      //         status: 'SUCCESS',
-      //         data: list,
-      //       });
-      //     }, null); //查询和回调
-      //   } else {
-      //     callBack(tx.executeSql(sql));
-      //   }
-      // });
     }
   }
-};//weex.requireModule('Db')
+};// weex.requireModule('Db')
 export default class {
   table: string;
   constructor(table: string) {
     this.table = table
-    let list = sqlConfig
+    const list = sqlConfig
     // @ts-ignore
-    let listStr = list[this.table].map(item => {
+    const listStr = list[this.table].map(item => {
       let type = 'text'
       if (item.type === Number) {
         type = 'integer'
@@ -344,7 +402,7 @@ export default class {
           resolve(res)
         })
       } else {
-        fetch('http://127.0.0.1:3011/', {
+        fetch('http://127.0.0.1:3012/', {
           method: 'POST',
           body: JSON.stringify({
             sql: 'create table if not exists ' + table + '(' + listStr.join(',') + ')'
@@ -356,7 +414,7 @@ export default class {
     })
   }
 
-  select(sql: string) {
+  select(sql: string): Promise<any[]> {
     return new Promise((resolve) => {
       // console.log('isReaded---0.1');
       // @ts-ignore
@@ -372,31 +430,32 @@ export default class {
       })
     })
   }
+
   run(sql: string, isSelect: boolean) {
     return new Promise(async (resolve) => {
       dbModule.sql(this.table, sql, (res: any) => {
         if (navigator.userAgent.includes('studying1v1Android')) {
           resolve(true)
         } else {
-          console.log(2.5)
-          console.log(res)
+          // console.log(2.5)
+          // console.log(res)
           resolve(res)
         }
       }, isSelect)
     })
   }
 
-  insert(object: any) {
-    let allObject = arguments
+  insert(object: any): Promise<any> {
+    const allObject = arguments
     // @ts-ignore
-    let table = this.table
-    let self = this;
+    const table = this.table
+    const self = this;
     return new Promise(async (resolve) => {
       // console.log(2.1)
-      let sql = []
-      let sqlBefore = `INSERT INTO ${table} (${Object.keys(allObject[0]).join(',')}) VALUES `
+      const sql = []
+      const sqlBefore = `INSERT INTO ${table} (${Object.keys(allObject[0]).join(',')}) VALUES `
       for (object of allObject) {
-        let value = Object.values(object).map((item) => {
+        const value = Object.values(object).map((item) => {
           if (typeof item === 'number') {
             return item
           } else {

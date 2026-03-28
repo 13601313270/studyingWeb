@@ -49,9 +49,7 @@ onMounted(() => {
 })
 
 function callBuyVip(product: 'studyingMonthVIP' | 'studyingYearVIP') {
-  console.log('=====a=====')
   buyVip(product).then(() => {
-    console.log('=====z=====')
     request.get('/user/getInfo')
       .then(res => {
         store.dispatch('main/setUserInfo', res)
@@ -125,6 +123,7 @@ function callBuyVip(product: 'studyingMonthVIP' | 'studyingYearVIP') {
 
 .vipEndDate {
   margin-top: 20px;
+  font-size: 28px;
   color: #999;
 }
 </style>
