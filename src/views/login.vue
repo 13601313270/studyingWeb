@@ -483,12 +483,12 @@ onMounted(() => {
   bottom: 0;
   right: 0;
   background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   .tempCode {
-    position: fixed;
     box-sizing: border-box;
-    top: 300px;
-    left: 50px;
     width: 650px;
     padding: 30px;
     background-color: white;
