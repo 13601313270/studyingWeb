@@ -50,7 +50,7 @@
             <img :src="'https://api.studying1v1.com/register/checkImg/' + phone + '?rand=' + random" />
             <Button class="changeOne" @click="getTempCode" text="换一张"></Button>
           </div>
-          <div class="tempInputText">请输入上面图片中的数字</div>
+          <div class="tempInputText">请输入上面图片中的4位数字</div>
           <div class="tempInput">
             <input v-model="tempCode">
           </div>
@@ -331,14 +331,14 @@ const registerWeChat = () => {
       phone: bindRuleForm.username,
       phoneCode: bindRuleForm.password,
     })
-    .then((res) => {
+    .then((res: any) => {
       if (res.result) {
         alert('登录成功');
         localStorage.setItem('token', res.token);
         store.dispatch('main/setToken', res.token);
         request
           .get(`/login/getInfo?email=${res.account}&token=${res.token}`)
-          .then((res2) => {
+          .then((res2: any) => {
             if (res2.code === 200) {
               localStorage.setItem('userInfo', JSON.stringify(res2.info));
               store.dispatch('main/setUserInfo', res2.info);
@@ -358,7 +358,7 @@ const registerWeChat = () => {
 };
 
 const showAgreement = async () => {
-  const agreement = await request.get('/agreement');
+  const agreement: any = await request.get('/agreement');
   agreementInfo.content = agreement.content;
   agreementInfo.title = agreement.title;
   showRuleContent.value = true;
