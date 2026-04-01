@@ -381,8 +381,13 @@ onMounted(() => {
 
   .close {
     position: absolute;
-    left: 30px;
-    top: 30px;
+    width: 88px;
+    height: 88px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    left: 0px;
+    top: env(safe-area-inset-top);
 
     >img {
       width: 50px;
@@ -528,10 +533,11 @@ onMounted(() => {
     .tempInput {
       height: 80px;
       border-style: solid;
-      border-width: 2px;
+      border-width: 1PX;
       border-color: rgba(0, 77, 59, 0.87);
       border-radius: 5px;
       margin-top: 12px;
+      display: flex;
 
       input {
         padding-left: 12px;
@@ -596,6 +602,9 @@ onMounted(() => {
       border-radius: 10px;
       box-sizing: border-box;
       overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       input {
         height: 96px;
