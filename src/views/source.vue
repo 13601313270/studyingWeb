@@ -98,7 +98,7 @@ export default {
     }
   },
   async created() {
-    this.subjects = await request.get('/subjectV3?degree=' + this.degree);
+    this.subjects = await request.get('/subjectV4?degree=' + this.degree);
     const selectSub = await localStorage.getItem('sourceChoose')
     if (selectSub === 'english') {
       this.selectSub = selectSub
@@ -180,7 +180,7 @@ export default {
   watch: {
     degree: {
       async handler(val) {
-        this.subjects = await request.get('/subjectV3?degree=' + this.degree);
+        this.subjects = await request.get('/subjectV4?degree=' + this.degree);
         this.selectSub = 'english';
         localStorage.setItem('sourceChoose', 'english')
       }
