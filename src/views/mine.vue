@@ -96,10 +96,12 @@
       </div>
     </div>
     <Dialog :show="showLogout" title="您确定要推出" @close="showLogout = false">
-      <div style="margin: 20px">推出后用户信息不会丢失，后续如果需要，可重新登录</div>
-      <div style="display:flex;justify-content: space-around;">
-        <Button text="取消" style="width: 40%" @click="showLogout = false"></Button>
-        <Button text="确定" style="width: 40%" @click="loginOut"></Button>
+      <div class="logout">
+        <div class="logoutText">推出后用户信息不会丢失，后续如果需要，可重新登录。</div>
+        <div class="tools">
+          <Button text="取消" style="width: 40%" @click="showLogout = false"></Button>
+          <Button text="确定" style="width: 40%" error @click="loginOut"></Button>
+        </div>
       </div>
     </Dialog>
     <Dialog :show="showBuyVip" title="提示" @close="showBuyVip = false">
@@ -426,6 +428,20 @@ watch(() => store.state.main.userInfo, () => {
     .actionItem {
       font-size: 16PX;
     }
+  }
+}
+
+.logout {
+  .logoutText {
+    font-size: 32px;
+    text-indent: 2em;
+  }
+
+  .tools {
+    margin-top: 28px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-around;
   }
 }
 </style>
