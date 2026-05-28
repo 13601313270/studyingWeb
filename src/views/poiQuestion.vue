@@ -28,8 +28,9 @@
                   :style="{ backgroundColor: { right: '#50ba5f', wrong: '#df473b', none: 'white', select: '#b0b0b0' }[optionColor(item, index, k)] }"
                   @click="chooseOption(index, k)">
                   <text style="">{{ k + ' : ' }}</text>
-                  <text v-if="item.is_simple === 1" style="line-height: 46px;font-size: 32px;flex:1">{{ item.options[k]
-                    }}</text>
+                  <text v-if="item.is_simple === 1" style="line-height: 46px;font-size: 32px;flex:1">
+                    {{ item.options[k] }}
+                  </text>
                   <div v-else v-html="item.options[k]" class="question_option_value"></div>
                 </div>
               </div>
@@ -569,6 +570,10 @@ export default {
       border-width: 4px;
       margin-right: 10px;
       margin-bottom: 10px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
 
       &_plot {
         position: absolute;
@@ -582,7 +587,7 @@ export default {
 
       .number {
         text-align: center;
-        line-height: 60px;
+        /* line-height: 60px; */
         font-size: 30px;
       }
     }
