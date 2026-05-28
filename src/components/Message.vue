@@ -1,9 +1,9 @@
 <template>
   <div class="MessageBase">
     <icon v-if="icon" :src="icon" width="36" height="36" class="button_img" />
-    <text class="button_text">
+    <div class="button_text">
       <slot></slot>
-    </text>
+    </div>
   </div>
 </template>
 
@@ -33,5 +33,9 @@ export default {
   background-color: white;
   flex-direction: row;
   align-items: center;
+
+  .button_text {
+    font-size: 32px;
+  }
 }
 </style>
