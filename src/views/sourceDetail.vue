@@ -477,6 +477,7 @@ async function continueUse() {
 .chooseUseType {
   .chooseUseTypeInfo {
     margin-bottom: 8px;
+    font-size: 36px;
 
     .time {
       font-weight: bold;

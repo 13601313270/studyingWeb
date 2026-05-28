@@ -646,6 +646,8 @@ watch(() => degree.value, async (newDegree) => {
 
 .chooseUseType {
   .chooseUseTypeInfo {
+    font-size: 36px;
+
     .time {
       font-weight: bold;
       font-size: 38px;
