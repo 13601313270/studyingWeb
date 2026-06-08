@@ -176,6 +176,7 @@ const showContent = computed<string>(() => {
 
 .question {
   padding: 16px;
+  font-size: 36px;
 
   .title {
     font-size: 32px;
