@@ -1,5 +1,5 @@
 <template>
-  <div class="header" v-if="$route.name !== 'welcome'">
+  <div class="header" v-if="hideHeader !== true">
     <div class="header_web_name">
       <div class="head_root" v-if="root">
         <img class="icon" src="../icons/icons.png" />
@@ -38,6 +38,7 @@ const props = defineProps<{
   title: string,
   root?: boolean,
   footActive: FootActiveEnum,
+  hideHeader?: boolean,
 }>();
 const title = ref<string>(props.title || '');
 const isOffline = ref<boolean>(false);
@@ -55,7 +56,6 @@ onMounted(() => {
     isOffline.value = false;
   })
 })
-const degreeList = computed(() => store.getters['main/degreeList'])
 function clickBack() {
   window.onClickBack()
 }
@@ -170,6 +170,7 @@ onActivated(() => {
   background: #f75a5a;
   text-align: center;
   height: 100px;
+  font-size: 32px;
   line-height: 100px;
   color: white;
   width: 100%;

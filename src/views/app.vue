@@ -364,7 +364,7 @@ export default {
 }
 
 .app_content {
-  background-color: #F5F4EF;
+  background-color: #f7f8f5;
   width: 750px;
   height: 100vh;
   display: flex;

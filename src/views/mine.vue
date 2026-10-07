@@ -1,5 +1,5 @@
 <template>
-  <Page title="我的" class="mine" root foot-active="mine">
+  <Page title="我的" class="mine" root foot-active="mine" hide-header>
     <div class="user" v-if="store.state.main.userInfo && store.state.main.userInfo.account">
       <div v-if="userInfo2.icon" class="user_icon">
         <pic @click="previewImg(userInfo2.icon.replace('http://', 'https://'))"
@@ -226,9 +226,6 @@ watch(() => store.state.main.userInfo, () => {
   flex-direction: row;
   align-items: center;
   padding: 10px 50px 0;
-  border-top-style: solid;
-  border-top-width: 1px;
-  border-top-color: grey;
   margin-bottom: 20px;
   flex-shrink: 0;
   box-sizing: border-box;
