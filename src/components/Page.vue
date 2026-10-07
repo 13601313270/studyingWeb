@@ -6,16 +6,17 @@
         <slot name="before"></slot>
       </div>
       <div v-else class="header_web_name_back" @click="clickBack">
-        <img class="header_web_name_back_img" src="../icons/back.png" />
-        <!-- <icon class="header_web_name_back_img" width="48" height="48" :src="root ? 'icons' : 'back'" /> -->
+        <div class="circle">
+          <img class="header_web_name_back_img" src="../icons/circleBack.svg" />
+        </div>
       </div>
     </div>
     <div class="header_links">
       <template v-if="root">
-        <text class="header_links_web_name">松鼠学</text>
+        <div class="header_links_web_name">松鼠学</div>
       </template>
       <template v-else>
-        <text class="header_links_web_name">{{ title }}</text>
+        <div class="header_links_web_name">{{ title }}</div>
       </template>
     </div>
     <div class="header_others">
@@ -73,7 +74,7 @@ onActivated(() => {
 <style lang="less" scoped>
 .header {
   line-height: 88px;
-  background-color: #00795c;
+  // background-color: #00795c;
   color: white;
   display: flex;
   flex-direction: row;
@@ -82,8 +83,9 @@ onActivated(() => {
   width: 100%;
   flex-shrink: 0;
   flex-grow: 0;
-  height: 88px;
+  height: 120px;
   position: relative;
+  border-bottom: solid 1PX rgba(233, 238, 235, 0.8);
   padding-top: env(safe-area-inset-top);
 
   .header_web_name {
@@ -118,16 +120,28 @@ onActivated(() => {
     }
 
     &_back {
-      min-width: 88px;
-      height: 88px;
+      min-width: 120px;
+      height: 120px;
       opacity: 0.8;
       display: flex;
       align-items: center;
       justify-content: center;
+      transform: rotate(180deg);
 
-      &_img {
-        width: 48px;
-        height: 48px;
+      .circle {
+        width: 76px;
+        height: 76px;
+        border: 1PX solid rgb(233, 238, 235);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+
+        &_img {
+          width: 48px;
+          height: 48px;
+        }
       }
     }
   }
@@ -142,11 +156,12 @@ onActivated(() => {
     color: white;
 
     &_web_name {
-      color: rgba(255, 255, 255, 0.9);
+      color: rgb(23, 33, 28);
       display: block;
       font-family: PingFangSC-Medium;
       width: 590px;
       flex-grow: 1;
+      line-height: 119px;
       font-size: 36px;
       text-align: center;
     }
