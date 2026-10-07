@@ -1,16 +1,16 @@
 <template>
   <Page :title="title" footActive='source' hide-header>
-    <header class="deep-header">
-      <button aria-label="返回" class="back-button" type="button">
-        <img aria-hidden="true" class="icon" src="../icons/circleBack.svg" width="19" height="19" />
-      </button>
-      <div>
-        <h2>{{ title }}</h2>
-        <!-- <p>数学 A</p> -->
-      </div>
-      <div class="deep-header-space"></div>
-    </header>
     <div class="content">
+      <header class="deep-header">
+        <button aria-label="返回" class="back-button" type="button" @click="$router.back()">
+          <img aria-hidden="true" class="icon" src="../icons/circleBack.svg" width="19" height="19" />
+        </button>
+        <div>
+          <h2>{{ title }}</h2>
+          <!-- <p>数学 A</p> -->
+        </div>
+        <div class="deep-header-space"></div>
+      </header>
       <div class="lessons">
         <div v-for="item in list" :key="item.id" class="lesson_item">
           <text class="lesson_item_title">{{ item.title }}</text>
@@ -25,10 +25,57 @@
           </div>
           <div style="flex-grow: 1;"></div>
           <div class="action_links">
-            <Button v-if="!item.poi.find(v => v.hasVideo)" text="课   程" icon="video" :disabled="!item.hasContent"
-              @click="lesson(item)" />
-            <Button text="题   库" icon="question" @click="gotoQuestion(item)" />
-            <Button v-if="item.lessonKnowledgeExist" text="知识点" icon="light" @click="gotoKnowledge(item)" />
+            <button v-if="!item.poi.find(v => v.hasVideo)" class="action-btn" :disabled="!item.hasContent"
+              @click="lesson(item)">
+              <span class="action-btn-icon action-btn-icon--play" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </span>
+              <span class="action-btn-label">课程</span>
+              <span class="action-btn-arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m9 6 6 6-6 6" />
+                </svg>
+              </span>
+            </button>
+            <button class="action-btn" @click="gotoQuestion(item)">
+              <span class="action-btn-icon action-btn-icon--doc" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <path d="M14 2v6h6" />
+                  <path d="M8 13h8" />
+                  <path d="M8 17h8" />
+                </svg>
+              </span>
+              <span class="action-btn-label">题库</span>
+              <span class="action-btn-arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m9 6 6 6-6 6" />
+                </svg>
+              </span>
+            </button>
+            <button v-if="item.lessonKnowledgeExist" class="action-btn" @click="gotoKnowledge(item)">
+              <span class="action-btn-icon action-btn-icon--light" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 18h6" />
+                  <path d="M10 22h4" />
+                  <path
+                    d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14" />
+                </svg>
+              </span>
+              <span class="action-btn-label">知识点</span>
+              <span class="action-btn-arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m9 6 6 6-6 6" />
+                </svg>
+              </span>
+            </button>
           </div>
         </div>
       </div>
@@ -194,6 +241,7 @@ async function continueUse() {
   background: rgba(247, 248, 245, .96);
   border-bottom: 1PX solid rgba(233, 238, 235, .8);
   backdrop-filter: blur(12px);
+  padding-top: env(safe-area-inset-top);
 
   .back-button {
     width: 76px;
@@ -311,6 +359,7 @@ async function continueUse() {
 
 .action_links {
   display: flex;
+  gap: 12px;
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #e9e9e9;
@@ -318,6 +367,71 @@ async function continueUse() {
   padding-top: 20px;
   flex-direction: row;
   justify-content: space-around;
+}
+
+.action-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 88px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 16px;
+  background-color: #f5f7f5;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: background-color .15s;
+  box-sizing: border-box;
+
+  &:active:not(:disabled) {
+    background-color: #e6e7e8;
+  }
+
+  &:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+  }
+}
+
+.action-btn-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #0f5132;
+  color: #fff;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  &--doc {
+    background-color: #8ca18c;
+  }
+
+  &--light {
+    background-color: #b45309;
+  }
+}
+
+.action-btn-label {
+  flex: 1;
+  font-size: 24px;
+  font-weight: 300;
+  color: #08130e;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.action-btn-arrow {
+  color: #9aa0a6;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
 }
 
 .video_list {
@@ -508,6 +622,33 @@ async function continueUse() {
         padding-top: 8px;
         padding-bottom: 8px;
         height: auto;
+        gap: 8px;
+
+        .action-btn {
+          height: 44px;
+          padding: 0 10px;
+          gap: 8px;
+          border-radius: 10px;
+
+          &-icon {
+            width: 28px;
+            height: 28px;
+
+            svg {
+              width: 14px;
+              height: 14px;
+            }
+          }
+
+          &-label {
+            font-size: 14px;
+          }
+
+          &-arrow svg {
+            width: 12px;
+            height: 12px;
+          }
+        }
       }
     }
   }
