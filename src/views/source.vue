@@ -1,5 +1,5 @@
 <template>
-  <Page title="课程" root footActive='source'>
+  <Page title="课程" root footActive='source' hideHeader>
     <template #before>
       <DegreeSelect />
     </template>
@@ -192,6 +192,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
+  margin-top: env(safe-area-inset-top);
 }
 
 .subject-tabs {

@@ -1,5 +1,15 @@
 <template>
-  <Page :title="title" footActive='source'>
+  <Page :title="title" footActive='source' hide-header>
+    <header class="deep-header">
+      <button aria-label="返回" class="back-button" type="button">
+        <img aria-hidden="true" class="icon" src="../icons/circleBack.svg" width="19" height="19" />
+      </button>
+      <div>
+        <h2>{{ title }}</h2>
+        <!-- <p>数学 A</p> -->
+      </div>
+      <div class="deep-header-space"></div>
+    </header>
     <div class="content">
       <div class="lessons">
         <div v-for="item in list" :key="item.id" class="lesson_item">
@@ -171,6 +181,37 @@ async function continueUse() {
 </script>
 
 <style scoped lang="less">
+.deep-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  min-height: 68px;
+  padding: 12px 16px;
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
+  align-items: center;
+  text-align: center;
+  background: rgba(247, 248, 245, .96);
+  border-bottom: 1PX solid rgba(233, 238, 235, .8);
+  backdrop-filter: blur(12px);
+
+  .back-button {
+    width: 76px;
+    height: 76px;
+    display: grid;
+    place-items: center;
+    color: rgb(23, 33, 28);
+    background: rgb(255, 255, 255);
+    border: 1PX solid rgb(233, 238, 235);
+    border-radius: 50%;
+    transform: rotate(180deg);
+  }
+
+  h2 {
+    font-size: 34px;
+  }
+}
+
 .content {
   height: 100%;
   overflow: auto;
@@ -221,20 +262,20 @@ async function continueUse() {
   width: 650px;
   min-height: 300px;
   border-style: solid;
-  border-color: #e0e0e0;
-  border-width: 1px;
+  border-color: rgb(233, 238, 235);
+  border-width: 1PX;
   background-color: white;
   float: left;
   flex-shrink: 0;
-  padding: 20px;
+  padding: 36px 32px;
   border-radius: 18px;
   box-sizing: border-box;
 
-  &_title {
+  .lesson_item_title {
     padding-top: 40px;
-    font-size: 50px;
-    text-align: center;
+    font-size: 34px;
     color: #08130e;
+    font-weight: 650;
   }
 
   &_free {
@@ -274,9 +315,7 @@ async function continueUse() {
   border-top-width: 2px;
   border-top-color: #e9e9e9;
   margin-top: 35px;
-  height: 102px;
   padding-top: 20px;
-  padding-bottom: 20px;
   flex-direction: row;
   justify-content: space-around;
 }
