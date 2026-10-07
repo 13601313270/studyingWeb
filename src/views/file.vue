@@ -1,5 +1,5 @@
 <template>
-  <Page title="文件" root footActive='file'>
+  <Page title="文件" root footActive='file' hide-header>
     <template #before>
       <DegreeSelect />
     </template>
@@ -68,7 +68,7 @@
       <div class="title">
         是否确认打印{{ fileList.length === waitPrintFileList.length ? '全部' : '' }}<span class="num">{{
           waitPrintFileList.length
-        }}</span>个资料文件？
+          }}</span>个资料文件？
       </div>
       <div class="list">
         <div v-for="file in waitPrintFileList" :key="file.id" class="listItem">
@@ -441,13 +441,15 @@ watch(() => degree.value, async (newDegree) => {
 
 .subjects {
   width: 100%;
-  height: 100px;
+  height: 84px;
   display: flex;
   flex-shrink: 0;
   flex-direction: row;
-  border-bottom-color: #afafaf;
+  border-bottom-color: rgb(233, 238, 235);
   border-bottom-width: 1px;
   border-bottom-style: solid;
+  padding: 14px 40px;
+  padding-top: max(14px, env(safe-area-inset-top));
 
   .scroll {
     width: 100%;
@@ -474,11 +476,12 @@ watch(() => degree.value, async (newDegree) => {
   }
 
   .subjects_item {
-    font-size: 42px;
-    min-width: 110px;
-    line-height: 70px;
+    font-size: 28px;
+    height: 42px;
+    min-width: 80px;
+    line-height: 42px;
     text-align: center;
-    padding: 20px 30px;
+    padding: 16px 24px 26px;
     color: rgba(0, 0, 0, 0.42);
 
     &.active {
@@ -487,10 +490,13 @@ watch(() => degree.value, async (newDegree) => {
       &::after {
         content: '';
         display: block;
-        width: 100%;
-        height: 8px;
+        width: 36px;
+        height: 4px;
         background-color: #04785c;
         border-radius: 4px;
+        margin-top: 7px;
+        margin-left: 50%;
+        transform: translateX(-50%);
       }
     }
   }
@@ -503,25 +509,43 @@ watch(() => degree.value, async (newDegree) => {
   overflow: hidden;
 
   .sourceList {
-    // border-right: solid 1px #afafaf;
     width: 220px;
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+    padding-left: 16px;
+    padding-right: 16px;
     box-sizing: border-box;
     flex-shrink: 0;
     overflow: auto;
+    background-color: #f0f3f0;
 
     .sourceItem {
       padding: 20px;
       display: flex;
+      min-height: 64px;
       align-items: center;
-      font-size: 32px;
+      font-size: 23px;
       justify-content: center;
       color: #6f6f6f;
+      position: relative;
 
       &.select {
         color: black;
-        background: #f0f0f0;
+        background: white;
+        box-shadow: 0 6px 24px rgba(35, 62, 47, .05);
+        border-radius: 18px;
+
+        &::before {
+          content: "";
+          position: absolute;
+          width: 6px;
+          height: 36px;
+          left: 0;
+          top: 50%;
+          background: #2f7d5a;
+          border-radius: 0 6px 6px 0;
+          transform: translateY(-50%);
+        }
       }
     }
   }
@@ -530,16 +554,16 @@ watch(() => degree.value, async (newDegree) => {
     display: flex;
     flex-grow: 1;
     flex-direction: column;
-    background-color: #f0f0f0;
+    background-color: #ffffff;
 
     .head {
-      font-size: 36px;
+      font-size: 28px;
       padding: 12px 16px;
       box-sizing: border-box;
+      color: rgb(154, 164, 159);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background-color: white;
       margin-left: 4px;
       margin-right: 4px;
       // border-radius: 0 0 15px 15px;
@@ -547,7 +571,6 @@ watch(() => degree.value, async (newDegree) => {
 
     .fileList {
       flex-grow: 1;
-      background: #f0f0f0;
       overflow: auto;
 
       .loading {
@@ -573,12 +596,13 @@ watch(() => degree.value, async (newDegree) => {
         border-radius: 8px;
         padding: 12px;
         box-sizing: border-box;
+        border-bottom: solid 1PX rgb(233, 238, 235);
 
         .name {
-          font-size: 32px;
+          font-size: 26px;
           line-height: 52px;
-          border-bottom: solid 1px #d6d6d6;
           padding-bottom: 8px;
+          font-weight: 600;
         }
 
         .buttons {
@@ -587,12 +611,19 @@ watch(() => degree.value, async (newDegree) => {
           justify-content: flex-end;
 
           >* {
+            height: 60px;
+            font-size: 24px;
             margin-left: 8px;
             padding-left: 14px;
             padding-right: 14px;
 
             :deep(.button_img) {
               margin-right: 4px;
+            }
+
+            :deep(.button_text) {
+              font-size: 24px;
+              line-height: 60px;
             }
           }
         }

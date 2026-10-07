@@ -393,7 +393,6 @@ export default {
 }
 
 .bottom {
-  width: 100vw;
   background-color: #FFFFFF;
   border-top-style: solid;
   border-top-width: 1PX;
@@ -401,7 +400,10 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-top: 12px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
 
   .bottom_link {
     height: 100px;
@@ -428,13 +430,13 @@ export default {
       }
     }
 
-    &_text {
-      font-size: 28px;
+    .bottom_link_text {
+      font-size: 24px;
       line-height: 28px;
       height: 24px;
       color: inherit;
       text-align: center;
-      margin-top: 8px;
+      margin-top: 12px;
     }
   }
 }
