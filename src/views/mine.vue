@@ -2,15 +2,21 @@
   <Page title="我的" root foot-active="mine" hide-header>
     <div class="mine">
       <!-- 用户未登录 -->
-      <div class="profile-card" v-if="!store.state.main.userInfo || !store.state.main.userInfo.account">
-        <div class="profile-avatar profile-avatar--placeholder">
-          <span class="profile-avatar-text">?</span>
+      <div class="card" v-if="!store.state.main.userInfo || !store.state.main.userInfo.account">
+        <div class="profile-card profile-card--guest" @click="login">
+          <div class="guest-avatar">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="8" r="4" stroke="#2f7d5a" stroke-width="2" />
+              <path d="M4 21C4 16.582 7.582 13 12 13C16.418 13 20 16.582 20 21" stroke="#2f7d5a" stroke-width="2"
+                stroke-linecap="round" />
+            </svg>
+          </div>
+          <div class="profile-info">
+            <div class="profile-name">登录松鼠学</div>
+            <div class="profile-sub">同步学习进度，收藏你的知识</div>
+          </div>
+          <div class="guest-btn">登录</div>
         </div>
-        <div class="profile-info">
-          <div class="profile-name">未登录</div>
-          <div class="profile-sub">欢迎来到松鼠学</div>
-        </div>
-        <Button class="profile-btn" text="登录" @click="login" type="white"></Button>
       </div>
 
       <!-- 用户已登录 -->
@@ -160,78 +166,80 @@
           </div>
         </div>
 
-        <div class="menu-group">
-          <div class="menu-group-title">社区与应用</div>
-          <div class="menu-card">
-            <div class="menu-item" @click="sharePanel">
-              <div class="menu-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <circle cx="18" cy="5" r="3" stroke="#059669" stroke-width="2" />
-                  <circle cx="6" cy="12" r="3" stroke="#059669" stroke-width="2" />
-                  <circle cx="18" cy="19" r="3" stroke="#059669" stroke-width="2" />
-                  <path d="M8.59 13.51L15.42 17.49" stroke="#059669" stroke-width="2" stroke-linecap="round" />
-                  <path d="M15.41 6.51L8.59 10.49" stroke="#059669" stroke-width="2" stroke-linecap="round" />
-                </svg>
-              </div>
-              <div class="menu-text">分享好友</div>
-              <div class="menu-arrow">›</div>
+      </div>
+
+      <!-- 社区与应用（未登录也可见） -->
+      <div class="menu-group">
+        <div class="menu-group-title">社区与应用</div>
+        <div class="menu-card">
+          <div class="menu-item" @click="sharePanel">
+            <div class="menu-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <circle cx="18" cy="5" r="3" stroke="#059669" stroke-width="2" />
+                <circle cx="6" cy="12" r="3" stroke="#059669" stroke-width="2" />
+                <circle cx="18" cy="19" r="3" stroke="#059669" stroke-width="2" />
+                <path d="M8.59 13.51L15.42 17.49" stroke="#059669" stroke-width="2" stroke-linecap="round" />
+                <path d="M15.41 6.51L8.59 10.49" stroke="#059669" stroke-width="2" stroke-linecap="round" />
+              </svg>
             </div>
-            <div class="menu-item" @click="$router.push('/QQ')">
-              <div class="menu-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M21 11.5C21 16.15 17.46 20 13 20H12.5L8 22V20H7C2.53 20 0 16.15 0 11.5C0 6.85 3.53 3 8 3H17C21.47 3 25 6.85 25 11.5"
-                    stroke="#0891b2" stroke-width="2" stroke-linejoin="round" />
-                  <path d="M8 10C8 11.1 7.1 12 6 12C4.9 12 4 11.1 4 10" stroke="#0891b2" stroke-width="2"
-                    stroke-linecap="round" />
-                  <path d="M16 10C16 11.1 15.1 12 14 12C12.9 12 12 11.1 12 10" stroke="#0891b2" stroke-width="2"
-                    stroke-linecap="round" />
-                </svg>
-              </div>
-              <div class="menu-text">QQ 交流群</div>
-              <div class="menu-arrow">›</div>
+            <div class="menu-text">分享好友</div>
+            <div class="menu-arrow">›</div>
+          </div>
+          <div class="menu-item" @click="$router.push('/QQ')">
+            <div class="menu-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M21 11.5C21 16.15 17.46 20 13 20H12.5L8 22V20H7C2.53 20 0 16.15 0 11.5C0 6.85 3.53 3 8 3H17C21.47 3 25 6.85 25 11.5"
+                  stroke="#0891b2" stroke-width="2" stroke-linejoin="round" />
+                <path d="M8 10C8 11.1 7.1 12 6 12C4.9 12 4 11.1 4 10" stroke="#0891b2" stroke-width="2"
+                  stroke-linecap="round" />
+                <path d="M16 10C16 11.1 15.1 12 14 12C12.9 12 12 11.1 12 10" stroke="#0891b2" stroke-width="2"
+                  stroke-linecap="round" />
+              </svg>
             </div>
-            <div class="menu-item" @click="$router.push('/cache')">
-              <div class="menu-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <ellipse cx="12" cy="5" rx="9" ry="3" stroke="#6b7280" stroke-width="2" />
-                  <path d="M3 5V19C3 20.6569 7.02944 22 12 22C16.9706 22 21 20.6569 21 19V5" stroke="#6b7280"
-                    stroke-width="2" />
-                  <path d="M3 12C3 13.6569 7.02944 15 12 15C16.9706 15 21 13.6569 21 12" stroke="#6b7280"
-                    stroke-width="2" />
-                </svg>
-              </div>
-              <div class="menu-text">缓存设置</div>
-              <div class="menu-arrow">›</div>
+            <div class="menu-text">QQ 交流群</div>
+            <div class="menu-arrow">›</div>
+          </div>
+          <div class="menu-item" @click="$router.push('/cache')">
+            <div class="menu-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <ellipse cx="12" cy="5" rx="9" ry="3" stroke="#6b7280" stroke-width="2" />
+                <path d="M3 5V19C3 20.6569 7.02944 22 12 22C16.9706 22 21 20.6569 21 19V5" stroke="#6b7280"
+                  stroke-width="2" />
+                <path d="M3 12C3 13.6569 7.02944 15 12 15C16.9706 15 21 13.6569 21 12" stroke="#6b7280"
+                  stroke-width="2" />
+              </svg>
             </div>
-            <div class="menu-item" v-if="isiOS" @click="score">
-              <div class="menu-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-                    stroke="#ca8a04" stroke-width="2" stroke-linejoin="round" />
-                </svg>
-              </div>
-              <div class="menu-text">给 App 评分</div>
-              <div class="menu-arrow">›</div>
+            <div class="menu-text">缓存设置</div>
+            <div class="menu-arrow">›</div>
+          </div>
+          <div class="menu-item" v-if="isiOS" @click="score">
+            <div class="menu-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
+                  stroke="#ca8a04" stroke-width="2" stroke-linejoin="round" />
+              </svg>
             </div>
-            <div class="menu-item" @click="$router.push('/aboutUs')">
-              <div class="menu-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="10" stroke="#0d9488" stroke-width="2" />
-                  <path d="M12 16V12" stroke="#0d9488" stroke-width="2" stroke-linecap="round" />
-                  <circle cx="12" cy="8" r="1" fill="#0d9488" />
-                </svg>
-              </div>
-              <div class="menu-text">关于我们</div>
-              <div class="menu-arrow">›</div>
+            <div class="menu-text">给 App 评分</div>
+            <div class="menu-arrow">›</div>
+          </div>
+          <div class="menu-item" @click="$router.push('/aboutUs')">
+            <div class="menu-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="#0d9488" stroke-width="2" />
+                <path d="M12 16V12" stroke="#0d9488" stroke-width="2" stroke-linecap="round" />
+                <circle cx="12" cy="8" r="1" fill="#0d9488" />
+              </svg>
             </div>
+            <div class="menu-text">关于我们</div>
+            <div class="menu-arrow">›</div>
           </div>
         </div>
-
-        <!-- 退出登录 -->
-        <div class="logout-btn" @click="showLogout = true">退出登录</div>
       </div>
+
+      <!-- 退出登录（始终在菜单组下方） -->
+      <div class="logout-btn" v-if="store.state.main.userInfo && store.state.main.userInfo.account" @click="showLogout = true">退出登录</div>
 
       <div style="flex-grow: 1"></div>
 
@@ -551,6 +559,46 @@ watch(() => store.state.main.userInfo, () => {
     width: 1px;
     height: 60px;
     background: #e5e7eb;
+  }
+}
+
+/* ========== 未登录卡片 ========== */
+.profile-card--guest {
+  cursor: pointer;
+
+  .guest-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgb(236, 245, 240);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    svg {
+      width: 52px;
+      height: 52px;
+    }
+  }
+
+  .profile-name {
+    font-size: 34px;
+  }
+
+  .profile-sub {
+    font-size: 24px;
+  }
+
+  .guest-btn {
+    padding: 18px 40px;
+    background: rgb(47, 125, 90);
+    color: white;
+    font-size: 28px;
+    font-weight: 600;
+    border-radius: 36px;
+    flex-shrink: 0;
+    white-space: nowrap;
   }
 }
 

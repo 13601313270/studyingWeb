@@ -1,5 +1,5 @@
 <template>
-  <Page title="商店" root foot-active="shop">
+  <Page title="商店" root foot-active="shop" hide-header>
     <div class="bookList">
       <div v-for="item in allMiniBookList" class="item" @click="toDetail(item.id)">
         <div class="imgPanel"><img :src="item.img" @click.stop="showImgUrl = item.img" /></div>
