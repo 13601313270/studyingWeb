@@ -1,45 +1,43 @@
 <template>
   <div class="login_content">
-    <div class="close" @click="back">
-      <img src="../icons/close.png" />
-    </div>
     <div class="login_content_inner">
-      <div class="icon">
-        <img src="../icons/icon_green.png" />
+      <div class="login_header">
+        <div class="brand">
+          <img class="brand_icon" src="../icons/icon_green.png" />
+          <text class="brand_name">松鼠学</text>
+        </div>
+        <div class="close" @click="back">
+          <img src="../icons/close.png" />
+        </div>
       </div>
-      <!--<text style="color: #ff736b">{{wrong}}</text>-->
+      <div class="login_welcome">欢迎回来，继续积累今天的知识</div>
       <div class="form" :model="ruleForm" :rules="rules">
         <div class="el-form-item" label="账号" prop="username">
-          <text class="text" style="color:rgb(0,40,31);">手机号</text>
+          <text class="text">手机号</text>
           <div class="loginInput">
-            <input v-model="ruleForm.username" />
+            <input v-model="ruleForm.username" placeholder="请输入 11 位手机号" />
           </div>
         </div>
-        <div class="el-form-item" label="密码" prop="password" style="margin-top: 20px">
-          <text class="text" style="color:rgb(0,40,31);">验证码</text>
-          <div style="display: flex;">
-            <div class="loginInput passport">
-              <input v-model="ruleForm.password" />
+        <div class="el-form-item" label="密码" prop="password">
+          <text class="text">验证码</text>
+          <div class="codeRow">
+            <div class="loginInput">
+              <input v-model="ruleForm.password" placeholder="请输入验证码" />
             </div>
             <div v-if="nextCodeTime > 0" class="instead_button">
-              <text style="color: grey;">{{ nextCodeTime }}s</text>
+              <text>{{ nextCodeTime }}s 后重新获取</text>
             </div>
-            <Button v-else class="tmpCodeButton" @click="getTempCode" text="验证码"></Button>
+            <div v-else class="tmpCodeButton" @click="getTempCode">获取验证码</div>
           </div>
         </div>
         <div class="el-form-item">
-          <Button class="action_button loginButton" @click="login" primary text="登录/注册"></Button>
+          <Button class="action_button loginButton" @click="login" primary text="登录 / 注册"></Button>
         </div>
       </div>
-      <div v-if="isInstalledWeChat" class="otherLogin">
-        <text class="title">或通过以下方式登录</text>
-        <div class="list">
-          <div @click="weChatLogin" class="item">
-            <img src="../icons/wechat.png" />
-          </div>
-        </div>
-      </div>
-      <div style="text-align: center;margin-top: 30px">
+      <div class="divider"><span>或通过以下方式登录</span></div>
+      <div class="weChatLoginBtn" @click="weChatLogin">
+        <img src="../icons/wechat.png" />
+        <text>微信登录</text>
       </div>
       <div class="tempCodeBack" v-if="showTempCode">
         <div class="tempCode">
@@ -57,18 +55,13 @@
           <Button class="tempSendButton" @click="getPhoneCode('login')" primary text="发送"></Button>
         </div>
       </div>
-    </div>
-    <div class="checkContent">
-      <Check :value="isSelectRule" @check="wxcCheckBoxItemChecked" />
-      <div class="desc">
-        我已同意<span class="agree" @click="showAgreement">《服务协议》</span>与<span class="agree"
-          @click="showAgreement">《隐私条款》</span>
+      <div class="checkContent">
+        <Check :value="isSelectRule" @check="wxcCheckBoxItemChecked" />
+        <div class="desc">
+          我已同意<span class="agree" @click="showAgreement">《服务协议》</span>与<span class="agree"
+            @click="showAgreement">《隐私条款》</span>
+        </div>
       </div>
-    </div>
-    <div class="argument" @click="showAgreement">
-      <text class="argument_link">服务协议</text>
-      <text class="argument_split">｜</text>
-      <text class="argument_link">隐私政策</text>
     </div>
     <Popup :title="agreementInfo.title" :show="showRuleContent" :zIndex="1000" @close="showRuleContent = false">
       <div class="agreementInfoPopUp">
@@ -80,19 +73,19 @@
         <div class="el-form-item">
           <div class="text">手机号</div>
           <div class="loginInput">
-            <input v-model="bindRuleForm.username" />
+            <input v-model="bindRuleForm.username" placeholder="请输入手机号" />
           </div>
         </div>
         <div class="el-form-item">
           <div class="text">验证码</div>
-          <div style="display: flex;flex-direction: row">
-            <div class="loginInput passport" style="flex-grow: 1;">
-              <input v-model="bindRuleForm.password">
+          <div class="codeRow">
+            <div class="loginInput">
+              <input v-model="bindRuleForm.password" placeholder="请输入验证码" />
             </div>
             <div v-if="nextCodeTime > 0" class="instead_button">
-              <text style="color: grey;">{{ nextCodeTime }}s</text>
+              <text>{{ nextCodeTime }}s 后重新获取</text>
             </div>
-            <Button v-else class="tmpCodeButton" @click="getTempCodeBind" text="验证码"></Button>
+            <div v-else class="tmpCodeButton" @click="getTempCodeBind">获取验证码</div>
           </div>
         </div>
         <div class="el-form-item">
@@ -375,110 +368,248 @@ onMounted(() => {
 
 <style scoped lang="less">
 .login_content {
-  width: 750px;
-  max-height: 100vh;
+  width: 100%;
+  max-height: calc(100vh - 36px);
   overflow-y: auto;
-
-  .close {
-    position: absolute;
-    width: 88px;
-    height: 88px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    left: 0px;
-    top: env(safe-area-inset-top);
-
-    >img {
-      width: 50px;
-      height: 50px;
-    }
-  }
+  background-color: white;
+  border-radius: 46px;
+  position: relative;
 }
 
 .login_content_inner {
-  padding-top: env(safe-area-inset-top);
+  display: flex;
+  flex-direction: column;
+  padding: 52px 44px 44px;
 
-  .icon {
-    text-align: center;
+  .login_header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 
-    >img {
-      width: 200px;
-    }
-  }
-
-  .otherLogin {
-    margin: 50px 25px 0;
-    padding: 25px;
-    border: solid 1px rgb(214, 214, 214);
-    border-radius: 16px;
-
-    .title {
-      text-align: center;
-      font-size: 30px;
-      color: grey;
-      margin-top: 40px;
-    }
-
-    .list {
+    .brand {
       display: flex;
       flex-direction: row;
+      align-items: center;
+      gap: 8px;
+
+      .brand_icon {
+        width: 78px;
+        height: 78px;
+      }
+
+      .brand_name {
+        font-size: 42px;
+        font-weight: 600;
+        color: #1a1a1a;
+      }
+    }
+
+    .close {
+      width: 76px;
+      height: 76px;
+      border-radius: 38px;
+      background-color: rgb(241, 243, 241);
+      display: flex;
+      align-items: center;
       justify-content: center;
-      margin-top: 40px;
+      position: absolute;
+      right: 24px;
+      top: 24px;
 
-      .item {
-
-        >img {
-          height: 120px;
-        }
+      >img {
+        width: 24px;
+        height: 24px;
       }
     }
   }
 
-  .passport {
-    width: 480px;
-    height: 100px;
-    border-style: solid;
-    border-width: 2px;
-    border-color: rgba(0, 77, 59, 0.87);
-    border-radius: 5px;
+  .login_welcome {
+    font-size: 24px;
+    margin-top: 18px;
+    margin-bottom: 44px;
+    color: #888;
+  }
+}
+
+.form {
+  margin: 0;
+
+  .el-form-item {
+    margin-bottom: 32px;
+    margin-top: 14px;
+
+    .text {
+      display: block;
+      font-size: 22px;
+      color: #68736d;
+      margin-bottom: 14px;
+      font-weight: 600;
+    }
+
+    .loginInput {
+      height: 96px;
+      background-color: rgb(247, 248, 246);
+      border: 1PX solid rgb(233, 238, 235);
+      border-radius: 24px;
+      box-sizing: border-box;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+
+      input {
+        height: 100%;
+        width: 100%;
+        font-size: 28px;
+        padding: 0 24px;
+        color: #333;
+        box-sizing: border-box;
+        border: none;
+        outline: none;
+        background: transparent;
+
+        &::placeholder {
+          color: #aaa;
+        }
+      }
+    }
+
+    .loginButton {
+      width: 100%;
+      height: 48px;
+      margin-top: 8px;
+      border-radius: 24px;
+    }
+
+    .codeRow {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      gap: 10px;
+
+      .loginInput {
+        flex-grow: 1;
+      }
+
+      .instead_button,
+      .tmpCodeButton {
+        flex: 0 0 auto;
+        height: 96px;
+        background-color: rgb(240, 242, 240);
+        border: none;
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin: 0;
+        width: auto;
+        padding: 0 16px;
+      }
+
+      .tmpCodeButton {
+        width: 204px;
+        color: #333;
+        cursor: pointer;
+        border: 1PX solid rgb(233, 238, 235);
+        color: rgb(154, 164, 159);
+        box-sizing: border-box;
+      }
+
+      .instead_button {
+        color: #888;
+      }
+    }
+  }
+}
+
+/* Button 组件 primary 浅绿覆盖 */
+.form :deep(.button.primary) {
+  background: #a8c8b8;
+  border: none;
+  border-radius: 24px;
+  height: 96px;
+
+  .button_text {
+    font-size: 28px;
+    line-height: 96px;
+  }
+}
+
+.divider {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  color: rgb(154, 164, 159);
+  margin-top: 22px;
+  font-size: 20px;
+
+  &::before,
+  &::after {
+    content: '';
+    flex-grow: 1;
+    height: 1px;
+    background-color: #e5e5e5;
+  }
+
+  span {
+    padding: 0 12px;
+  }
+}
+
+.weChatLoginBtn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 88px;
+  background-color: white;
+  border: 1PX solid #e5e5e5;
+  border-radius: 24px;
+  margin-top: 28px;
+  cursor: pointer;
+
+  >img {
+    // width: 52px;
+    height: 52px;
+  }
+
+  >text {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
   }
 }
 
 .checkContent {
-  width: 100%;
-  padding-left: 25px;
-  padding-right: 25px;
   display: flex;
+  flex-direction: row;
   align-items: center;
-  box-sizing: border-box;
+  justify-content: center;
+  margin-top: 32px;
+  gap: 14px;
 
-  .Check {
-    margin-right: 16px;
-  }
+  :deep(.Check) {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1PX solid rgb(203, 211, 206);
 
-  .agree {
-    color: #24248f;
+    >img {
+      width: 26px;
+      height: 26px;
+    }
   }
 
   .desc {
-    font-size: 32px;
+    font-size: 20px;
+    color: rgb(104, 115, 109);
   }
-}
 
-.instead_button {
-  border-style: solid;
-  border-width: 1px;
-  border-color: grey;
-  flex: 1;
-  height: 100px;
-  width: 200px;
-  margin-left: 20px;
-  border-radius: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: grey;
+  .agree {
+    color: #2b6cb0;
+  }
 }
 
 .tempCodeBack {
@@ -561,116 +692,42 @@ onMounted(() => {
 
 }
 
-.argument {
-  display: flex;
-  width: 750px;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  margin-top: 120px;
-  margin-bottom: 36px;
-
-  &_split {
-    font-size: 28px;
-    color: #688590;
-  }
-
-  &_link {
-    font-size: 28px;
-    color: #7c8690;
-  }
-
-}
-
-.form {
-  margin: 25px;
-
-  .el-form-item {
-    margin-bottom: 24px;
-
-    .text {
-      color: rgb(0, 40, 31);
-      font-size: 32px;
-      margin-bottom: 12px;
-    }
-
-    .loginInput {
-      height: 100px;
-      border-style: solid;
-      border-width: 2px;
-      border-color: rgba(0, 77, 59, 0.87);
-      border-radius: 10px;
-      box-sizing: border-box;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      input {
-        height: 96px;
-        width: 100%;
-        font-size: 36px;
-        padding-left: 10px;
-        color: #0e270e;
-        box-sizing: border-box;
-        border: none;
-      }
-    }
-
-    .action_button {
-      width: 100%;
-      margin: 50px 0 0 0;
-    }
-
-    .action_button {
-      margin-top: 20px;
-      width: 30%;
-    }
-
-    .loginButton {
-      width: 100%;
-      height: 120px;
-      box-sizing: border-box;
-      margin-top: 50px;
-    }
-
-    .tmpCodeButton {
-      height: 100px;
-      width: 200px;
-      margin-left: 20px;
-      font-size: 24px;
-    }
-  }
-}
-
 .agreementInfoPopUp {
   height: 100%;
   overflow: auto;
-  font-size: 32px;
+  font-size: 14px;
   padding: 16px;
 }
 
-@media (min-width: 400px) {
+@media (min-width: 1025px) {
   .login_content {
     .form {
       .el-form-item {
         .loginInput {
-          height: 53PX;
-          border-width: 2PX;
+          height: 44px;
+        }
 
-          :deep(input) {
-            height: 49PX;
+        .codeRow {
+
+          .instead_button,
+          .tmpCodeButton {
+            height: 44px;
+            font-size: 12px;
           }
         }
 
-        .tmpCodeButton {
-          height: 53PX;
-        }
-
-        .action_button {
-          height: 64PX;
+        .loginButton {
+          height: 44px;
         }
       }
+    }
+
+    .weChatLoginBtn {
+      height: 44px;
+    }
+
+    .login_content_inner {
+      padding: 62px 28px 20px;
     }
   }
 }

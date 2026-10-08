@@ -444,11 +444,14 @@ export default {
 .login {
   position: fixed;
   width: 100vw;
-  background-color: white;
+  box-sizing: border-box;
+  background-color: rgba(18, 27, 22, .48);
   top: 0;
   bottom: 0;
   z-index: 999;
   display: flex;
+  padding: 36px;
+  padding-top: calc(env(safe-area-inset-top) + 36px);
   align-items: center;
   justify-content: center;
 
