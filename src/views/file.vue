@@ -442,14 +442,13 @@ watch(() => degree.value, async (newDegree) => {
 .subjects {
   width: 100%;
   box-sizing: border-box;
-  height: 112px;
   display: flex;
   flex-shrink: 0;
   flex-direction: row;
   border-bottom-color: rgb(233, 238, 235);
   border-bottom-width: 1px;
   border-bottom-style: solid;
-  padding: 14px 40px;
+  padding: 14px 0 14px 40px;
   padding-top: max(14px, env(safe-area-inset-top));
 
   .scroll {
