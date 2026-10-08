@@ -108,7 +108,7 @@ export default {
   opacity: 0;
   transition: bottom 0.3s, opacity 0.3s;
   width: 90%;
-  border-radius: 20px;
+  border-radius: 44px;
   overflow: hidden;
 
   .title {

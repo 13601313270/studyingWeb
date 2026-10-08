@@ -69,7 +69,7 @@ function callBuyVip(product: 'studyingMonthVIP' | 'studyingYearVIP') {
 </script>
 <style lang="less" scoped>
 .vipTitle {
-  font-size: 38px;
+  font-size: 32px;
   margin-bottom: 16px;
   color: rgb(64, 64, 64);
   text-align: center;
@@ -86,14 +86,13 @@ function callBuyVip(product: 'studyingMonthVIP' | 'studyingYearVIP') {
   }
 
   .buyVip {
-    /* background: #00795c; */
     border: none;
     height: 170px;
-    border-radius: 10px;
+    border-radius: 26px;
     padding-left: 20px;
     padding-right: 20px;
     border-style: solid;
-    border-width: 2px;
+    border-width: 2PX;
     border-color: #ccd6d2;
     display: flex;
     flex-direction: column;
@@ -123,7 +122,7 @@ function callBuyVip(product: 'studyingMonthVIP' | 'studyingYearVIP') {
 
 .vipEndDate {
   margin-top: 20px;
-  font-size: 28px;
+  font-size: 22px;
   color: #999;
 }
 </style>

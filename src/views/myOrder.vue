@@ -15,41 +15,23 @@
           <div v-for="order in orderList" :key="order.id" class="order-item" @click="viewOrderDetail(order)">
             <div class="order-header">
               <div class="order-number">订单号：{{ order.orderId }}</div>
-              <!-- <div class="order-status" :class="getStatusClass(order.status)">
-                {{ getOrderStatusText(order.status) }}
-              </div> -->
-            </div>
-
-            <div class="order-content">
-              <div class="product-info">
-                <!-- <div class="product-image">
-                  <img :src="order.productImage" alt="商品图片" />
-                </div> -->
-                <div class="product-details">
-                  <div class="product-name">{{ order.name }}</div>
-                  <!-- <div class="product-spec">{{ order.productSpec }}</div> -->
-                </div>
-              </div>
-
-              <div class="order-summary">
-                <!-- <div class="quantity">共{{ order.quantity }}件商品</div> -->
-                <div class="amount">合计：¥{{ order.price }}</div>
+              <div class="order-status-tag" :class="getStatusTagClass(order)">
+                {{ getDisplayStatusText(order) }}
               </div>
             </div>
 
-            <div class="order-footer">
-              <div class="order-date">{{ order.ctime }}</div>
-              <div class="order-actions">
-                <!-- <button v-if="order.status === 'pending'" class="action-button primary" @click.stop="payOrder(order)">
-                  立即支付
-                </button>
-                <button v-if="order.status === 'completed'" class="action-button" @click.stop="viewOrderDetail(order)">
-                  查看详情
-                </button>
-                <button v-if="order.status === 'cancelled'" class="action-button" @click.stop="deleteOrder(order)">
-                  删除订单
-                </button> -->
+            <div class="order-body">
+              <div class="order-icon">
+                <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="10" y="6" width="28" height="36" rx="3" stroke="#00795c" stroke-width="2.5"/>
+                  <path d="M16 14H32M16 21H32M16 28H28" stroke="#00795c" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
               </div>
+              <div class="order-info">
+                <div class="order-name">{{ order.name }}</div>
+                <div class="order-ctime">{{ order.ctime }}</div>
+              </div>
+              <div class="order-price">¥{{ order.price }}</div>
             </div>
           </div>
         </div>
@@ -167,6 +149,7 @@ interface OrderItem {
   ctime: string;
   name: string;
   price: number;
+  status?: number | string;
 }
 
 // 响应式数据
@@ -246,6 +229,23 @@ const getOrderStatusText = (status: stateType) => {
 // 获取订单状态样式类
 const getStatusClass = (status: stateType) => {
   return `status-${status}`
+}
+
+// 根据订单数据获取展示用的状态文本（列表页用）
+const getDisplayStatusText = (order: OrderItem): string => {
+  const s = order.status
+  if (s === 1 || s === '1' || s === 'completed' || s === '已完成') return '已完成'
+  if (s === 0 || s === '0' || s === 'pending' || s === '待支付') return '待支付'
+  if (s === -1 || s === '-1' || s === 'cancelled' || s === '已取消') return '已取消'
+  return '待支付'
+}
+
+// 根据订单数据获取状态标签样式类（列表页用）
+const getStatusTagClass = (order: OrderItem): string => {
+  const s = order.status
+  if (s === 1 || s === '1' || s === 'completed' || s === '已完成') return 'tag-done'
+  if (s === -1 || s === '-1' || s === 'cancelled' || s === '已取消') return 'tag-cancel'
+  return 'tag-pending'
 }
 
 // 查看订单详情
@@ -330,144 +330,101 @@ onMounted(() => {
   .order-list {
     flex: 1;
     overflow-y: auto;
-    padding: 40px;
+    padding: 24px;
 
     .order-item {
       background: #fff;
-      border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 24px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      border-radius: 20px;
+      padding: 28px 32px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
       cursor: pointer;
 
       .order-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding-bottom: 24px;
-        border-bottom: 1px solid #eee;
-        margin-bottom: 24px;
+        margin-bottom: 28px;
 
         .order-number {
           font-size: 24px;
-          color: #666;
+          color: #999;
+          font-family: PingFangSC-Regular, sans-serif;
         }
 
-        .order-status {
-          font-size: 24px;
-          font-weight: bold;
+        .order-status-tag {
+          font-size: 22px;
+          padding: 6px 20px;
+          border-radius: 20px;
+          font-family: PingFangSC-Regular, sans-serif;
+          line-height: 1.4;
 
-          &.status-pending {
-            color: #ff6b35;
-          }
-
-          &.status-paid {
+          &.tag-done {
             color: #00795c;
+            background-color: #eaf5ef;
           }
 
-          &.status-shipped {
-            color: #00795c;
-          }
-
-          &.status-completed {
-            color: #00795c;
-          }
-
-          &.status-cancelled {
+          &.tag-pending {
             color: #999;
+            background-color: #f0f0f0;
+          }
+
+          &.tag-cancel {
+            color: #999;
+            background-color: #f0f0f0;
           }
         }
       }
 
-      .order-content {
+      .order-body {
         display: flex;
-        justify-content: space-between;
-        margin-bottom: 24px;
-
-        .product-info {
-          display: flex;
-          flex: 1;
-
-          .product-image {
-            width: 160px;
-            height: 160px;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-right: 24px;
-
-            img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-            }
-          }
-
-          .product-details {
-            flex: 1;
-
-            .product-name {
-              font-size: 32px;
-              font-weight: bold;
-              color: #333;
-              margin-bottom: 8px;
-            }
-
-            .product-spec {
-              font-size: 24px;
-              color: #999;
-            }
-          }
-        }
-
-        .order-summary {
-          text-align: right;
-
-          .quantity {
-            font-size: 24px;
-            color: #666;
-            margin-bottom: 8px;
-          }
-
-          .amount {
-            font-size: 32px;
-            font-weight: bold;
-            color: #333;
-          }
-        }
-      }
-
-      .order-footer {
-        display: flex;
-        justify-content: space-between;
         align-items: center;
 
-        .order-date {
-          font-size: 24px;
-          color: #999;
+        .order-icon {
+          width: 72px;
+          height: 72px;
+          border-radius: 16px;
+          background-color: #eaf5ef;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          margin-right: 24px;
+
+          svg {
+            width: 44px;
+            height: 44px;
+          }
         }
 
-        .order-actions {
-          display: flex;
-          gap: 24px;
+        .order-info {
+          flex: 1;
+          min-width: 0;
 
-          .action-button {
-            padding: 12px 24px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            background: #fff;
-            font-size: 24px;
-            cursor: pointer;
-
-            &.primary {
-              background: #00795c;
-              color: #fff;
-              border-color: #00795c;
-            }
-
-            &:hover {
-              opacity: 0.8;
-            }
+          .order-name {
+            font-size: 30px;
+            font-weight: 500;
+            color: #17211c;
+            margin-bottom: 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-family: PingFangSC-Medium, sans-serif;
           }
+
+          .order-ctime {
+            font-size: 24px;
+            color: #999;
+            font-family: PingFangSC-Regular, sans-serif;
+          }
+        }
+
+        .order-price {
+          font-size: 34px;
+          font-weight: 600;
+          color: #17211c;
+          flex-shrink: 0;
+          font-family: PingFangSC-Medium, sans-serif;
         }
       }
     }

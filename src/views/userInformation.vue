@@ -1,81 +1,192 @@
 <template>
   <Page title="用户信息" foot-active="mine">
-    <div>
-      <div class="header">
-        <pic v-if="userInfo2.icon" class="icon" @click="showImgDetail(userInfo2.icon.replace('http://', 'https://'))"
-          :src="userInfo2.icon.replace('http://', 'https://') + '?x-oss-process=image/resize,m_fill,h_100,w_100'"
-          :width="80" />
-        <text class="name">账号:</text>
-        <text class="header_value">{{ userInfo2.account }}</text>
-        <div style="flex-grow:1"></div>
-        <Icon src="config" :width="52" @click="$router.push('/accountInfo')" />
-        <!--                <text class="name">金币:</text>-->
-        <!--                <text class="header_value">{{userInfo2.coin}}</text>-->
-        <!--                <text class="tips">学习圈获取:1:每日5题，2:问答发表优质回答</text>-->
+    <div class="page-bg">
+      <!-- 顶部资料卡片 -->
+      <div class="profile-card">
+        <div class="avatar-circle" :class="{ 'has-img': userInfo2.icon }">
+          <img
+            v-if="userInfo2.icon"
+            class="avatar-img"
+            :src="userInfo2.icon.replace('http://', 'https://') + '?x-oss-process=image/resize,m_fill,h_200,w_200'"
+            @click="showImgDetail(userInfo2.icon.replace('http://', 'https://'))"
+          />
+          <span v-else class="avatar-text">{{ avatarInitial }}</span>
+        </div>
+        <div class="profile-info">
+          <div class="profile-name">{{ userInfo2.name || '未设置昵称' }}</div>
+          <div class="profile-sub">完善资料，让推荐更适合你</div>
+        </div>
+        <div class="profile-progress">
+          <span class="progress-num">{{ profilePercent }}</span>
+          <span class="progress-unit">%</span>
+        </div>
+      </div>
+
+      <!-- 信息列表卡片 -->
+      <div class="info-card">
+        <div class="info-item" @click="nameInput = userInfo2.name, namePopShow = true">
+          <div class="item-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" stroke="#00795c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M20 22C20 17.5817 16.4183 14 12 14C7.58172 14 4 17.5817 4 22" stroke="#00795c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="item-label">昵称</div>
+          <div class="item-value">{{ userInfo2.name || '未设置' }}</div>
+          <div class="item-arrow">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 18L15 12L9 6" stroke="#c0c0c0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="info-item" @click="selectUploadImg">
+          <div class="item-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2L14.9 8.6L22 9.3L16.5 14.1L18.2 21.2L12 17.5L5.8 21.2L7.5 14.1L2 9.3L9.1 8.6L12 2Z" stroke="#00795c" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="item-label">头像</div>
+          <div class="item-value avatar-value">
+            <div class="avatar-thumb" :class="{ 'has-img': userInfo2.icon }">
+              <img
+                v-if="userInfo2.icon"
+                :src="userInfo2.icon.replace('http://', 'https://') + '?x-oss-process=image/resize,m_fill,h_100,w_100'"
+              />
+              <span v-else>{{ avatarInitial }}</span>
+            </div>
+          </div>
+          <div class="item-arrow">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 18L15 12L9 6" stroke="#c0c0c0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="info-item" @click="isBottomShow = true">
+          <div class="item-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="8" r="3" stroke="#00795c" stroke-width="1.5"/>
+              <path d="M6 21C6 17.6863 8.68629 15 12 15C15.3137 15 18 17.6863 18 21" stroke="#00795c" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M8 13C8.5 11.5 10 11 12 11C14 11 15.5 11.5 16 13" stroke="#00795c" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="item-label">性别</div>
+          <div class="item-value">{{ userInfo2.sex === 1 ? '女' : '男' }}</div>
+          <div class="item-arrow">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 18L15 12L9 6" stroke="#c0c0c0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="info-item" @click="cityShow = true">
+          <div class="item-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 22C12 22 20 14.5 20 8.5C20 4.36 16.42 1 12 1C7.58 1 4 4.36 4 8.5C4 14.5 12 22 12 22Z" stroke="#00795c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="12" cy="8.5" r="2.5" stroke="#00795c" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="item-label">城市</div>
+          <div class="item-value">{{ userInfo2.city || '未设置' }}</div>
+          <div class="item-arrow">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 18L15 12L9 6" stroke="#c0c0c0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="info-item last" @click="isBottomGroundShow = true">
+          <div class="item-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 10L12 5L21 10L12 15L3 10Z" stroke="#00795c" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+              <path d="M7 12V17C7 18.1 8.8 19 12 19C15.2 19 17 18.1 17 17V12" stroke="#00795c" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="item-label">年级</div>
+          <div class="item-value">{{ grandText }}</div>
+          <div class="item-arrow">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 18L15 12L9 6" stroke="#c0c0c0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="actions">
-      <div class="item" @click="nameInput = userInfo2.name, namePopShow = true">
-        <text class="name">昵称:</text>
-        {{ userInfo2.name }}
-      </div>
-      <div class="item">
-        <text class="name">头像:</text>
-        <input type="file" single ref="inputFile" accept="image/*" style="display:none" @change="uploadImg" />
-        <div @click="selectUploadImg" v-if="userInfo2.icon" class="userIcon">
-          <pic :src="userInfo2.icon.replace('http://', 'https://') + '?x-oss-process=image/resize,m_fill,h_100,w_100'"
-            :width="100" />
+
+    <!-- 保持原有隐藏的上传组件 -->
+    <input type="file" single ref="inputFile" accept="image/*" style="display:none" @change="uploadImg" />
+    <Select :show="imgSelectShow" title="选择上传方式" @close="imgSelectShow = false" :list="[
+      {
+        key: 'gallery',
+        title: '相册'
+      }
+    ]" @select="selectImgSelectShow">
+    </Select>
+
+    <Popup :show="namePopShow" @close="namePopShow = false">
+      <div class="sex-sheet name-sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <div class="sheet-title-wrap">
+            <div class="sheet-subtitle">快速编辑</div>
+            <div class="sheet-title">修改昵称</div>
+          </div>
+          <div class="sheet-close" @click="namePopShow = false">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 6L6 18M6 6L18 18" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
         </div>
-        <div v-else>
-          <Button @click="selectUploadImg" style="width: 100px;" type="white" text="上传"></Button>
-        </div>
-        <Select :show="imgSelectShow" title="选择上传方式" @close="imgSelectShow = false" :list="[
-          // {
-          //   key: 'camera',
-          //   title: '照相机'
-          // },
-          {
-            key: 'gallery',
-            title: '相册'
-          }
-        ]" @select="selectImgSelectShow">
-        </Select>
-      </div>
-      <div class="item" @click="isBottomShow = true">
-        <text class="name">性别:</text>
-        <text class="value">{{ userInfo2.sex === 1 ? '女' : '男' }}</text>
-        <pic src="right_black" width="40" />
-      </div>
-      <div class="item" @click="cityShow = true">
-        <text class="name">城市:</text>
-        <text class="value">{{ userInfo2.city ? userInfo2.city : '未设置' }}</text>
-        <pic src="right_black" width="40" />
-      </div>
-      <div class="item" @click="isBottomGroundShow = true">
-        <text class="name">年级:</text>
-        <text class="value">{{ grandText }}</text>
-        <pic src="right_black" width="40" />
-      </div>
-    </div>
-    <Popup title="修改姓名" :show="namePopShow" @close="namePopShow = false">
-      <div class="namePopContent">
-        原名称：{{ userInfo2.name }}
-        <Input v-model="nameInput" class="input" />
-        <div>
-          <Button text="保存" primary @click="saveName(nameInput)"></Button>
+        <div class="name-body">
+          <div class="name-field">
+            <div class="name-label">昵称</div>
+            <input v-model="nameInput" class="name-input" :placeholder="userInfo2.name" maxlength="20" />
+          </div>
+          <div class="name-save-btn" :class="{ disabled: !nameInput || nameInput.trim() === '' }" @click="saveName(nameInput)">
+            保存
+          </div>
         </div>
       </div>
     </Popup>
-    <Popup title="性别选择" :show="isBottomShow" @close="isBottomShow = false">
-      <div class="sex">
-        <div class="option" :class="{ active: userInfo2.sex === 0 }" @click="changeSex(0)">
-          <text style="line-height: 100px;text-align: center">男</text>
+
+    <Popup :show="isBottomShow" @close="isBottomShow = false">
+      <div class="sex-sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <div class="sheet-title-wrap">
+            <div class="sheet-subtitle">快速选择</div>
+            <div class="sheet-title">性别选择</div>
+          </div>
+          <div class="sheet-close" @click="isBottomShow = false">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 6L6 18M6 6L18 18" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
         </div>
-        <div class="option" :class="{ active: userInfo2.sex === 1 }" @click="changeSex(1)">
-          <text style="line-height: 100px;text-align: center">女</text>
+        <div class="sex-options">
+          <div class="sex-card" :class="{ active: userInfo2.sex === 0 }" @click="changeSex(0)">
+            <text class="sex-text">男</text>
+            <div class="sex-check">
+              <svg v-if="userInfo2.sex === 0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12L10 17L19 8" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <div v-else class="sex-circle"></div>
+            </div>
+          </div>
+          <div class="sex-card" :class="{ active: userInfo2.sex === 1 }" @click="changeSex(1)">
+            <text class="sex-text">女</text>
+            <div class="sex-check">
+              <svg v-if="userInfo2.sex === 1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12L10 17L19 8" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <div v-else class="sex-circle"></div>
+            </div>
+          </div>
         </div>
       </div>
     </Popup>
+
     <Popup title="城市选择" :show="cityShow" @close="cityShow = false">
       <div class="cityPopContent">
         <div class="citySelect">
@@ -98,29 +209,60 @@
         </div>
       </div>
     </Popup>
-    <Popup title="选择年级" :show="isBottomGroundShow" @close="isBottomGroundShow = false">
-      <div class="groundPop">
-        <div class="option" :class="{ active: userInfo2.grand === 1 }" @click="changeGround(1)">
-          <text>高一</text>
+
+    <Popup :show="isBottomGroundShow" @close="isBottomGroundShow = false">
+      <div class="sex-sheet grade-sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <div class="sheet-title-wrap">
+            <div class="sheet-subtitle">快速选择</div>
+            <div class="sheet-title">选择年级</div>
+          </div>
+          <div class="sheet-close" @click="isBottomGroundShow = false">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 6L6 18M6 6L18 18" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
         </div>
-        <div class="option" :class="{ active: userInfo2.grand === 2 }" @click="changeGround(2)">
-          <text>高二</text>
-        </div>
-        <div class="option" :class="{ active: userInfo2.grand === 3 }" @click="changeGround(3)">
-          <text>高三</text>
+        <div class="grade-options">
+          <div class="grade-card" :class="{ active: userInfo2.grand === 1 }" @click="changeGround(1)">
+            <text class="grade-text">高一</text>
+            <div class="grade-check">
+              <svg v-if="userInfo2.grand === 1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12L10 17L19 8" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <div v-else class="grade-circle"></div>
+            </div>
+          </div>
+          <div class="grade-card" :class="{ active: userInfo2.grand === 2 }" @click="changeGround(2)">
+            <text class="grade-text">高二</text>
+            <div class="grade-check">
+              <svg v-if="userInfo2.grand === 2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12L10 17L19 8" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <div v-else class="grade-circle"></div>
+            </div>
+          </div>
+          <div class="grade-card" :class="{ active: userInfo2.grand === 3 }" @click="changeGround(3)">
+            <text class="grade-text">高三</text>
+            <div class="grade-check">
+              <svg v-if="userInfo2.grand === 3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12L10 17L19 8" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <div v-else class="grade-circle"></div>
+            </div>
+          </div>
         </div>
       </div>
     </Popup>
+
     <Camera v-if="showCamera" @save="saveImg" @close="close" :proportion="1" />
   </Page>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
-// import {WxcCell} from 'weex-ui';
-// import Nat from 'natjs';
 import pic from '../components/icon';
-// import wxcSelect from '../components/select'
 import Button from '../components/Button.vue'
 import Input from '../components/Input.vue'
 import Popup from '../components/Popup.vue'
@@ -133,11 +275,6 @@ import { showImg } from '../plugin/imagePreview'
 import Camera from '@/components/Camera.vue'
 import Icon from '@/components/icon.vue';
 import Page from '@/components/Page.vue';
-
-// import { WxcCity, WxcPopup} from 'weex-ui';
-
-// var modal = weex.requireModule('modal');
-// const localStorage = weex.requireModule('storage');
 
 export default {
   name: 'userInformation',
@@ -181,6 +318,20 @@ export default {
       } else if (this.userInfo2.grand === 3) {
         return '高三'
       }
+      return '未设置'
+    },
+    avatarInitial() {
+      const name = this.userInfo2.name || this.userInfo2.account || '?'
+      return name.charAt(0)
+    },
+    profilePercent() {
+      let filled = 0
+      if (this.userInfo2.name) filled++
+      if (this.userInfo2.icon) filled++
+      if (this.userInfo2.sex !== undefined && this.userInfo2.sex !== null) filled++
+      if (this.userInfo2.city) filled++
+      if (this.userInfo2.grand) filled++
+      return Math.round((filled / 5) * 100)
     }
   },
   methods: {
@@ -189,7 +340,6 @@ export default {
       request.get('/user/getInfo').then(res => {
         this.userInfo2 = res;
       });
-      // this.logAction('mine');
     },
     selectUploadImg() {
       this.imgSelectShow = true;
@@ -247,8 +397,6 @@ export default {
       if (type.key === 'camera') {
         this.showCamera = true;
       } else if (type.key === 'gallery') {
-        console.log(this.$refs.inputFile)
-        // camera();
         this.$refs.inputFile.click()
       }
     },
@@ -264,14 +412,11 @@ export default {
         }
         return new File([u8arr], filename, { type: mime });
       }
-      // const fileData = e.target.files[0]
       let formData = new FormData()
       formData.append('file', base64toBlob(url))
       formData.append('token', this.userInfo.account + '@@' + this.token)
       await request.postForm('/userIcon', formData)
       this.update()
-
-
       this.showCamera = false;
     },
     close() {
@@ -291,106 +436,304 @@ export default {
   }
 }
 </script>
+
 <style scoped lang="less">
-.header {
+.page-bg {
+  min-height: 100vh;
+  background-color: #f5f6f5;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.profile-card {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
   align-items: center;
-  border-bottom-style: solid;
-  border-bottom-color: #f2f2f2;
-  border-bottom-width: 20px;
-  padding: 10px 20px 10px 50px;
-  box-sizing: border-box;
-  height: 230px;
-  color: white;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 36px 32px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 
-  .icon {
-    border-radius: 30px;
-    margin-right: 30px;
+  .avatar-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #00795c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    margin-right: 24px;
+
+    .avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .avatar-text {
+      color: #ffffff;
+      font-size: 52px;
+      font-weight: 600;
+      font-family: PingFangSC-Medium, sans-serif;
+    }
   }
 
-  .name {
-    font-size: 32px;
-    margin-right: 70px;
-    color: #343434;
+  .profile-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+
+    .profile-name {
+      font-size: 40px;
+      font-weight: 600;
+      color: #17211c;
+      line-height: 1.3;
+      font-family: PingFangSC-Medium, sans-serif;
+    }
+
+    .profile-sub {
+      font-size: 26px;
+      color: #8a9a92;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+  }
+
+  .profile-progress {
+    flex-shrink: 0;
+    text-align: right;
+
+    .progress-num {
+      font-size: 44px;
+      font-weight: 600;
+      color: #00795c;
+      font-family: PingFangSC-Medium, sans-serif;
+    }
+
+    .progress-unit {
+      font-size: 24px;
+      color: #00795c;
+      margin-left: 2px;
+    }
   }
 }
 
-.header_value {
-  font-size: 36px;
-  color: #5d5d5d;
-}
+.info-card {
+  background: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 
-.actions {
-  .item {
+  .info-item {
     display: flex;
     flex-direction: row;
-    font-size: 32px;
-    justify-content: space-between;
     align-items: center;
-    border-bottom-style: solid;
-    border-bottom-color: #d8d8d8;
-    border-bottom-width: 1px;
-    padding: 10px 20px 10px 50px;
-    height: 110px;
+    padding: 32px;
+    border-bottom: 1px solid #f0f2f1;
 
-    .name {
-      width: 200px;
+    &:last-child {
+      border-bottom: none;
     }
 
-    .value {
+    .item-icon {
+      width: 56px;
+      height: 56px;
+      flex-shrink: 0;
+      margin-right: 20px;
+
+      svg {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .item-label {
+      font-size: 30px;
+      color: #17211c;
+      flex-shrink: 0;
+      width: 120px;
+      font-family: PingFangSC-Regular, sans-serif;
+    }
+
+    .item-value {
       flex: 1;
       text-align: right;
-      margin-right: 30px;
+      font-size: 30px;
+      color: #333;
+      margin-right: 16px;
+      font-family: PingFangSC-Regular, sans-serif;
+
+      &.avatar-value {
+        display: flex;
+        justify-content: flex-end;
+      }
     }
 
-    .userIcon {
-      border-radius: 20px;
-      width: 100px;
-      height: 100px;
-      border: solid 1px rgb(228, 228, 228);
-      overflow: hidden;
+    .item-arrow {
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      svg {
+        width: 100%;
+        height: 100%;
+      }
     }
   }
 }
 
-.moreAction {
-  margin-top: 32px;
-  padding: 24px;
-}
-
-.tips {
-  position: absolute;
-  right: 10px;
-  bottom: 20px;
-  font-size: 24px;
-  color: #a6a6a6;
-}
-
-.sex {
-  height: 300px;
+.avatar-thumb {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #00795c;
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
+  overflow: hidden;
 
-  .option {
-    width: 300px;
-    height: 200px;
-    line-height: 200px;
-    font-size: 40px;
-    color: #999;
-    text-align: center;
-    border-radius: 20px;
-    border: solid 1px #b4b4b4;
-    box-sizing: border-box;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
 
-    &.active {
-      border: solid 10px #33713a;
-      line-height: 180px;
-      color: #33713a;
-      font-size: 50px;
-      font-weight: bold;
+  span {
+    color: #ffffff;
+    font-size: 32px;
+    font-weight: 600;
+    font-family: PingFangSC-Medium, sans-serif;
+  }
+}
+
+/* ===== 以下为原有弹窗样式，保持不变 ===== */
+.sex-sheet {
+  padding: 0 32px 48px 32px;
+
+  .sheet-handle {
+    width: 80px;
+    height: 8px;
+    border-radius: 4px;
+    background-color: #e0e0e0;
+    margin: 16px auto 32px auto;
+  }
+
+  .sheet-header {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 40px;
+
+    .sheet-title-wrap {
+      display: flex;
+      flex-direction: column;
+
+      .sheet-subtitle {
+        font-size: 26px;
+        color: #00795c;
+        font-weight: 500;
+        font-family: PingFangSC-Regular, sans-serif;
+        margin-bottom: 4px;
+      }
+
+      .sheet-title {
+        font-size: 40px;
+        color: #17211c;
+        font-weight: 600;
+        font-family: PingFangSC-Medium, sans-serif;
+      }
+    }
+
+    .sheet-close {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+
+      svg {
+        width: 40px;
+        height: 40px;
+      }
+    }
+  }
+
+  .sex-options {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+
+    .sex-card {
+      flex: 1;
+      height: 140px;
+      border-radius: 20px;
+      border: solid 2px #e0e0e0;
+      background-color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: all 0.2s;
+
+      .sex-text {
+        font-size: 36px;
+        color: #666;
+        font-weight: 500;
+        font-family: PingFangSC-Medium, sans-serif;
+      }
+
+      .sex-check {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 40px;
+        height: 40px;
+
+        svg {
+          width: 100%;
+          height: 100%;
+        }
+
+        .sex-circle {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          border: solid 2px #ccc;
+          box-sizing: border-box;
+        }
+      }
+
+      &.active {
+        background-color: #eaf5ef;
+        border: solid 2px #00795c;
+
+        .sex-text {
+          color: #00795c;
+          font-weight: 600;
+        }
+
+        .sex-check {
+          width: 44px;
+          height: 44px;
+
+          svg {
+            width: 100%;
+            height: 100%;
+          }
+        }
+      }
     }
   }
 }
@@ -432,38 +775,120 @@ export default {
   }
 }
 
-.namePopContent {
-  padding: 20px;
+.name-sheet {
+  .name-body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 
-  .input {
-    margin-top: 30px;
-    margin-bottom: 30px;
-    width: 100%;
+  .name-field {
+    margin-bottom: 40px;
+
+    .name-label {
+      font-size: 28px;
+      color: #999;
+      margin-bottom: 16px;
+      font-family: PingFangSC-Regular, sans-serif;
+    }
+
+    .name-input {
+      width: 100%;
+      height: 96px;
+      border: solid 2px #e0e0e0;
+      border-radius: 16px;
+      padding: 0 28px;
+      font-size: 32px;
+      color: #17211c;
+      background-color: #fafafa;
+      box-sizing: border-box;
+      font-family: PingFangSC-Regular, sans-serif;
+      outline: none;
+
+      &:focus {
+        border-color: #00795c;
+        background-color: #ffffff;
+      }
+    }
+  }
+
+  .name-save-btn {
+    height: 96px;
+    border-radius: 48px;
+    background-color: #00795c;
+    color: #ffffff;
+    font-size: 32px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: PingFangSC-Medium, sans-serif;
+
+    &.disabled {
+      background-color: #ccc;
+      pointer-events: none;
+    }
   }
 }
 
-.groundPop {
-  display: flex;
-  justify-content: space-evenly;
-  padding: 100px 0;
+.grade-sheet {
+  .grade-options {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
 
-  .option {
-    width: 200px;
-    height: 140px;
-    line-height: 150px;
-    font-size: 40px;
-    color: #999;
-    text-align: center;
-    border-radius: 20px;
-    border: solid 1px #b4b4b4;
-    box-sizing: border-box;
+    .grade-card {
+      flex: 1;
+      height: 140px;
+      border-radius: 20px;
+      border: solid 2px #e0e0e0;
+      background-color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
 
-    &.active {
-      border: solid 10px #33713a;
-      line-height: 120px;
-      color: #33713a;
-      font-size: 50px;
-      font-weight: bold;
+      .grade-text {
+        font-size: 32px;
+        color: #666;
+        font-weight: 500;
+        font-family: PingFangSC-Medium, sans-serif;
+      }
+
+      .grade-check {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 36px;
+        height: 36px;
+
+        svg {
+          width: 100%;
+          height: 100%;
+        }
+
+        .grade-circle {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          border: solid 2px #ccc;
+          box-sizing: border-box;
+        }
+      }
+
+      &.active {
+        background-color: #eaf5ef;
+        border: solid 2px #00795c;
+
+        .grade-text {
+          color: #00795c;
+          font-weight: 600;
+        }
+
+        .grade-check {
+          width: 40px;
+          height: 40px;
+        }
+      }
     }
   }
 }
