@@ -525,7 +525,7 @@ onMounted(() => {
 
 /* Button 组件 primary 浅绿覆盖 */
 .form :deep(.button.primary) {
-  background: #a8c8b8;
+  background: #2f7d5a;
   border: none;
   border-radius: 24px;
   height: 96px;
