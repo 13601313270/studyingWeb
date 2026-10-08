@@ -278,7 +278,6 @@ async function continueUse() {
   box-sizing: border-box;
 
   .lesson_item_title {
-    padding-top: 40px;
     font-size: 34px;
     color: #08130e;
     font-weight: 650;
