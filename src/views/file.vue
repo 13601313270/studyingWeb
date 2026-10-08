@@ -441,7 +441,8 @@ watch(() => degree.value, async (newDegree) => {
 
 .subjects {
   width: 100%;
-  height: 84px;
+  box-sizing: border-box;
+  height: 112px;
   display: flex;
   flex-shrink: 0;
   flex-direction: row;

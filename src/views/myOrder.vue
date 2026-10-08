@@ -500,6 +500,8 @@ onMounted(() => {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    font-size: 28px;
+    color: #333;
     padding: 120px 40px;
 
     .spinner {

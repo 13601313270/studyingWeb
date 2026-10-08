@@ -403,7 +403,7 @@ export default {
 
 .citySelect {
   .title {
-    font-size: 44px;
+    font-size: 38px;
     margin: 30px 0 10px 0;
     padding-left: 40px;
   }
@@ -419,6 +419,7 @@ export default {
       text-align: center;
       width: 200px;
       margin-bottom: 20px;
+      font-size: 24px;
       border: solid 1px rgb(217, 217, 217);
       border-radius: 10px;
       background-color: white;

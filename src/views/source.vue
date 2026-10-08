@@ -245,7 +245,7 @@ export default {
   width: 100%;
 
   .loading {
-    font-size: 44px;
+    font-size: 28px;
     color: #999;
   }
 
