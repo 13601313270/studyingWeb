@@ -35,7 +35,7 @@
               <div class="name">{{ file.title }}</div>
               <div class="buttons">
                 <!-- <Button @click="printFile([file])">云打印</Button> -->
-                <Button @click="share(file)" icon="share">分享</Button>
+                <Button @click="share(file)">分享</Button>
                 <Button v-if="isFileDownloaded(file.file)" text="打开"
                   @click="open(downLoadFile[file.file.split('/').slice(-1)[0]])">
                 </Button>
@@ -643,6 +643,7 @@ watch(() => degree.value, async (newDegree) => {
       .fileItem {
         width: 48%;
         margin: 1%;
+        border: solid 1PX #e9eeeb;
 
         .name {
           min-height: 2rem;

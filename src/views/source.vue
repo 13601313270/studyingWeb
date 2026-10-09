@@ -5,8 +5,8 @@
     </template>
     <div class="source">
       <div class="subject-tabs">
-        <div :key="subject.id" v-for="subject in sourceList" @click="changeSubject(subject.id)"
-          class="subject-tab" :class="{ active: selectSub === subject.id }">
+        <div :key="subject.id" v-for="subject in sourceList" @click="changeSubject(subject.id)" class="subject-tab"
+          :class="{ active: selectSub === subject.id }">
           {{ subject.name }}
         </div>
       </div>
@@ -354,6 +354,34 @@ export default {
   justify-content: center;
   height: 300px;
   padding-top: 50px;
+}
+
+@media (min-width: 1000px) {
+  .source {
+    .source_list {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row;
+      padding: 16px;
+      width: 100%;
+      box-sizing: border-box;
+      align-items: center;
+      justify-content: center;
+
+      .source_item {
+        width: 400PX;
+        height: 260PX;
+        margin: 12px 22px;
+
+        .source_item_title {
+          font-size: 16PX;
+          top: 8PX;
+          left: 8PX;
+          right: 8PX;
+        }
+      }
+    }
+  }
 }
 
 @media (min-width: 1025px) {
