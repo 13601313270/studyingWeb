@@ -486,12 +486,13 @@ export default {
     max-width: 1000PX;
   }
 
-  &_question {
+  .item_list_question {
     flex: 1;
     flex-wrap: wrap;
     font-size: 34px;
     color: #1d1d1d;
     padding: 15px;
+    overflow: auto;
   }
 
   &_option_list {
