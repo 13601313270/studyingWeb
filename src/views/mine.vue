@@ -32,7 +32,7 @@
               <span class="profile-avatar-text">{{ (userInfo2.name || userInfo2.account || '').charAt(0) }}</span>
             </div>
             <div class="profile-info">
-              <div class="profile-name">{{ userInfo2.account }}</div>
+              <div class="profile-name">{{ userInfo2.name || userInfo2.account }}</div>
               <div class="profile-sub">学员 {{ userInfo2.account }}</div>
             </div>
             <div class="profile-edit">编辑资料</div>
