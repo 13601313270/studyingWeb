@@ -29,7 +29,7 @@
                 :src="userInfo2.icon.replace('http://', 'https://') + '?x-oss-process=image/resize,m_fill,h_200,w_200'" />
             </div>
             <div v-else class="profile-avatar profile-avatar--default">
-              <span class="profile-avatar-text">{{ (userInfo2.account || '').charAt(0) }}</span>
+              <span class="profile-avatar-text">{{ (userInfo2.name || userInfo2.account || '').charAt(0) }}</span>
             </div>
             <div class="profile-info">
               <div class="profile-name">{{ userInfo2.account }}</div>

@@ -23,10 +23,10 @@
         <TabBarIcon name="file" />
         <text class="bottom_link_text">资料</text>
       </div>
-      <div class="bottom_link" :class="[tabType === 'shop' ? 'active' : 'bottom_link_blur']" @click="to('/shop')">
+      <!-- <div class="bottom_link" :class="[tabType === 'shop' ? 'active' : 'bottom_link_blur']" @click="to('/shop')">
         <TabBarIcon name="shop" />
         <text class="bottom_link_text">商店</text>
-      </div>
+      </div> -->
       <div class="bottom_link" :class="[tabType === 'friend' ? 'active' : 'bottom_link_blur']" @click="to('/friend')"
         v-if="channel !== 'huawei'">
         <TabBarIcon name="friend" />

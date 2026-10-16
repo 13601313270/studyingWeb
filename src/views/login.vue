@@ -39,6 +39,10 @@
         <img src="../icons/wechat.png" />
         <text>微信登录</text>
       </div>
+      <div v-if="isAppleDevice" class="appleLoginBtn" @click="appleLogin">
+        <img class="apple_icon" src="../icons/apple.svg" />
+        <text>Apple 登录</text>
+      </div>
       <div class="tempCodeBack" v-if="showTempCode">
         <div class="tempCode">
           <div @click="showTempCode = false" class="tools">
@@ -124,6 +128,7 @@ import Check from '@/components/Check.vue';
 import Dialog from '@/components/Dialog.vue';
 import Popup from '@/components/Popup.vue';
 import WeChat from '@/plugin/WeChat';
+import Apple from '@/plugin/Apple';
 import { getToken } from '@/plugin/phoneNumber';
 
 // Vuex store and router
@@ -152,6 +157,10 @@ const rules = reactive({
 });
 
 const isIpx = ref(navigator.userAgent.includes('iPhone'));
+const isAppleDevice = ref(
+  /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent) ||
+  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+);
 const phone = ref<string | null>(null);
 const tempCode = ref<string | null>(null);
 const tempCodeBind = ref<string | null>(null);
@@ -313,6 +322,37 @@ const weChatLogin = () => {
     } else if (res.type === 'not_account') {
       codeBak.value = res.code;
       showBindPhone.value = true;
+    }
+  });
+};
+
+const appleLogin = () => {
+  if (!isSelectRule.value) {
+    alert('请先阅读服务协议与隐私政策并同意');
+    return;
+  }
+  Apple.login().then((res: any) => {
+    console.log('------', res)
+    if (res.result === true) {
+      localStorage.setItem('token', res.token);
+      store.dispatch('main/setToken', res.token);
+      request
+        .get(`/login/getInfo?email=${res.account}&token=${res.token}`)
+        .then((res2: any) => {
+          if (res2.code === 200) {
+            localStorage.setItem('userInfo', JSON.stringify(res2.info));
+            store.dispatch('main/setUserInfo', res2.info);
+            store.dispatch('main/setShowLogin', false);
+            setTimeout(() => {
+              router.back();
+            }, 100);
+          }
+        });
+    } else if (res.type === 'not_account') {
+      codeBak.value = res.code;
+      showBindPhone.value = true;
+    } else {
+      alert(res.msg || 'Apple 登录失败');
     }
   });
 };
@@ -582,6 +622,31 @@ onMounted(() => {
   }
 }
 
+.appleLoginBtn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 88px;
+  background-color: #000;
+  border: 1PX solid #000;
+  border-radius: 24px;
+  margin-top: 20px;
+  cursor: pointer;
+
+  .apple_icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  >text {
+    font-size: 24px;
+    font-weight: 600;
+    color: #fff;
+  }
+}
+
 .checkContent {
   display: flex;
   flex-direction: row;
@@ -723,6 +788,10 @@ onMounted(() => {
     }
 
     .weChatLoginBtn {
+      height: 44px;
+    }
+
+    .appleLoginBtn {
       height: 44px;
     }
 
