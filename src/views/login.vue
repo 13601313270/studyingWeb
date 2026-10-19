@@ -35,7 +35,7 @@
         </div>
       </div>
       <div class="divider"><span>或通过以下方式登录</span></div>
-      <div class="weChatLoginBtn" @click="weChatLogin">
+      <div class="weChatLoginBtn" @click="weChatLogin" v-if="isInstalledWeChat">
         <img src="../icons/wechat.png" />
         <text>微信登录</text>
       </div>
@@ -146,7 +146,6 @@ const bindRuleForm = reactive({
   password: '',
 });
 
-const wrong = ref('wrong01');
 const nextCodeTime = ref(0);
 const rules = reactive({
   username: [
@@ -156,7 +155,6 @@ const rules = reactive({
   password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
 });
 
-const isIpx = ref(navigator.userAgent.includes('iPhone'));
 const isAppleDevice = ref(
   /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent) ||
   (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)

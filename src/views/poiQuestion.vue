@@ -493,6 +493,10 @@ export default {
     color: #1d1d1d;
     padding: 15px;
     overflow: auto;
+
+    :deep(math) {
+      display: math;
+    }
   }
 
   &_option_list {
@@ -819,6 +823,10 @@ export default {
 .question_option_value {
   flex: 1;
   flex-wrap: wrap;
+
+  :deep(math) {
+    display: math;
+  }
 }
 
 .lookQuestionQAText {
