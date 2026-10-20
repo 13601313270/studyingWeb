@@ -4,12 +4,13 @@
       <div class="lessons">
         <div v-for="item in list" :key="item.id" class="lesson_item">
           <text class="lesson_item_title">{{ item.title }}</text>
-          <div class="video_list" v-if="item.poi.find(v => v.hasVideo)">
+          <div class="video_list" v-if="item.poi.find(v => v.hasVideo || v.pageUrl)">
             <div class="title">课 程</div>
             <div class="list">
               <div v-for="(poi, key) in item.poi" :key="poi.id" class="item">
                 <text class="user_to_poi_item">{{ key + 1 }}、{{ poi.name }}</text>
-                <Button class="playButton" text="播放" icon="video" :disabled="!poi.hasVideo" @click="poiLesson(poi)" />
+                <Button class="playButton" text="播放" icon="video" :disabled="!poi.hasVideo && !poi.pageUrl"
+                  @click="poiLesson(poi)" />
               </div>
             </div>
           </div>
@@ -97,6 +98,7 @@ import toast from '@/plugin/toast';
 import log from '@/plugin/log';
 import VipPriceDesc from '@/components/vipPriceDesc.vue';
 import Page from '@/components/Page.vue';
+import file from '@/plugin/file';
 
 const router = useRouter();
 const route = useRoute();
@@ -106,6 +108,7 @@ type Poi = {
   id: number;
   name: string;
   hasVideo: boolean;
+  pageUrl: string;
   hasContent: boolean;
 };
 
@@ -140,7 +143,7 @@ const refresh = () => {
     title.value = data.name;
   });
 
-  request.get('/source/' + route.params.id + '/lessonsV3').then(data => {
+  request.get('/source/' + route.params.id + '/lessonsV4').then(data => {
     // @ts-ignore
     list.value = data;
   });
@@ -159,6 +162,23 @@ async function poiLesson(item: Poi) {
   console.log(data, data)
   // @ts-ignore
   showConinueTimes.value = data as any;
+  console.log(1)
+  if (item.pageUrl) {
+    const fileName = item.pageUrl.split('/').pop()
+    if (fileName) {
+      console.log(2)
+      const exist = await file.isFileExist(fileName)
+      console.log(3, exist)
+      if (!exist) {
+        console.log(4)
+        await file.download(item.pageUrl);
+        console.log(5)
+      }
+      console.log(6)
+      file.open(fileName);
+    }
+    return;
+  }
   if (!item.hasVideo) {
     alert('课程维护中');
     return;
