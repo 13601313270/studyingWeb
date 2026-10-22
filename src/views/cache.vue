@@ -24,14 +24,18 @@
   </Dialog>
 </template>
 
-<script>
-import toast from '../plugin/toast'
-import request from '../plugin/request'
-import Button from '../components/Button.vue'
-import Dialog from '@/components/Dialog.vue';
-import Page from '@/components/Page.vue';
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+import Button from '@/components/Button.vue'
+import Dialog from '@/components/Dialog.vue'
+import Page from '@/components/Page.vue'
+import file from '@/plugin/file'
+import Toast from '@/plugin/toast'
 
-const tableNameMap = {
+// Web SQL Database 全局 API（非标准，但历史项目仍在使用）
+declare const openDatabase: any
+
+const tableNameMap: Record<string, string> = {
   option: '单词创建记录',
   word: '单词库',
   wordRecord: '单词熟练度数据',
@@ -39,105 +43,68 @@ const tableNameMap = {
   enListenRecord: '英语听力记录',
   enListenRecordNew: '英语听力记录',
 }
-export default {
-  name: 'mine',
-  data() {
-    return {
-      DBList: [],
-      showDelete: false,
-    }
-  },
-  created() {
-    this.init();
-  },
-  methods: {
-    init() {
-      if (navigator.userAgent.includes('windvane')) {
-        // @ts-ignore
-        window.WindVane.call('Db', 'sql', {
-          sql: 'select * from sqlite_master where type = "table"',
-          isSelect: true,
-        }, (res) => {
-          // callBack(res)
-          this.DBList = res.data.map(v => v.name);
-        }, () => {
-        });
-      } else if (typeof openDatabase === 'function') {
-        var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
-        var totalSize = 0;
-        // 执行SQL查询语句
-        db.transaction((tx) => {
-          console.log('===1===')
-          tx.executeSql("SELECT name FROM sqlite_master WHERE type='table';", [], (_, resultSet) => {
-            console.log('===2===')
-            const DBList = [];
-            for (var i = 0; i < resultSet.rows.length; i++) {
-              var tableName = resultSet.rows[i].name;
-              console.log('===3===' + tableName)
-              if (Object.keys(tableNameMap).includes(tableName)) {
-                DBList.push(tableName)
-              }
-            }
-            console.log('===4===' + DBList)
-            this.DBList = DBList;
-          }, null);
-        });
-      }
-    },
-    deleteCache() {
-      if (navigator.userAgent.includes('windvane')) {
-        this.DBList.forEach(v => {
-          if (tableNameMap[v]) {
-            // @ts-ignore
-            window.WindVane.call('Db', 'sql', {
-              sql: 'DROP TABLE ' + v,
-              isSelect: true,
-            }, (res) => {
 
-            }, () => {
-            });
+const DBList = ref<string[]>([])
+const showDelete = ref<boolean>(false)
+
+onMounted(() => {
+  init()
+})
+
+function init() {
+  if (navigator.userAgent.includes('windvane')) {
+    // @ts-ignore
+    window.WindVane.call('Db', 'sql', {
+      sql: 'select * from sqlite_master where type = "table"',
+      isSelect: true,
+    }, (res: any) => {
+      DBList.value = res.data.map((v: any) => v.name)
+    }, () => { })
+  } else if (typeof openDatabase === 'function') {
+    const db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024)
+    db.transaction((tx: any) => {
+      tx.executeSql("SELECT name FROM sqlite_master WHERE type='table';", [], (_: any, resultSet: any) => {
+        const list: string[] = []
+        for (let i = 0; i < resultSet.rows.length; i++) {
+          const tableName = resultSet.rows[i].name
+          if (Object.keys(tableNameMap).includes(tableName)) {
+            list.push(tableName)
           }
-        });
-        setTimeout(() => {
-          this.showDelete = false
-          this.init();
-        }, 500);
-      } else if (typeof openDatabase === 'function') {
-        var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
-        var totalSize = 0;
-        // 执行SQL查询语句
-        db.transaction((tx) => {
-          this.DBList.forEach(v => {
-            if (tableNameMap[v]) {
-              tx.executeSql('DROP TABLE ' + v, [], () => {
-                // Log a message to the console indicating that the table was deleted
-                console.log('Table tableName deleted successfully');
-              });
-            }
-          })
-        });
-        this.showDelete = false
-        this.init();
-      }
-    },
-  },
-  computed: {
-    cacheListText() {
-      const returnTextList = [];
-      console.log('===========')
-      console.log('===========')
-      console.log('===========')
-      console.log(this.DBList)
-      this.DBList.forEach(v => {
+        }
+        DBList.value = list
+      }, null)
+    })
+  }
+}
+
+async function deleteCache() {
+  if (typeof openDatabase === 'function') {
+    const db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024)
+    db.transaction((tx: any) => {
+      DBList.value.forEach(v => {
         if (tableNameMap[v]) {
-          returnTextList.push(tableNameMap[v])
+          tx.executeSql('DROP TABLE ' + v, [], () => { }, null)
         }
       })
-      return returnTextList;
-    }
-  },
-  components: { Button, Dialog, Page },
+    })
+  }
+  await file.clearDownloadFiles();
+  showDelete.value = false
+  Toast({
+    message: '清除成功',
+  })
+  init()
 }
+
+const cacheListText = computed<string[]>(() => {
+  const returnTextList: string[] = []
+  DBList.value.forEach(v => {
+    if (tableNameMap[v]) {
+      returnTextList.push(tableNameMap[v])
+    }
+  })
+  return returnTextList
+})
 </script>
 
 <style scoped lang="less">

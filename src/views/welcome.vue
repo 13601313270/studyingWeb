@@ -1,5 +1,5 @@
 <template>
-  <Page title="欢迎" foot-active="source">
+  <Page title="欢迎" foot-active="source" hide-header>
     <div class="welcome">
       <icon src="icon_green" class="icon" />
       <div class="title">松鼠学</div>

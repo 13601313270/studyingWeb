@@ -12,10 +12,15 @@
         </div>
       </div>
       <div class="bottomTool">
-        <div class="pageCount">总页数<span class="number">{{ goodInfo.pageCount }}</span></div>
-        <div class="price">价格<span class="number">{{ calcNumber(`${goodInfo.price} / 100`) }}</span></div>
+        <div>
+          <div class="pageCount">共{{ goodInfo.pageCount }}页</div>
+          <div class="price">
+            <span class="dw">¥</span>
+            <span class="number">{{ calcNumber(`${goodInfo.price} / 100`) }}</span>
+          </div>
+        </div>
         <div style="flex-grow: 1;"></div>
-        <Button class="buyBtn" @click="printFile([goodInfo])">购买</Button>
+        <Button class="buyBtn" @click="printFile([goodInfo])">立即购买</Button>
       </div>
     </div>
     <Dialog :show="showPrintAllDialog" title="提示" @close="showPrintAllDialog = false">
@@ -247,12 +252,13 @@ function toAddAddress() {
 
 .bottomTool {
   flex-shrink: 0;
-  border-top: solid 2px #959595;
-  padding: 18px;
+  border-top: solid 1PX #e9eeeb;
+  padding: 24px 40px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding-bottom: calc(env(safe-area-inset-bottom) + 16px);
+  box-shadow: 0 -10px 35px rgba(30, 58, 42, .1);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 24px);
 
   .number {
     font-weight: bold;
@@ -261,18 +267,24 @@ function toAddAddress() {
   }
 
   .pageCount {
-    font-size: 36px;
+    font-size: 20px;
+    color: rgb(104, 115, 109);
   }
 
   .price {
-    margin-left: 16px;
     font-size: 36px;
+
+    .dw {
+      font-size: 24px;
+    }
   }
 
   .buyBtn {
     width: 300px;
-    background-color: #ffa400;
+    background-color: #2f7d5a;
+    border-radius: 28px;
     border: none;
+    box-shadow: 0 16px 36px rgba(47, 125, 90, .23);
 
     :deep(.button_text) {
       color: white;

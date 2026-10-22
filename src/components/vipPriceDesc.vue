@@ -19,14 +19,25 @@
       <div v-if="isVipExpired">您的VIP在{{ userInfo.vipEndDate }}日已过期，请重新购买</div>
       <div v-else>您目前已经是VIP，时间持续到{{ userInfo.vipEndDate }}，购买后将顺延结束时间</div>
     </div>
+    <div class="argument">
+      <text class="argument_link" @click="showAgreement">服务协议</text>
+      <text class="argument_split">｜</text>
+      <text class="argument_link" @click="showAgreement">隐私政策</text>
+    </div>
+    <Popup :title="agreementInfo.title" :show="showRuleContent" :zIndex="1000" @close="showRuleContent = false">
+      <div class="agreementInfoPopUp">
+        <div v-html="agreementInfo.content"></div>
+      </div>
+    </Popup>
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { buyVip, subscribe } from '@/plugin/buyVip';
 import request from '@/plugin/request';
+import Popup from '@/components/Popup.vue';
 
 const router = useRouter();
 const store = useStore<any>()
@@ -36,6 +47,11 @@ const userInfo = ref<{
   vipEndDate: string;
 }>()
 const isVipExpired = ref(false);
+const showRuleContent = ref(false);
+const agreementInfo = reactive({
+  content: '',
+  title: '',
+});
 onMounted(() => {
   request.get('/user/getInfo').then((res: any) => {
     userInfo.value = {
@@ -57,6 +73,12 @@ function callBuyVip(product: 'studyingMonthVIP' | 'studyingYearVIP') {
       })
   })
 }
+async function showAgreement() {
+  const agreement: any = await request.get('/agreement');
+  agreementInfo.content = agreement.content;
+  agreementInfo.title = agreement.title;
+  showRuleContent.value = true;
+}
 // function callSubscribe() {
 //   subscribe('delete2').then(() => {
 //     request.get('/user/getInfo')
@@ -69,7 +91,7 @@ function callBuyVip(product: 'studyingMonthVIP' | 'studyingYearVIP') {
 </script>
 <style lang="less" scoped>
 .vipTitle {
-  font-size: 38px;
+  font-size: 32px;
   margin-bottom: 16px;
   color: rgb(64, 64, 64);
   text-align: center;
@@ -86,14 +108,13 @@ function callBuyVip(product: 'studyingMonthVIP' | 'studyingYearVIP') {
   }
 
   .buyVip {
-    /* background: #00795c; */
     border: none;
     height: 170px;
-    border-radius: 10px;
+    border-radius: 26px;
     padding-left: 20px;
     padding-right: 20px;
     border-style: solid;
-    border-width: 2px;
+    border-width: 2PX;
     border-color: #ccd6d2;
     display: flex;
     flex-direction: column;
@@ -123,7 +144,33 @@ function callBuyVip(product: 'studyingMonthVIP' | 'studyingYearVIP') {
 
 .vipEndDate {
   margin-top: 20px;
-  font-size: 28px;
+  font-size: 22px;
   color: #999;
+}
+
+.argument {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+
+  &_split {
+    font-size: 24px;
+    color: #9ca3af;
+  }
+
+  &_link {
+    font-size: 24px;
+    color: #9ca3af;
+  }
+}
+
+.agreementInfoPopUp {
+  font-size: 28px;
+  line-height: 1.6;
+  color: #555;
+  max-height: 60vh;
+  overflow: auto;
 }
 </style>

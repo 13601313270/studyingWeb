@@ -8,17 +8,17 @@
           <th style="width: 35%">VIP</th>
         </tr>
         <tr>
-          <td>课程每日限量</td>
+          <td class="title">课程每日限量</td>
           <td class="warning" v-if="limit">{{ limit.lesson ? (limit.lesson + '次') : '不支持' }}</td>
           <td class="good">不限</td>
         </tr>
         <tr>
-          <td>试题AI解析</td>
+          <td class="title">试题AI解析</td>
           <td class="warning" v-if="limit">{{ limit.aiQa ? (limit.aiQa + '次') : '不支持' }}</td>
           <td class="good">支持</td>
         </tr>
         <tr>
-          <td>资料下载</td>
+          <td class="title">资料下载</td>
           <td class="warning" v-if="limit">{{ limit.fileDown ? (limit.fileDown + '次') : '不支持' }}</td>
           <td class="good">不限</td>
         </tr>
@@ -45,35 +45,51 @@ onMounted(() => {
 .popBuyVipSuccess {
   margin-bottom: 20px;
   overflow: auto;
-  border-radius: 10px;
-  border: solid 1px #eeeeee;
+  border-radius: 20px;
+  border: solid 1PX #eeeeee;
   overflow: hidden;
 
   table {
     width: 100%;
     border-collapse: collapse;
+    overflow: hidden;
+    background: var(--white);
 
     th {
-      background-color: #00795c;
-      color: white;
-      font-size: 28px;
+      background-color: #f7f2e8;
+      color: #68736d;
+      font-size: 22px;
       padding: 10px;
+    }
+
+    tr {
+      height: 60px;
+      border-bottom: 1PX solid #f0ece2;
+
+      &:last-child {
+        border-bottom: none;
+      }
     }
 
     td {
       text-align: center;
-      font-size: 28px;
+      font-size: 24px;
+      height: 60px;
       padding: 10px;
+
+      &.title {
+        font-weight: bold;
+      }
 
       &.warning {
         color: rgb(99, 99, 99);
-        font-size: 32px;
+        font-size: 22px;
         font-weight: bold;
       }
 
       &.good {
         color: #f09903;
-        font-size: 32px;
+        font-size: 22px;
         font-weight: bold;
       }
     }

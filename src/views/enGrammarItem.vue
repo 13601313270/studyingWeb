@@ -34,17 +34,19 @@ onMounted(async () => {
   padding: 24px;
 }
 
-:deep(.content) {
-  h2 {
-    font-size: 38px;
-  }
+:deep(h2) {
+  font-size: 38px;
+}
 
-  h3 {
-    font-size: 32px;
-  }
+:deep(h3) {
+  font-size: 32px;
+}
 
-  p {
-    font-size: 28px;
-  }
+:deep(p) {
+  font-size: 28px;
+}
+
+:deep(li) {
+  font-size: 28px;
 }
 </style>

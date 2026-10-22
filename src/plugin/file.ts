@@ -104,8 +104,51 @@ function getDownLoadFileList() {
   })
 }
 
+function isFileExist(file: string): Promise<boolean> {
+  return new Promise(resolve => {
+    if (navigator.userAgent.includes('studying1v1Android')) {
+      androidBridge('File', 'isFileExist', {
+        fileName: file
+      }).then(res => {
+        resolve(res.result)
+      })
+    } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
+      // @ts-ignore
+      window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+        group: 'file',
+        type: 'isFileExist',
+        fileName: file,
+      }).then((res: any) => {
+        console.log('isFileExist', res)
+        console.log('isFileExist', JSON.parse(res))
+        resolve(JSON.parse(res));
+      })
+    }
+  })
+}
+
+function clearDownloadFiles(): Promise<boolean> {
+  return new Promise(resolve => {
+    if (navigator.userAgent.includes('studying1v1Android')) {
+      androidBridge('File', 'clearDownloadFiles').then(res => {
+        resolve(res.result)
+      })
+    } else if (window.webkit && window.webkit.messageHandlers.jsUseWKWebView) {
+      // @ts-ignore
+      window.webkit.messageHandlers.jsUseWKWebView.postMessage({
+        group: 'file',
+        type: 'clearDownloadFiles',
+      }).then((res: any) => {
+        resolve(JSON.parse(res));
+      })
+    }
+  })
+}
+
 export default {
   download,
   getDownLoadFileList,
   open,
+  isFileExist,
+  clearDownloadFiles,
 }

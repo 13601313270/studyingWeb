@@ -1,6 +1,6 @@
 {
   "name": "falcon_vue",
-  "version": "0.3.10",
+  "version": "0.5.3",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

@@ -486,12 +486,17 @@ export default {
     max-width: 1000PX;
   }
 
-  &_question {
+  .item_list_question {
     flex: 1;
     flex-wrap: wrap;
     font-size: 34px;
     color: #1d1d1d;
     padding: 15px;
+    overflow: auto;
+
+    :deep(math) {
+      display: math;
+    }
   }
 
   &_option_list {
@@ -818,6 +823,10 @@ export default {
 .question_option_value {
   flex: 1;
   flex-wrap: wrap;
+
+  :deep(math) {
+    display: math;
+  }
 }
 
 .lookQuestionQAText {

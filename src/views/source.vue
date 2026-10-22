@@ -1,18 +1,13 @@
 <template>
-  <Page title="课程" root footActive='source'>
+  <Page title="课程" root footActive='source' hideHeader>
     <template #before>
       <DegreeSelect />
     </template>
     <div class="source">
-      <div class="subjects">
-        <div class="subjects_scroll" ref="subjectScroll">
-          <text ref="start" key="start"></text>
-          <div class="subjectScroll">
-            <div :key="subject.id" v-for="subject in sourceList" @click="changeSubject(subject.id)"
-              class="subjects_item" :class="{ active: selectSub === subject.id }">
-              <div :key="subject.id">{{ subject.name }}</div>
-            </div>
-          </div>
+      <div class="subject-tabs">
+        <div :key="subject.id" v-for="subject in sourceList" @click="changeSubject(subject.id)" class="subject-tab"
+          :class="{ active: selectSub === subject.id }">
+          {{ subject.name }}
         </div>
       </div>
       <div class="list" :class="{ englishList: selectSub === 'english' }" v-if="selectSub === 'english'">
@@ -197,97 +192,45 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #fff;
+  margin-top: env(safe-area-inset-top);
 }
 
-.subjects {
-  width: 100%;
-  height: 100px;
+.subject-tabs {
   display: flex;
   flex-direction: row;
-  border-bottom-color: #afafaf;
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 16px 24px 18px;
+  scrollbar-width: none;
 
-  .subjects_scroll {
-    width: 100%;
-    flex-direction: row;
-    align-items: center;
-    height: 100%;
-    overflow-x: auto;
-    position: relative;
-
-    .subjectScroll {
-      display: flex;
-      flex-direction: row;
-      height: 100%;
-
-      >div {
-        flex-shrink: 0;
-      }
-    }
-
-    &::-webkit-scrollbar {
-      display: none;
-      /* Chrome Safari */
-    }
+  &::-webkit-scrollbar {
+    display: none;
   }
+}
 
-  &_set {
-    border-left-style: solid;
-    border-left-color: #afafaf;
-    border-left-width: 1px;
-    width: 100px;
-    height: 100px;
-    position: relative;
+.subject-tab {
+  position: relative;
+  flex: none;
+  color: rgba(0, 0, 0, 0.42);
+  background: transparent;
+  padding: 10px 8px 12px;
+  font-size: 28px;
+  line-height: 1;
 
-    &_list {
+  &.active {
+    color: #00795c;
+    font-weight: 500;
+
+    &::after {
+      content: '';
       position: absolute;
-      background-color: white;
-      border-style: solid;
-      border-width: 1px;
-      border-color: #afafaf;
-      top: 100px;
-      right: 0;
-      width: 300px;
-      z-index: 100;
-      padding: 20px;
-
-      &_item {
-        height: 80px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-direction: row;
-
-        >text {
-          font-size: 32px;
-        }
-      }
-    }
-  }
-
-  .subjects_item {
-    font-size: 42px;
-    min-width: 105px;
-    line-height: 70px;
-    text-align: center;
-    padding: 20px 30px;
-    color: rgba(0, 0, 0, 0.42);
-    position: relative;
-
-    &.active {
-      color: #00795c;
-      font-weight: bold;
-
-      &::after {
-        content: '';
-        display: block;
-        width: 100%;
-        height: 8px;
-        background-color: #04785c;
-        border-radius: 4px;
-      }
+      left: 50%;
+      bottom: 4px;
+      width: 32px;
+      height: 4px;
+      background-color: #00795c;
+      border-radius: 2px;
+      transform: translateX(-50%);
     }
   }
 }
@@ -300,10 +243,9 @@ export default {
   justify-content: center;
   overflow: auto;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.06);
 
   .loading {
-    font-size: 44px;
+    font-size: 28px;
     color: #999;
   }
 
@@ -414,37 +356,44 @@ export default {
   padding-top: 50px;
 }
 
-@media (min-width: 1025px) {
+@media (min-width: 1000px) {
   .source {
-    .subjects {
-      height: 66px;
+    .source_list {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row;
+      padding: 16px;
+      width: 100%;
+      box-sizing: border-box;
+      align-items: center;
+      justify-content: center;
 
-      .subjects_item {
-        height: 100%;
-        padding: 0;
-        font-size: 24px;
-        line-height: 66px;
-        min-width: 120px;
+      .source_item {
+        width: 400PX;
+        height: 260PX;
+        margin: 12px 22px;
 
-        &.active {
-          color: #00795c;
-
-          &::after {
-            content: '';
-            display: block;
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 4px;
-            background-color: #04785c;
-            border-radius: 2px;
-          }
+        .source_item_title {
+          font-size: 16PX;
+          top: 8PX;
+          left: 8PX;
+          right: 8PX;
         }
       }
+    }
+  }
+}
 
-      .subjects_set {
-        display: none;
-      }
+@media (min-width: 1025px) {
+  .source {
+    .subject-tabs {
+      gap: 16px;
+      padding: 12px 24px 14px;
+    }
+
+    .subject-tab {
+      font-size: 14px;
+      padding: 4px 6px 8px;
     }
 
     .source_list {

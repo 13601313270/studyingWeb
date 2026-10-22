@@ -16,22 +16,20 @@
     <div class="bottom" :style="{}"
       v-if="$route.meta.hideBottom !== true && (!['lessonDetail', 'lessonDetailNew', 'poiLessonDetail'].includes($route.name))">
       <div class="bottom_link" :class="[tabType === 'source' ? 'active' : 'bottom_link_blur']" @click="to('/source')">
-        <icon class="bottom_link_icon" :src="tabType === 'source' ? 'main_active' : 'main'" />
+        <TabBarIcon name="source" />
         <text class="bottom_link_text">学科</text>
       </div>
       <div class="bottom_link" :class="[tabType === 'file' ? 'active' : 'bottom_link_blur']" @click="to('/file')">
-        <img class="bottom_link_icon" v-if="tabType === 'file'" src="../icons/file_active.png" />
-        <img class="bottom_link_icon" v-else src="../icons/file.png" />
+        <TabBarIcon name="file" />
         <text class="bottom_link_text">资料</text>
       </div>
-      <div class="bottom_link" :class="[tabType === 'shop' ? 'active' : 'bottom_link_blur']" @click="to('/shop')">
-        <img class="bottom_link_icon" v-if="tabType === 'shop'" src="../icons/shop_active.png" />
-        <img class="bottom_link_icon" v-else src="../icons/shop.png" />
+      <!-- <div class="bottom_link" :class="[tabType === 'shop' ? 'active' : 'bottom_link_blur']" @click="to('/shop')">
+        <TabBarIcon name="shop" />
         <text class="bottom_link_text">商店</text>
-      </div>
+      </div> -->
       <div class="bottom_link" :class="[tabType === 'friend' ? 'active' : 'bottom_link_blur']" @click="to('/friend')"
         v-if="channel !== 'huawei'">
-        <icon class="bottom_link_icon" :src="tabType === 'friend' ? 'friend_active' : 'friend'" />
+        <TabBarIcon name="friend" />
         <text class="bottom_link_text">消息</text>
         <div class="tip" v-if="notUsedInformationCount > 0">
           <text class="tipText">{{ notUsedInformationCount }}</text>
@@ -46,7 +44,7 @@
       <!--                <text class="bottom_link_text" :class="[tabType==='mall'?'bottom_link_text_active':'bottom_link_text_blur']">商城</text>-->
       <!--            </div>-->
       <div class="bottom_link" :class="[tabType === 'mine' ? 'active' : 'bottom_link_blur']" @click="to('/mine')">
-        <icon class="bottom_link_icon" :src="tabType === 'mine' ? 'user_active' : 'user'" />
+        <TabBarIcon name="mine" />
         <text class="bottom_link_text">我的</text>
       </div>
     </div>
@@ -130,6 +128,7 @@ import umeng from '@/plugin/umeng';
 import program from '@/plugin/program';
 import isMobileDevice from '@/plugin/isMobileDevice'
 import BuyVIPDesc from './buyVIPDesc.vue';
+import TabBarIcon from '../components/TabBarIcon.vue';
 import { setBuyVipCallback } from '@/plugin/buyVip'
 import checkNet from '../plugin/checkNet';
 import bridge from '@/plugin/bridge';
@@ -349,7 +348,7 @@ export default {
       return ['source', 'friend', 'file', 'mall', 'mine'].includes(this.$route.name);
     },
   },
-  components: { icon, Button, Login, ImgPreview, Dialog, BuyVIPDesc }
+  components: { icon, Button, Login, ImgPreview, Dialog, BuyVIPDesc, TabBarIcon }
 }
 </script>
 <style lang="less" scoped>
@@ -365,7 +364,7 @@ export default {
 }
 
 .app_content {
-  background-color: #fafffd;
+  background-color: #f7f8f5;
   width: 750px;
   height: 100vh;
   display: flex;
@@ -394,15 +393,17 @@ export default {
 }
 
 .bottom {
-  width: 100vw;
-  background-color: #fcfcfc;
+  background-color: #FFFFFF;
   border-top-style: solid;
   border-top-width: 1PX;
-  border-top-color: #bfc4c2;
+  border-top-color: transparent;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-top: 12px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
 
   .bottom_link {
     height: 100px;
@@ -413,6 +414,7 @@ export default {
     align-items: center;
     justify-content: center;
     position: relative;
+    color: #8a8f8e;
 
     &_icon {
       width: 44px;
@@ -420,19 +422,21 @@ export default {
     }
 
     &.active {
+      color: #00795c;
+
       .bottom_link_text {
-        color: #19392d;
+        color: #00795c;
         font-weight: bold;
       }
     }
 
-    &_text {
-      font-size: 28px;
+    .bottom_link_text {
+      font-size: 24px;
       line-height: 28px;
       height: 24px;
-      color: #5a5e5d;
+      color: inherit;
       text-align: center;
-      margin-top: 8px;
+      margin-top: 12px;
     }
   }
 }
@@ -440,11 +444,14 @@ export default {
 .login {
   position: fixed;
   width: 100vw;
-  background-color: white;
+  box-sizing: border-box;
+  background-color: rgba(18, 27, 22, .48);
   top: 0;
   bottom: 0;
   z-index: 999;
   display: flex;
+  padding: 36px;
+  padding-top: calc(env(safe-area-inset-top) + 36px);
   align-items: center;
   justify-content: center;
 

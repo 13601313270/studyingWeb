@@ -3,21 +3,32 @@
     <div class="address-container">
       <!-- 地址列表 -->
       <div class="address-list" v-if="addressList.length > 0">
-        <div v-for="(address, index) in addressList" :key="index" class="address-item"
-          :class="{ 'default-address': address.isDefault }">
-          <div class="address-info" @click="editAddress(address, index)">
-            <div class="address-header">
+        <div v-for="(address, index) in addressList" :key="index" class="address-item">
+          <div class="address-top" @click="editAddress(address, index)">
+            <div class="address-user">
               <span class="name">{{ address.name }}</span>
-              <span class="phone">{{ address.phone }}</span>
-              <span v-if="address.isDefault" class="default-tag">默认</span>
+              <span class="phone">{{ maskPhone(address.phone) }}</span>
             </div>
-            <div class="address-detail">
-              {{ address.province }}{{ address.city }}{{ address.district }}{{ address.detail }}
-            </div>
+            <div v-if="address.isDefault" class="default-tag">默认</div>
           </div>
+          <div class="address-detail" @click="editAddress(address, index)">
+            {{ address.province }}{{ address.city }}{{ address.district }}{{ address.detail }}
+          </div>
+          <div class="address-divider"></div>
           <div class="address-actions">
-            <switch :value="address.isDefault" @input="setDefaultAddress(index)" class="default-switch" />
-            <Button text="删除" error @click.stop="deleteAddress(address.id)" class="delete-btn" />
+            <!-- <div class="action-btn edit" @click.stop="editAddress(address, index)">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 21H7.5L18.5 10L14 5L3 16.5V21Z" stroke="#666" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M13.5 5.5L18.5 10.5" stroke="#666" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+              编辑
+            </div> -->
+            <div class="action-btn delete" @click.stop="deleteAddress(address.id)">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 7L17.5 20C17.5 20.5523 17.0523 21 16.5 21H7.5C6.94772 21 6.5 20.5523 6.5 20L5 7M10 11V17M14 11V17M8 7V4.5C8 3.67 8.67 3 9.5 3H14.5C15.33 3 16 3.67 16 4.5V7M4.5 7H19.5" stroke="#666" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              删除
+            </div>
           </div>
         </div>
       </div>
@@ -30,7 +41,9 @@
 
       <!-- 添加地址按钮 -->
       <div class="add-address-btn">
-        <Button text="新增收货地址" primary @click="resetForm(), showAddressForm = true" />
+        <div class="add-btn" @click="resetForm(), showAddressForm = true">
+          + 新增收货地址
+        </div>
       </div>
     </div>
 
@@ -199,7 +212,6 @@ const resetForm = () => {
 
 // 显示地址表单（编辑）
 const editAddress = (address: Address, index: number) => {
-  return;
   editingIndex.value = index
   Object.assign(currentAddress, { ...address })
 
@@ -208,6 +220,12 @@ const editAddress = (address: Address, index: number) => {
   onCityChange()
 
   showAddressForm.value = true
+}
+
+// 手机号脱敏：中间4位显示为 ****
+const maskPhone = (phone: string): string => {
+  if (!phone || phone.length < 7) return phone || ''
+  return phone.slice(0, 3) + '****' + phone.slice(-4)
 }
 
 // 关闭表单
@@ -349,7 +367,7 @@ addressList.value = new Proxy(addressList.value, {
 
 <style scoped lang="less">
 .address-container {
-  background-color: #f5f5f5;
+  background-color: #f5f6f5;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -358,82 +376,97 @@ addressList.value = new Proxy(addressList.value, {
 }
 
 .address-list {
-  padding: 20px;
+  padding: 24px;
   flex: 1;
   overflow-y: auto;
 }
 
 .address-item {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px 32px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 
-  &.default-address {
-    border: 2px solid #00795c;
+  .address-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+
+    .address-user {
+      display: flex;
+      align-items: center;
+
+      .name {
+        font-size: 30px;
+        font-weight: 600;
+        color: #17211c;
+        margin-right: 20px;
+        font-family: PingFangSC-Medium, sans-serif;
+      }
+
+      .phone {
+        font-size: 28px;
+        color: #666;
+        font-family: PingFangSC-Regular, sans-serif;
+      }
+    }
+
+    .default-tag {
+      font-size: 22px;
+      color: #00795c;
+      background-color: #eaf5ef;
+      padding: 6px 16px;
+      border-radius: 16px;
+      font-family: PingFangSC-Regular, sans-serif;
+    }
   }
-}
 
-.address-info {
-  padding-bottom: 20px;
-  border-bottom: 1px solid #eee;
-}
-
-.address-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-
-  .name {
-    font-size: 32px;
-    font-weight: bold;
-    color: #333;
-    margin-right: 20px;
-  }
-
-  .phone {
-    font-size: 28px;
+  .address-detail {
+    font-size: 26px;
     color: #666;
-    flex: 1;
+    line-height: 1.5;
+    margin-bottom: 24px;
+    font-family: PingFangSC-Regular, sans-serif;
   }
 
-  .default-tag {
-    background: #00795c;
-    color: white;
-    font-size: 24px;
-    padding: 4px 10px;
-    border-radius: 4px;
-  }
-}
-
-.address-detail {
-  font-size: 28px;
-  color: #666;
-  line-height: 1.5;
-}
-
-.address-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 20px;
-
-  .default-switch {
-    flex: 1;
+  .address-divider {
+    height: 1px;
+    background-color: #f0f0f0;
+    margin-bottom: 20px;
   }
 
-  .delete-btn {
-    width: 120px;
+  .address-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 40px;
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 26px;
+      color: #666;
+      cursor: pointer;
+      font-family: PingFangSC-Regular, sans-serif;
+
+      svg {
+        width: 32px;
+        height: 32px;
+      }
+
+      &.delete {
+        color: #666;
+      }
+    }
   }
 }
 
 .empty-address {
   text-align: center;
   padding: 100px 0;
-  background: white;
-  border-radius: 10px;
-  margin-bottom: 30px;
 
   .empty-icon {
     font-size: 80px;
@@ -441,16 +474,28 @@ addressList.value = new Proxy(addressList.value, {
   }
 
   .empty-text {
-    font-size: 32px;
+    font-size: 30px;
     color: #999;
   }
 }
 
 .add-address-btn {
-  padding: 16px 20px;
+  padding: 24px;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
 
-  .button {
+  .add-btn {
     width: 100%;
+    height: 96px;
+    border-radius: 48px;
+    background-color: #00795c;
+    color: #ffffff;
+    font-size: 32px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: PingFangSC-Medium, sans-serif;
+    box-sizing: border-box;
   }
 }
 

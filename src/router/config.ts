@@ -6,6 +6,7 @@ import sourceDetail from '../views/sourceDetail.vue'
 import lessonDetail from '../views/lessonDetail.vue'
 import poiLessonDetail from '../views/poiLessonDetail.vue'
 import lessonDetailNew from '../views/lessonDetailNew.vue';
+import lessonDetailPPT from '../views/lessonPPT/index.vue';
 import lessonQuestionList from '../views/lessonQuestionList.vue';
 import poiQuestion from '../views/poiQuestion.vue';
 import poiLessonQuestionList from '../views/poiLessonQuestionList.vue';
@@ -77,6 +78,11 @@ const routes: Array<RouterItem> = [
     path: '/lessonNew/:id',
     name: 'lessonDetailNew',
     component: lessonDetailNew,
+  },
+  {
+    path: '/lessonPPT/:id',
+    name: 'lessonDetailPPT',
+    component: lessonDetailPPT,
   },
   {
     path: '/lesson/:id/questionList',

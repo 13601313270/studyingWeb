@@ -14,8 +14,8 @@
       <div class="content">
         <div v-for="section in showContent.split('\n')">
           <div v-if="section.substring(0, 2) === '##'"
-            style="display: flex;flex-direction: row;flex-wrap: wrap;width: 660px;">
-            {{ section }}
+            style="display: flex;flex-direction: row;flex-wrap: wrap;">
+            {{ section.slice(2) }}
             <!-- <text style="float:left;display: inline;margin-right: 10px;font-family: iconfont;font-size: 40px;"
               v-for="word in section.substr(2).split(' ')" :style="{ color: UserInterfaceStyle === 1 ? '#c0c0c0' : 'black' }"
               @longpress="longPressWord(word)">{{ word }}</text> -->
@@ -160,6 +160,7 @@ const showContent = computed<string>(() => {
 .content {
   padding: 16px;
   padding-bottom: 128px;
+  font-size: 36px;
 
   .showImg {
     width: 100%;
@@ -175,6 +176,7 @@ const showContent = computed<string>(() => {
 
 .question {
   padding: 16px;
+  font-size: 36px;
 
   .title {
     font-size: 32px;

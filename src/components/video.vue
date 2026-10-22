@@ -454,6 +454,7 @@ const nowDuration = computed(() => {
       flex-shrink: 0;
       position: absolute;
       right: 4%;
+      font-size: 26px;
       bottom: -40px;
       color: #b7b7b7;
     }
