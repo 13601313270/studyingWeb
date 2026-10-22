@@ -189,9 +189,8 @@ async function poiLesson(item: Poi) {
   // @ts-ignore
   showConinueTimes.value = data as any;
   if (item.pageUrl) {
-    const html = await request.get('/poi/' + item.id + '/html');
-    // @ts-ignore
-    htmlContent.value = typeof html === 'string' ? html : (html?.data ?? html?.html ?? '');
+    const htmlNew = await request.get(item.pageUrl);
+    htmlContent.value = htmlNew as any;
     htmlPreviewKey.value++;
     showHtmlPreview.value = true;
     return;
