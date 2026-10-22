@@ -83,6 +83,22 @@
       <Button class="continueUseButton" @click="continueUse" text="继续免费试用"></Button>
     </div>
   </Dialog>
+
+  <teleport to="#teleport">
+    <div v-if="showHtmlPreview" class="html-preview-fullscreen">
+      <Header title="课件预览" @back="closeHtmlPreview" />
+      <div class="html-preview-body">
+        <iframe
+          v-if="htmlPreviewKey"
+          :key="htmlPreviewKey"
+          :srcdoc="htmlContent"
+          class="html-preview-iframe"
+          frameborder="0"
+          sandbox="allow-scripts allow-forms allow-popups allow-same-origin"
+        ></iframe>
+      </div>
+    </div>
+  </teleport>
 </template>
 
 <script lang="ts" setup>
@@ -98,6 +114,7 @@ import toast from '@/plugin/toast';
 import log from '@/plugin/log';
 import VipPriceDesc from '@/components/vipPriceDesc.vue';
 import Page from '@/components/Page.vue';
+import Header from '@/components/Header.vue';
 import file from '@/plugin/file';
 
 const router = useRouter();
@@ -136,6 +153,16 @@ const showConinueTimes = ref({
   }
 });
 
+// HTML 课件预览
+const showHtmlPreview = ref(false);
+const htmlContent = ref('');
+const htmlPreviewKey = ref(0);
+function closeHtmlPreview() {
+  showHtmlPreview.value = false;
+  htmlContent.value = '';
+  htmlPreviewKey.value = 0;
+}
+
 const refresh = () => {
   request.get('/source/' + route.params.id + '/info').then(data => {
     Object.assign(info, data);
@@ -159,24 +186,14 @@ const refresh = () => {
 
 async function poiLesson(item: Poi) {
   const data = await request.get('/user/checkFuncTimes');
-  console.log(data, data)
   // @ts-ignore
   showConinueTimes.value = data as any;
-  console.log(1)
   if (item.pageUrl) {
-    const fileName = item.pageUrl.split('/').pop()
-    if (fileName) {
-      console.log(2)
-      const exist = await file.isFileExist(fileName)
-      console.log(3, exist)
-      if (!exist) {
-        console.log(4)
-        await file.download(item.pageUrl);
-        console.log(5)
-      }
-      console.log(6)
-      file.open(fileName);
-    }
+    const html = await request.get('/poi/' + item.id + '/html');
+    // @ts-ignore
+    htmlContent.value = typeof html === 'string' ? html : (html?.data ?? html?.html ?? '');
+    htmlPreviewKey.value++;
+    showHtmlPreview.value = true;
     return;
   }
   if (!item.hasVideo) {
@@ -656,5 +673,30 @@ async function continueUse() {
       font-weight: bold;
     }
   }
+}
+
+.html-preview-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+}
+
+.html-preview-body {
+  flex: 1;
+  overflow: hidden;
+}
+
+.html-preview-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  background-color: #fff;
 }
 </style>
