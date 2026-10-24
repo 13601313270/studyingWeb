@@ -434,7 +434,7 @@ watch(() => store.state.main.userInfo, () => {
       }
 
       .profile-sub {
-        font-size: 26px;
+        font-size: 24px;
         color: rgb(154, 164, 159);
       }
     }

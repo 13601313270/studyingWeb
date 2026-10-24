@@ -30,20 +30,23 @@
           </div>
           <div class="fileList">
             <div v-if="loading" class="loading">加载中...</div>
+            <div v-else-if="isCompliance === false" class="complianceText">{{ isComplianceText }}</div>
             <div v-else-if="!loading && fileList.length === 0" class="loading">该分类下暂无资料</div>
-            <div v-for="file in fileList" class="fileItem" :key="file.id">
-              <div class="name">{{ file.title }}</div>
-              <div class="buttons">
-                <!-- <Button @click="printFile([file])">云打印</Button> -->
-                <Button @click="share(file)">分享</Button>
-                <Button v-if="isFileDownloaded(file.file)" text="打开"
-                  @click="open(downLoadFile[file.file.split('/').slice(-1)[0]])">
-                </Button>
-                <Button :text="downLoading[file.file] ? '下载中' : (isFileDownloaded(file.file) ? '重新下载' : '下载')"
-                  :disabled="downLoading[file.file]" @click="download(file)">
-                </Button>
+            <template v-if="isCompliance">
+              <div v-for="file in fileList" class="fileItem" :key="file.id">
+                <div class="name">{{ file.title }}</div>
+                <div class="buttons">
+                  <!-- <Button @click="printFile([file])">云打印</Button> -->
+                  <Button @click="share(file)">分享</Button>
+                  <Button v-if="isFileDownloaded(file.file)" text="打开"
+                    @click="open(downLoadFile[file.file.split('/').slice(-1)[0]])">
+                  </Button>
+                  <Button :text="downLoading[file.file] ? '下载中' : (isFileDownloaded(file.file) ? '重新下载' : '下载')"
+                    :disabled="downLoading[file.file]" @click="download(file)">
+                  </Button>
+                </div>
               </div>
-            </div>
+            </template>
           </div>
         </div>
       </div>
@@ -68,7 +71,7 @@
       <div class="title">
         是否确认打印{{ fileList.length === waitPrintFileList.length ? '全部' : '' }}<span class="num">{{
           waitPrintFileList.length
-          }}</span>个资料文件？
+        }}</span>个资料文件？
       </div>
       <div class="list">
         <div v-for="file in waitPrintFileList" :key="file.id" class="listItem">
@@ -145,6 +148,8 @@ const loading = ref<boolean>(false)
 const downLoading = ref<{ [key: string]: boolean }>({})
 const showConinueUrl = ref<string>('') // 下载
 const showConinueOpenPath = ref<string>('') // 打开
+const isCompliance = ref<boolean>(false)
+const isComplianceText = ref<string>('')
 
 const showConinueTimes = ref<{
   isVip: boolean,
@@ -208,7 +213,12 @@ const changeSource = async (course: any) => {
   loading.value = true;
 
   try {
-    const data: any = await request.get('/file/listWithTotal', {
+    const data: {
+      list: any[],
+      total: number,
+      isCompliance: boolean,
+      isComplianceText: string,
+    } = await request.get('/file/listWithTotal', {
       params: {
         course: course.id,
         status: 0,
@@ -216,6 +226,8 @@ const changeSource = async (course: any) => {
     });
     fileList.value = data.list;
     fileCount.value = data.total;
+    isCompliance.value = data.isCompliance;
+    isComplianceText.value = data.isComplianceText;
     loading.value = false;
   } catch (error) {
     loading.value = false;
@@ -578,6 +590,15 @@ watch(() => degree.value, async (newDegree) => {
         text-align: center;
         color: #b7b7b7;
         font-size: 42px;
+        margin-top: 32px;
+        line-height: 300px;
+      }
+
+      .complianceText {
+        width: 100%;
+        text-align: center;
+        color: #b7b7b7;
+        font-size: 32px;
         margin-top: 32px;
         line-height: 300px;
       }
