@@ -87,7 +87,7 @@
           </div>
           <div class="stat-divider"></div>
           <div class="stat-item">
-            <div class="stat-num">--</div>
+            <div class="stat-num">---</div>
             <div class="stat-label">本周学习</div>
           </div>
         </div>
