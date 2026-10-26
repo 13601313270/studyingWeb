@@ -72,7 +72,6 @@ onActivated(() => {
 
 
 @media (min-width: 1025px) {
-
   /* 中等屏幕宽度下的样式 */
   .app_content {
     .bottom {
