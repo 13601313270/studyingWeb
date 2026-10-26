@@ -2,7 +2,7 @@ name: Deploy Vue App to GitHub Pages
 
 on:
   push:
-    branches: [ "main" ] # 当向 main 分支推送代码时触发这个 Action。如果你的默认分支是 master，请改为 master。
+    branches: [ "develop" ] # 当向 branch 分支推送代码时触发这个 Action。
 
 # 设置 GITHUB_TOKEN 的权限，以便可以推送代码到 gh-pages 分支
 permissions:
